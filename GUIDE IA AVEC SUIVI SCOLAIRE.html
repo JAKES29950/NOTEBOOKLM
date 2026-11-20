@@ -1,0 +1,2170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="narrative">
+  <meta name="design-style" content="sticker">
+  <title>Aide aux devoirs en ligne et IA éducative au primaire (CP–CM2)</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Page and surfaces (Sticker palette) */
+      --background: #fef7ff;
+      --surface-container-low: #ffffff;
+      --surface-container: #f8eef8;
+      --surface-container-high: #f2e8f2;
+
+      /* Ink */
+      --on-surface: #2e1a28;
+      --on-surface-variant: #604868;
+
+      /* Rules */
+      --outline: #907898;
+      --outline-variant: #dcc8e0;
+
+      /* Accents */
+      --primary: #c2207f;
+      --on-primary: #ffffff;
+      --primary-container: #f080c0;
+      --on-primary-container: #2e1a28;
+      --secondary: #7c52aa;
+      --on-secondary: #ffffff;
+      --tertiary: #0096cc;
+      --error: #c53030;
+      --on-error: #ffffff;
+
+      /* Semantic */
+      --positive: #157f4b;
+      --positive-bg: #e7f7ef;
+      --positive-ink: #0e5934;
+      --warning: #a84d00;
+      --warning-bg: #fff1e0;
+      --warning-ink: #7a3600;
+      --error-bg: #fdecec;
+      --error-ink: #961f1f;
+      --sky-soft: #e2f5fc;
+      --grape-soft: #f1eaf9;
+      --pink-soft: #fde8f5;
+
+      /* Data series */
+      --data-1: #c2207f;
+      --data-1-fill: rgb(194 32 127 / 0.14);
+      --data-2: #7c52aa;
+      --data-3: #0096cc;
+      --data-4: #d96a00;
+      --data-context: #c8b8d0;
+
+      /* Fonts */
+      --font-headline: 'DM Sans', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-label: 'DM Sans', sans-serif;
+
+      /* Shape */
+      --rounded: 1.25rem;
+      --rounded-lg: 2rem;
+      --rounded-full: 9999px;
+
+      /* Sticker & Pixar-inspired 3D relief effects (strictly tinted, never grey/black) */
+      --shadow-pink: 0 8px 24px rgb(224 64 160 / 0.18);
+      --shadow-pink-deep: 0 14px 32px rgb(224 64 160 / 0.30);
+      --shadow-grape: 0 8px 24px rgb(124 82 170 / 0.18);
+      --shadow-sky: 0 8px 24px rgb(0 150 204 / 0.18);
+
+      --surface-3d-card: linear-gradient(165deg, #ffffff 0%, #fcf4fd 100%);
+      --surface-3d-hero: linear-gradient(145deg, #ffffff 0%, #faf0fb 58%, #f3e6f9 100%);
+      --surface-3d-pink: linear-gradient(165deg, #ce2888 0%, #b51b74 100%);
+      --surface-3d-grape: linear-gradient(165deg, #885db8 0%, #6f469c 100%);
+      --surface-3d-sky-clay: linear-gradient(165deg, #5ccbf3 0%, #0096cc 100%);
+      --surface-3d-mint: linear-gradient(165deg, #1b9659 0%, #137544 100%);
+
+      --relief-pink: 0 10px 26px rgb(194 32 127 / 0.15), 0 4px 10px rgb(124 82 170 / 0.08), inset 0 3px 0 rgb(255 255 255 / 0.96), inset 0 -5px 12px rgb(194 32 127 / 0.06);
+      --relief-grape: 0 10px 26px rgb(124 82 170 / 0.15), 0 4px 10px rgb(124 82 170 / 0.08), inset 0 3px 0 rgb(255 255 255 / 0.96), inset 0 -5px 12px rgb(124 82 170 / 0.07);
+      --relief-sky: 0 10px 26px rgb(0 150 204 / 0.16), 0 4px 10px rgb(0 150 204 / 0.08), inset 0 3px 0 rgb(255 255 255 / 0.96), inset 0 -5px 12px rgb(0 150 204 / 0.07);
+      --relief-btn-pink: 0 8px 20px rgb(194 32 127 / 0.28), inset 0 2px 0 rgb(255 255 255 / 0.38), inset 0 -4px 0 rgb(118 12 73 / 0.24);
+      --relief-btn-grape: 0 8px 20px rgb(124 82 170 / 0.28), inset 0 2px 0 rgb(255 255 255 / 0.38), inset 0 -4px 0 rgb(68 38 104 / 0.24);
+      --relief-well: inset 0 3px 8px rgb(124 82 170 / 0.11), inset 0 -2px 0 rgb(255 255 255 / 0.88);
+      --relief-pill-nav: 0 4px 14px rgb(124 82 170 / 0.12), inset 0 2px 0 rgb(255 255 255 / 0.95), inset 0 -2px 4px rgb(124 82 170 / 0.06);
+
+      /* SVG 3D stops */
+      --svg-robot-light: #ffffff;
+      --svg-robot-mid: #ecdcf5;
+      --svg-robot-shade: #cbb0dc;
+      --svg-visor-top: #462a42;
+      --svg-visor-bot: #241320;
+      --svg-glow-sky: #4fd2ff;
+      --svg-glow-pink: #f46bba;
+      --svg-gold-light: #ffe28a;
+      --svg-gold-dark: #d96a00;
+      --svg-book-cover: #885db8;
+      --svg-book-edge: #5d3988;
+
+      --pop-scale: scale(1.03);
+      --lift: translateY(-4px);
+      --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      /* Focus ring */
+      --focus: var(--primary);
+
+      /* Type scale (Narrative) */
+      --display-size: clamp(2.35rem, 1.4rem + 3.4vw, 3.75rem);
+      --headline-size: clamp(1.65rem, 1.2rem + 1.8vw, 2.45rem);
+      --subhead-size: clamp(1.18rem, 1.05rem + 0.5vw, 1.4rem);
+      --body-size: clamp(1.02rem, 0.98rem + 0.2vw, 1.125rem);
+      --label-size: clamp(0.75rem, 0.72rem + 0.12vw, 0.8125rem);
+
+      /* Spacing scale */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+      --space-3xl: 5.5rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.62;
+      -webkit-font-smoothing: antialiased;
+    }
+    header { position: static !important; }
+
+    /* Focus rings */
+    :focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .page-shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: var(--space-lg) var(--space-lg) var(--space-3xl);
+    }
+    .page-shell * { min-width: 0; }
+
+    /* Typography */
+    h1, h2, h3, h4 {
+      font-family: var(--font-headline);
+      color: var(--on-surface);
+      margin: 0;
+    }
+    .display {
+      font-weight: 900;
+      font-size: var(--display-size);
+      letter-spacing: -0.03em;
+      line-height: 1.07;
+    }
+    .display em, .section-title em {
+      font-style: normal;
+      color: var(--primary);
+    }
+    .section-title {
+      font-weight: 800;
+      font-size: var(--headline-size);
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+    }
+    .card-title {
+      font-weight: 700;
+      font-size: var(--subhead-size);
+      letter-spacing: -0.015em;
+      line-height: 1.25;
+    }
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--secondary);
+      background: var(--grape-soft);
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--rounded-full);
+      box-shadow: var(--relief-pill-nav);
+    }
+    .lede {
+      font-size: var(--subhead-size);
+      color: var(--on-surface-variant);
+      max-width: 62ch;
+      line-height: 1.5;
+      margin: var(--space-md) 0 0;
+    }
+    .prose {
+      max-width: 65ch;
+      color: var(--on-surface);
+      margin: var(--space-md) 0 0;
+    }
+    .caption {
+      font-size: 0.92rem;
+      color: var(--on-surface-variant);
+      line-height: 1.5;
+    }
+    .tabular { font-variant-numeric: tabular-nums; }
+
+    /* Top Header & Axis Pills */
+    .top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-bottom: var(--space-xl);
+    }
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      background: var(--surface-3d-card);
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--rounded-full);
+      box-shadow: var(--relief-pill-nav);
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--on-surface);
+    }
+    .brand-orb {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--rounded-full);
+      background: var(--surface-3d-pink);
+      color: var(--on-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--relief-btn-pink);
+    }
+    .axis-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+    .nav-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 44px;
+      padding: 0 var(--space-md);
+      border-radius: var(--rounded-full);
+      background: var(--surface-3d-card);
+      color: var(--on-surface);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.88rem;
+      box-shadow: var(--relief-pill-nav);
+      transition: transform var(--dur-short) var(--ease-bounce), box-shadow var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
+    }
+    .nav-pill:hover {
+      transform: var(--pop-scale);
+      background: var(--pink-soft);
+      color: var(--primary);
+      box-shadow: var(--shadow-pink);
+    }
+
+    /* Hero 3D Panel */
+    .hero-panel {
+      background: var(--surface-3d-hero);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-2xl) var(--space-xl);
+      box-shadow: var(--relief-pink);
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.95fr);
+      gap: var(--space-xl);
+      align-items: center;
+      margin-bottom: var(--space-2xl);
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+    .hero-scene {
+      background: var(--surface-container-low);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md);
+      box-shadow: var(--relief-sky);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .hero-scene svg {
+      width: 100%;
+      max-width: 380px;
+      height: auto;
+      display: block;
+    }
+
+    /* Sculpted Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-lg);
+      border-radius: var(--rounded-full);
+      border: 0;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.96rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform var(--dur-short) var(--ease-bounce), box-shadow var(--dur-short) var(--ease-out), filter var(--dur-micro) var(--ease-out);
+    }
+    .btn:hover { transform: var(--pop-scale); }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+      background: var(--surface-3d-pink);
+      color: var(--on-primary);
+      box-shadow: var(--relief-btn-pink);
+    }
+    .btn-primary:hover { box-shadow: var(--shadow-pink-deep); }
+    .btn-secondary {
+      background: var(--surface-3d-grape);
+      color: var(--on-secondary);
+      box-shadow: var(--relief-btn-grape);
+    }
+    .btn-soft {
+      background: var(--surface-container-low);
+      color: var(--primary);
+      box-shadow: var(--relief-pill-nav);
+    }
+    .btn-soft:hover { background: var(--pink-soft); }
+
+    /* Key KPI Strip */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+      gap: var(--space-lg);
+      margin-bottom: var(--space-3xl);
+    }
+    .kpi-card {
+      background: var(--surface-3d-card);
+      border-radius: var(--rounded);
+      padding: var(--space-lg);
+      box-shadow: var(--relief-pink);
+    }
+    .kpi-card:nth-child(3n+2) { box-shadow: var(--relief-sky); }
+    .kpi-card:nth-child(3n+3) { box-shadow: var(--relief-grape); }
+    .kpi-label {
+      font-size: var(--label-size);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface-variant);
+    }
+    .kpi-value {
+      font-size: clamp(1.85rem, 1.4rem + 1.4vw, 2.45rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      color: var(--primary);
+      margin: var(--space-xs) 0;
+    }
+    .kpi-card:nth-child(3n+2) .kpi-value { color: var(--on-surface); }
+    .kpi-card:nth-child(3n+3) .kpi-value { color: var(--secondary); }
+
+    /* Narrative Sections */
+    .axis-section {
+      margin-bottom: var(--space-3xl);
+      scroll-margin-top: var(--space-lg);
+    }
+    .section-head {
+      margin-bottom: var(--space-xl);
+    }
+    .section-head .kicker { margin-bottom: var(--space-sm); }
+
+    /* Sculpted 3D Cards */
+    .card {
+      background: var(--surface-3d-card);
+      border-radius: var(--rounded);
+      padding: var(--space-lg);
+      box-shadow: var(--relief-pink);
+    }
+    .card-sky { box-shadow: var(--relief-sky); }
+    .card-grape { box-shadow: var(--relief-grape); }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+      gap: var(--space-lg);
+    }
+    .asymmetric-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .asymmetric-grid-rev {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+
+    /* Segmented Pill Track (3D Inset Well) */
+    .pill-track {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      background: var(--surface-container-high);
+      padding: 6px;
+      border-radius: var(--rounded-full);
+      box-shadow: var(--relief-well);
+      margin-bottom: var(--space-lg);
+      max-width: 100%;
+    }
+    .seg-btn {
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-lg);
+      border-radius: var(--rounded-full);
+      border: 0;
+      background: transparent;
+      color: var(--on-surface-variant);
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: transform var(--dur-short) var(--ease-bounce), background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out);
+    }
+    .seg-btn:hover { color: var(--on-surface); }
+    .seg-btn.active {
+      background: var(--surface-3d-pink);
+      color: var(--on-primary);
+      box-shadow: var(--relief-btn-pink);
+      transform: scale(1.02);
+    }
+    .seg-btn.active-grape {
+      background: var(--surface-3d-grape);
+      color: var(--on-secondary);
+      box-shadow: var(--relief-btn-grape);
+      transform: scale(1.02);
+    }
+
+    /* Badges & Tags */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: var(--rounded-full);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+    .badge-pink { background: var(--pink-soft); color: var(--primary); }
+    .badge-grape { background: var(--grape-soft); color: var(--secondary); }
+    .badge-sky { background: var(--sky-soft); color: var(--on-surface); }
+    .badge-pos { background: var(--positive-bg); color: var(--positive-ink); }
+    .badge-warn { background: var(--warning-bg); color: var(--warning-ink); }
+    .badge-err { background: var(--error-bg); color: var(--error-ink); }
+
+    /* Format Comparator Table / Cards */
+    .format-detail-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: var(--space-lg);
+      align-items: stretch;
+    }
+    .spec-list {
+      list-style: none;
+      padding: 0;
+      margin: var(--space-md) 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    .spec-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      background: var(--surface-container);
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--rounded);
+      color: var(--on-surface);
+    }
+    .spec-icon {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: var(--rounded-full);
+      background: var(--surface-container-low);
+      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+      box-shadow: var(--relief-pill-nav);
+    }
+
+    /* Clean Sticker Table */
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: var(--space-lg);
+    }
+    table.sticker-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 8px;
+      text-align: left;
+    }
+    table.sticker-table thead th {
+      font-size: var(--label-size);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface-variant);
+      background: var(--surface-container);
+      padding: var(--space-sm) var(--space-md);
+    }
+    table.sticker-table thead th:first-child { border-radius: var(--rounded-full) 0 0 var(--rounded-full); }
+    table.sticker-table thead th:last-child { border-radius: 0 var(--rounded-full) var(--rounded-full) 0; }
+    table.sticker-table tbody td {
+      background: var(--surface-container-low);
+      padding: var(--space-md);
+      color: var(--on-surface);
+      vertical-align: top;
+    }
+    table.sticker-table tbody tr:nth-child(even) td {
+      background: var(--surface-container);
+    }
+    table.sticker-table tbody td:first-child { border-radius: var(--rounded) 0 0 var(--rounded); font-weight: 700; }
+    table.sticker-table tbody td:last-child { border-radius: 0 var(--rounded) var(--rounded) 0; }
+
+    /* Socratic Simulator */
+    .chat-well {
+      background: var(--surface-container);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-lg);
+      box-shadow: var(--relief-well);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    .bubble-row {
+      display: flex;
+      gap: var(--space-sm);
+      align-items: flex-end;
+    }
+    .bubble-row.student { justify-content: flex-end; }
+    .avatar-3d {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      border-radius: var(--rounded-full);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+    .avatar-tutor {
+      background: var(--surface-3d-pink);
+      color: var(--on-primary);
+      box-shadow: var(--relief-btn-pink);
+    }
+    .avatar-student {
+      background: var(--surface-3d-grape);
+      color: var(--on-secondary);
+      box-shadow: var(--relief-btn-grape);
+    }
+    .chat-bubble {
+      max-width: 82%;
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--rounded);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      box-shadow: var(--relief-pink);
+    }
+    .bubble-row.student .chat-bubble {
+      background: var(--grape-soft);
+      box-shadow: var(--relief-grape);
+    }
+    .bubble-meta {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--on-surface-variant);
+      margin-bottom: 4px;
+    }
+
+    /* Progress Bar (Lollipop pill) */
+    .progress-track {
+      width: 100%;
+      height: 16px;
+      border-radius: var(--rounded-full);
+      background: var(--surface-container-high);
+      box-shadow: var(--relief-well);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: var(--rounded-full);
+      background: var(--surface-3d-sky-clay);
+      transition: width var(--dur-long) var(--ease-bounce);
+    }
+    .progress-fill.pink { background: var(--surface-3d-pink); }
+    .progress-fill.mint { background: var(--surface-3d-mint); }
+
+    /* Charts */
+    .chart-box {
+      position: relative;
+      width: 100%;
+      min-height: 280px;
+      margin-top: var(--space-md);
+    }
+
+    /* Interactive Model Nodes (Viau) */
+    .viau-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+    .node-btn {
+      text-align: left;
+      width: 100%;
+      background: var(--surface-3d-card);
+      border: 0;
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+      cursor: pointer;
+      color: var(--on-surface);
+      font-family: inherit;
+      box-shadow: var(--relief-grape);
+      transition: transform var(--dur-short) var(--ease-bounce), box-shadow var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
+    }
+    .node-btn:hover { transform: var(--lift); }
+    .node-btn.selected {
+      background: var(--pink-soft);
+      box-shadow: var(--shadow-pink-deep);
+      outline: 2px solid var(--primary);
+    }
+
+    /* Vigilance Checklist */
+    .check-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-md);
+      background: var(--surface-container-low);
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+      box-shadow: var(--relief-sky);
+      cursor: pointer;
+      transition: transform var(--dur-short) var(--ease-bounce), background-color var(--dur-short) var(--ease-out);
+    }
+    .check-item:hover { transform: translateY(-2px); }
+    .check-item.checked {
+      background: var(--positive-bg);
+      box-shadow: var(--relief-grape);
+    }
+    .check-input {
+      width: 24px;
+      height: 24px;
+      accent-color: var(--primary);
+      flex-shrink: 0;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+
+    /* Before/After & Dashboard Rows */
+    .status-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      background: var(--surface-container);
+      padding: var(--space-md);
+      border-radius: var(--rounded);
+    }
+    .status-row + .status-row { margin-top: var(--space-sm); }
+
+    /* Callout well */
+    .callout-well {
+      background: var(--sky-soft);
+      color: var(--on-surface);
+      border-radius: var(--rounded);
+      padding: var(--space-lg);
+      box-shadow: var(--relief-sky);
+      margin-top: var(--space-lg);
+    }
+
+    /* Range slider styled as lollipop */
+    .range-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    label.field-label {
+      display: block;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--on-surface);
+    }
+    input[type="range"] {
+      width: 100%;
+      height: 12px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* Scroll reveal animation */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity var(--dur-long) var(--ease-out), transform var(--dur-long) var(--ease-bounce);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 860px) {
+      .hero-panel,
+      .asymmetric-grid,
+      .asymmetric-grid-rev,
+      .format-detail-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 640px) {
+      .page-shell {
+        padding: var(--space-md) var(--space-md) var(--space-2xl);
+      }
+      .hero-panel {
+        padding: var(--space-xl) var(--space-md);
+      }
+      .pill-track {
+        border-radius: var(--rounded);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <!-- En-tête statique et navigation par axes -->
+    <header class="top-bar">
+      <div class="brand-badge">
+        <span class="brand-orb" aria-hidden="true"><i data-lucide="sparkles" width="16" height="16"></i></span>
+        <span>Observatoire Primaire · CP–CM2</span>
+      </div>
+      <nav class="axis-nav" aria-label="Axes de réflexion">
+        <a class="nav-pill" href="#axe-formats">1. Formats</a>
+        <a class="nav-pill" href="#axe-methode">2. Méthode socratique</a>
+        <a class="nav-pill" href="#axe-motivation">3. Motivation</a>
+        <a class="nav-pill" href="#axe-ethique">4. RGPD &amp; Éthique</a>
+        <a class="nav-pill" href="#axe-famille">5. École–Famille</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- HERO 3D EN RELIEF -->
+      <section class="hero-panel">
+        <div>
+          <span class="kicker">Dossier interactif grand public · Cycle 2 &amp; Cycle 3</span>
+          <h1 class="display" style="margin-top: var(--space-md);">L’aide aux devoirs à l’ère de l’<em>IA</em> : comprendre pour mieux accompagner</h1>
+          <p class="lede">
+            Entre cours en visio, plateformes d’exercices et tuteurs conversationnels, le numérique bouleverse les devoirs du soir du CP au CM2. L’enjeu n’est pas d’aller plus vite à la place de l’enfant, mais de consolider les fondamentaux sans briser le goût d’apprendre.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#axe-methode">
+              <i data-lucide="message-circle-question" width="18" height="18"></i>
+              Tester la méthode socratique
+            </a>
+            <a class="btn btn-soft" href="#axe-ethique">
+              <i data-lucide="shield-check" width="18" height="18"></i>
+              Vérifier un outil (checklist RGPD)
+            </a>
+          </div>
+        </div>
+
+        <!-- Scène 3D sculptée façon Pixar en SVG (couleurs via variables CSS uniquement) -->
+        <div class="hero-scene">
+          <svg viewBox="0 0 380 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustration en relief d'un petit compagnon éducatif bienveillant guidant un cahier d'écolier avec une ampoule d'indice et des étoiles">
+            <defs>
+              <radialGradient id="clayGlowBg" cx="50%" cy="45%" r="55%">
+                <stop offset="0%" stop-color="var(--pink-soft)" />
+                <stop offset="65%" stop-color="var(--sky-soft)" />
+                <stop offset="100%" stop-color="var(--surface-container-low)" />
+              </radialGradient>
+              <radialGradient id="robotBodyGrad" cx="35%" cy="28%" r="70%">
+                <stop offset="0%" stop-color="var(--svg-robot-light)" />
+                <stop offset="60%" stop-color="var(--svg-robot-mid)" />
+                <stop offset="100%" stop-color="var(--svg-robot-shade)" />
+              </radialGradient>
+              <linearGradient id="visorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="var(--svg-visor-top)" />
+                <stop offset="100%" stop-color="var(--svg-visor-bot)" />
+              </linearGradient>
+              <radialGradient id="eyeSky" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="var(--svg-robot-light)" />
+                <stop offset="45%" stop-color="var(--svg-glow-sky)" />
+                <stop offset="100%" stop-color="var(--tertiary)" />
+              </radialGradient>
+              <radialGradient id="bulbGold" cx="35%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="var(--svg-robot-light)" />
+                <stop offset="45%" stop-color="var(--svg-gold-light)" />
+                <stop offset="100%" stop-color="var(--svg-gold-dark)" />
+              </radialGradient>
+              <linearGradient id="bookGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="var(--svg-book-cover)" />
+                <stop offset="100%" stop-color="var(--svg-book-edge)" />
+              </linearGradient>
+              <radialGradient id="pinkOrb" cx="32%" cy="30%" r="68%">
+                <stop offset="0%" stop-color="var(--primary-container)" />
+                <stop offset="100%" stop-color="var(--primary)" />
+              </radialGradient>
+            </defs>
+
+            <!-- Halo ambiant doux -->
+            <ellipse cx="190" cy="150" rx="165" ry="125" fill="url(#clayGlowBg)" />
+            <!-- Ombre portée teintée au sol -->
+            <ellipse cx="190" cy="264" rx="118" ry="18" fill="var(--secondary)" opacity="0.16" />
+
+            <!-- Cahier ouvert 3D à gauche -->
+            <g transform="translate(46, 175) rotate(-8)">
+              <rect x="0" y="12" width="128" height="74" rx="16" fill="url(#bookGrad)" />
+              <rect x="8" y="4" width="54" height="68" rx="10" fill="var(--svg-robot-light)" />
+              <rect x="66" y="4" width="54" height="68" rx="10" fill="var(--surface-container)" />
+              <line x1="16" y1="20" x2="52" y2="20" stroke="var(--outline-variant)" stroke-width="4" stroke-linecap="round" />
+              <line x1="16" y1="34" x2="48" y2="34" stroke="var(--primary)" stroke-width="4" stroke-linecap="round" />
+              <line x1="16" y1="48" x2="44" y2="48" stroke="var(--outline-variant)" stroke-width="4" stroke-linecap="round" />
+              <line x1="74" y1="20" x2="110" y2="20" stroke="var(--secondary)" stroke-width="4" stroke-linecap="round" />
+              <line x1="74" y1="34" x2="104" y2="34" stroke="var(--outline-variant)" stroke-width="4" stroke-linecap="round" />
+              <circle cx="92" cy="52" r="9" fill="var(--tertiary)" opacity="0.3" />
+            </g>
+
+            <!-- Compagnon tuteur 3D au centre-droit -->
+            <g transform="translate(155, 58)">
+              <!-- Antenne -->
+              <rect x="61" y="0" width="8" height="22" rx="4" fill="var(--svg-robot-shade)" />
+              <circle cx="65" cy="0" r="10" fill="url(#pinkOrb)" />
+              <ellipse cx="62" cy="-3" rx="3.5" ry="2" fill="var(--svg-robot-light)" opacity="0.85" />
+
+              <!-- Oreilles / écouteurs sculptés -->
+              <rect x="2" y="54" width="18" height="36" rx="9" fill="url(#pinkOrb)" />
+              <rect x="110" y="54" width="18" height="36" rx="9" fill="url(#pinkOrb)" />
+
+              <!-- Tête arrondie façon argile lumineuse -->
+              <rect x="14" y="18" width="102" height="92" rx="38" fill="url(#robotBodyGrad)" />
+              <!-- Reflet spéculaire supérieur -->
+              <ellipse cx="55" cy="30" rx="28" ry="8" fill="var(--svg-robot-light)" opacity="0.75" />
+
+              <!-- Visière sombre lisse -->
+              <rect x="26" y="42" width="78" height="48" rx="22" fill="url(#visorGrad)" />
+
+              <!-- Yeux expressifs 3D -->
+              <circle cx="48" cy="65" r="10.5" fill="url(#eyeSky)" />
+              <circle cx="82" cy="65" r="10.5" fill="url(#eyeSky)" />
+              <circle cx="45" cy="61" r="3.5" fill="var(--svg-robot-light)" />
+              <circle cx="79" cy="61" r="3.5" fill="var(--svg-robot-light)" />
+              <!-- Sourire doux -->
+              <path d="M58 77 Q65 83 72 77" stroke="var(--svg-glow-sky)" stroke-width="3.5" stroke-linecap="round" fill="none" />
+
+              <!-- Torse arrondi -->
+              <rect x="28" y="114" width="74" height="64" rx="28" fill="url(#robotBodyGrad)" />
+              <circle cx="65" cy="144" r="14" fill="var(--sky-soft)" />
+              <path d="M59 144 L63 148 L72 139" stroke="var(--tertiary)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+
+              <!-- Bras gauche levé vers le cahier -->
+              <rect x="2" y="122" width="22" height="44" rx="11" transform="rotate(22 12 134)" fill="url(#robotBodyGrad)" />
+              <!-- Bras droit vers l'indice -->
+              <rect x="104" y="118" width="22" height="44" rx="11" transform="rotate(-28 114 134)" fill="url(#robotBodyGrad)" />
+            </g>
+
+            <!-- Ampoule d'indice flottante 3D -->
+            <g transform="translate(292, 62)">
+              <circle cx="24" cy="24" r="22" fill="url(#bulbGold)" />
+              <ellipse cx="17" cy="15" rx="6" ry="4" transform="rotate(-25 17 15)" fill="var(--svg-robot-light)" opacity="0.85" />
+              <rect x="16" y="42" width="16" height="10" rx="5" fill="var(--svg-robot-shade)" />
+              <path d="M24 -8 L24 -2 M48 16 L54 14 M0 16 L-6 14" stroke="var(--data-4)" stroke-width="3.5" stroke-linecap="round" />
+            </g>
+
+            <!-- Étoiles d'effort flottantes -->
+            <path d="M74 72 L79 83 L91 84 L82 92 L84 104 L74 98 L64 104 L66 92 L57 84 L69 83 Z" fill="url(#bulbGold)" />
+            <circle cx="315" cy="212" r="12" fill="url(#pinkOrb)" opacity="0.9" />
+            <ellipse cx="311" cy="208" rx="4" ry="2.5" fill="var(--svg-robot-light)" opacity="0.8" />
+          </svg>
+          <p class="caption" style="text-align: center; margin: 0;">
+            Un tuteur numérique efficace éclaire la piste par des indices — il ne rédige jamais le cahier.
+          </p>
+        </div>
+      </section>
+
+      <!-- INDICATEURS CLÉS -->
+      <section class="kpi-grid reveal" aria-label="Repères clés">
+        <article class="kpi-card">
+          <div class="kpi-label">Temps de devoirs adapté</div>
+          <div class="kpi-value tabular">10–40 min</div>
+          <p class="caption" style="margin: 0;">Selon la classe (CP–CE1 à CM2) : dépasser ces repères dégrade la concentration.</p>
+        </article>
+        <article class="kpi-card">
+          <div class="kpi-label">Étude terrain TICE (primaire)</div>
+          <div class="kpi-value tabular">84,6 %</div>
+          <p class="caption" style="margin: 0;">D’élèves ayant la moyenne après intégration des TICE (contre 50 % en classe témoin).</p>
+        </article>
+        <article class="kpi-card">
+          <div class="kpi-label">Cadre légal européen</div>
+          <div class="kpi-value">Risque élevé</div>
+          <p class="caption" style="margin: 0;">Qualification de l’IA en éducation par l’IA Act européen depuis mai 2024.</p>
+        </article>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- AXE 1 : FORMATS D'ACCOMPAGNEMENT                                    -->
+      <!-- =================================================================== -->
+      <section id="axe-formats" class="axis-section reveal">
+        <div class="section-head">
+          <span class="kicker">Axe 1 · Formats d’accompagnement</span>
+          <h2 class="section-title">L’efficacité dépend du format et de l’interaction, pas du simple fait d’être en ligne</h2>
+          <p class="prose">
+            L’aide aux devoirs en ligne recouvre trois grandes familles aux usages, coûts et besoins matériels très différents — auxquelles s’ajoutent les assistants institutionnels développés pour l’école primaire française. Explorez chaque format pour comparer ses atouts et ses limites.
+          </p>
+        </div>
+
+        <div class="pill-track" role="tablist" aria-label="Formats d'aide aux devoirs en ligne">
+          <button type="button" class="seg-btn active" id="tab-visio" onclick="selectFormat('visio')">Cours en visioconférence</button>
+          <button type="button" class="seg-btn" id="tab-plateforme" onclick="selectFormat('plateforme')">Plateforme de contenu</button>
+          <button type="button" class="seg-btn" id="tab-ia" onclick="selectFormat('ia')">Assistant IA conversationnel</button>
+        </div>
+
+        <div id="format-panel" class="card card-sky format-detail-panel">
+          <!-- Rempli dynamiquement par JS -->
+        </div>
+
+        <!-- Comparatif synthétique & écosystème P2IA -->
+        <div class="asymmetric-grid" style="margin-top: var(--space-xl);">
+          <div class="card">
+            <h3 class="card-title">Matériel requis et coût indicatif</h3>
+            <p class="caption" style="margin-top: var(--space-xs);">Comparaison issue des guides pratiques d’aide aux devoirs au primaire.</p>
+            <div class="table-wrap">
+              <table class="sticker-table">
+                <thead>
+                  <tr>
+                    <th>Format</th>
+                    <th>Matériel</th>
+                    <th>Disponibilité &amp; coût</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Visioconférence</td>
+                    <td>Ordinateur ou tablette avec webcam, micro et connexion stable</td>
+                    <td class="tabular">Sur créneau fixé · ~30 €/h en cours particulier classique</td>
+                  </tr>
+                  <tr>
+                    <td>Plateforme de contenu</td>
+                    <td>Tout appareil connecté (ordinateur, tablette, smartphone)</td>
+                    <td>Accès à la demande · souvent à partir du CE2 pour l’autonomie</td>
+                  </tr>
+                  <tr>
+                    <td>Assistant IA dédié primaire</td>
+                    <td>Tout appareil connecté (photo du cahier ou dictée vocale)</td>
+                    <td class="tabular">7 j/7 sans rendez-vous · ~9,90 €/mois (1 enfant) à 24,90 € (4 enfants)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card card-grape">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm); flex-wrap: wrap;">
+              <h3 class="card-title">À l’école : les assistants P2IA (Cycle 2)</h3>
+              <span class="badge badge-grape">éduscol · CP–CE2</span>
+            </div>
+            <p class="caption" style="margin-top: var(--space-xs);">
+              Issus du Partenariat d’innovation en intelligence artificielle, ces outils accompagnent les professeurs des écoles via le gestionnaire d’accès (GAR) et l’ENT.
+            </p>
+            <div class="pill-track" style="margin-top: var(--space-md); margin-bottom: var(--space-md);">
+              <button type="button" class="seg-btn active-grape" id="p2ia-maths" onclick="selectP2IA('maths')">Mathématiques</button>
+              <button type="button" class="seg-btn" id="p2ia-francais" onclick="selectP2IA('francais')">Français</button>
+              <button type="button" class="seg-btn" id="p2ia-inversee" onclick="selectP2IA('inversee')">Classe inversée</button>
+            </div>
+            <div id="p2ia-list" style="display: flex; flex-direction: column; gap: var(--space-sm);">
+              <!-- Rempli par JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- AXE 2 : MÉTHODE SOCRATIQUE ET GUIDAGE                               -->
+      <!-- =================================================================== -->
+      <section id="axe-methode" class="axis-section reveal">
+        <div class="section-head">
+          <span class="kicker">Axe 2 · Méthode socratique et guidage</span>
+          <h2 class="section-title">Ne jamais donner la réponse : guider par des questions et des indices</h2>
+          <p class="prose">
+            Entre le CP et le CM2, l’objectif n’est pas la note mais l’ancrage durable de la lecture et du calcul. Une IA généraliste qui fournit le résultat court-circuite l’apprentissage ; un tuteur socratique transforme l’erreur en étape de raisonnement et s’ajuste au niveau de l’enfant.
+          </p>
+        </div>
+
+        <div class="asymmetric-grid">
+          <!-- Simulateur interactif socratique -->
+          <div class="card">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-sm); margin-bottom: var(--space-md);">
+              <h3 class="card-title">Simulateur de dialogue : IA généraliste vs méthode socratique</h3>
+              <span class="badge badge-pink">Manipulation interactive</span>
+            </div>
+
+            <div class="pill-track" style="margin-bottom: var(--space-md);">
+              <button type="button" class="seg-btn active" id="ex-btn-0" onclick="selectExercise(0)">Maths CP–CE1</button>
+              <button type="button" class="seg-btn" id="ex-btn-1" onclick="selectExercise(1)">Problème CE2–CM1</button>
+              <button type="button" class="seg-btn" id="ex-btn-2" onclick="selectExercise(2)">Grammaire CM1–CM2</button>
+            </div>
+
+            <div style="display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-bottom: var(--space-md);">
+              <button type="button" class="btn btn-primary" id="mode-socratic" onclick="setTutorMode('socratic')">
+                <i data-lucide="compass" width="16" height="16"></i>
+                Approche socratique (guidée)
+              </button>
+              <button type="button" class="btn btn-soft" id="mode-direct" onclick="setTutorMode('direct')">
+                <i data-lucide="zap" width="16" height="16"></i>
+                IA généraliste (réponse brute)
+              </button>
+            </div>
+
+            <div class="chat-well" id="socratic-chat" aria-live="polite">
+              <!-- Rempli par JS -->
+            </div>
+
+            <div id="socratic-controls" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-sm); margin-top: var(--space-md);">
+              <!-- Bouton étape suivante / réinitialiser -->
+            </div>
+          </div>
+
+          <!-- Sélecteur d'âge / classe CP-CM2 -->
+          <div class="card card-grape">
+            <h3 class="card-title">Des besoins et durées qui évoluent du CP au CM2</h3>
+            <p class="caption" style="margin-top: var(--space-xs);">
+              Sélectionnez le cycle de l’enfant pour voir le temps de travail recommandé et la posture d’aide adaptée.
+            </p>
+
+            <div class="pill-track" style="margin-top: var(--space-md); margin-bottom: var(--space-md);">
+              <button type="button" class="seg-btn active-grape" id="grade-cp" onclick="selectGrade('cp')">CP – CE1</button>
+              <button type="button" class="seg-btn" id="grade-ce2" onclick="selectGrade('ce2')">CE2 – CM1</button>
+              <button type="button" class="seg-btn" id="grade-cm2" onclick="selectGrade('cm2')">CM2</button>
+            </div>
+
+            <div id="grade-panel">
+              <!-- Rempli par JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- AXE 3 : MOTIVATION DE L'ÉLÈVE                                       -->
+      <!-- =================================================================== -->
+      <section id="axe-motivation" class="axis-section reveal">
+        <div class="section-head">
+          <span class="kicker">Axe 3 · Motivation de l’élève</span>
+          <h2 class="section-title">L’effet de nouveauté lance la dynamique, mais seule la pédagogie la fait durer</h2>
+          <p class="prose">
+            Les sciences de l’éducation montrent que l’outil numérique n’est jamais magique en soi. Pour favoriser la motivation intrinsèque plutôt que la contrainte, l’élève doit percevoir la valeur de la tâche, se sentir capable de réussir et garder un sentiment de contrôle.
+          </p>
+        </div>
+
+        <!-- Modèle de Roland Viau & théories psychologiques -->
+        <div class="card card-grape" style="margin-bottom: var(--space-xl);">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-sm); margin-bottom: var(--space-md);">
+            <h3 class="card-title">Les 3 déterminants du modèle de Roland Viau (1994) et les leviers du numérique</h3>
+            <span class="badge badge-grape">Cliquez sur un levier</span>
+          </div>
+          <div class="viau-grid">
+            <button type="button" class="node-btn selected" id="viau-0" onclick="selectViau(0)">
+              <span class="badge badge-pink">1. Valeur de l’activité</span>
+              <div style="font-weight: 800; margin-top: var(--space-sm);">« À quoi cela me sert ? »</div>
+              <p class="caption" style="margin: var(--space-xs) 0 0;">Utilité perçue et lien avec le quotidien de l’enfant.</p>
+            </button>
+            <button type="button" class="node-btn" id="viau-1" onclick="selectViau(1)">
+              <span class="badge badge-sky">2. Sentiment de compétence</span>
+              <div style="font-weight: 800; margin-top: var(--space-sm);">« Suis-je capable d’y arriver ? »</div>
+              <p class="caption" style="margin: var(--space-xs) 0 0;">Auto-efficacité (Bandura) et droit à l’erreur (Weiner).</p>
+            </button>
+            <button type="button" class="node-btn" id="viau-2" onclick="selectViau(2)">
+              <span class="badge badge-grape">3. Contrôlabilité &amp; autonomie</span>
+              <div style="font-weight: 800; margin-top: var(--space-sm);">« Ai-je une prise sur ce que je fais ? »</div>
+              <p class="caption" style="margin: var(--space-xs) 0 0;">Autodétermination (Deci &amp; Ryan) sans surveillance punitive.</p>
+            </button>
+            <button type="button" class="node-btn" id="viau-3" onclick="selectViau(3)">
+              <span class="badge badge-warn">4. Leviers ludiques (Lepper &amp; Hodell)</span>
+              <div style="font-weight: 800; margin-top: var(--space-sm);">Défi · Curiosité · Contrôle · Fantaisie</div>
+              <p class="caption" style="margin: var(--space-xs) 0 0;">Récompenser l’effort plutôt que la seule note parfaite.</p>
+            </button>
+          </div>
+          <div id="viau-detail" class="callout-well" aria-live="polite">
+            <!-- Rempli par JS -->
+          </div>
+        </div>
+
+        <!-- Deux graphiques empiriques (Bouakka, 2025) -->
+        <div class="card-grid">
+          <article class="card">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-xs);">
+              <h3 class="card-title">Motivation observée sur 10 séances</h3>
+              <span class="badge badge-pink">Échelle 0–10</span>
+            </div>
+            <p class="caption" style="margin-top: var(--space-xs);">
+              Forte hausse aux séances 1 à 4 (nouveauté et interactivité), puis baisse à partir de la 5<sup>e</sup> séance et stagnation — tout en restant au-dessus du niveau initial.
+            </p>
+            <div class="chart-box">
+              <canvas id="motivationChart" aria-label="Courbe d'évaluation de la motivation durant 10 séances TICE"></canvas>
+            </div>
+            <p class="caption" style="margin: var(--space-sm) 0 0;">
+              Source : Ouafae Bouakka (Revue-IRS, juillet 2025, école primaire El Falah — appréciation qualitative par séance).
+            </p>
+          </article>
+
+          <article class="card card-sky">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-xs);">
+              <h3 class="card-title">Résultats aux devoirs : classe TICE vs témoin</h3>
+              <span class="badge badge-pos">+34,6 pts d’écart</span>
+            </div>
+            <p class="caption" style="margin-top: var(--space-xs);">
+              Part des élèves obtenant une note ≥ 5 sur deux devoirs identiques, avant et après 2 mois d’intégration des TICE (25–26 élèves par classe).
+            </p>
+            <div class="chart-box">
+              <canvas id="examChart" aria-label="Comparaison des résultats entre classe pilote avec TICE et classe témoin"></canvas>
+            </div>
+            <p class="caption" style="margin: var(--space-sm) 0 0;">
+              Source : Bouakka (2025). Avant : 8 élèves (30,73 %). Après : 22 élèves en classe pilote (84,61 %) contre 13 en classe témoin (50 %).
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- AXE 4 : SÉCURITÉ, RGPD ET ÉTHIQUE                                   -->
+      <!-- =================================================================== -->
+      <section id="axe-ethique" class="axis-section reveal">
+        <div class="section-head">
+          <span class="kicker">Axe 4 · Sécurité, RGPD et éthique</span>
+          <h2 class="section-title">Un outil éducatif pour enfants exige des garde-fous vérifiables</h2>
+          <p class="prose">
+            Détourner un robot conversationnel généraliste pour faire les devoirs expose les enfants à des réponses inadaptées, à la collecte de données et à des biais algorithmiques. Depuis mai 2024, l’IA Act européen classe d’ailleurs l’IA en éducation comme un système à risque élevé.
+          </p>
+        </div>
+
+        <div class="asymmetric-grid-rev">
+          <!-- Explorateur des biais algorithmiques (Sorbonne Université) -->
+          <div class="card card-grape">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-sm);">
+              <h3 class="card-title">3 biais d’IA documentés par la recherche</h3>
+              <span class="badge badge-warn">Vigilance algorithmique</span>
+            </div>
+            <p class="caption" style="margin-top: var(--space-xs);">
+              D’après les travaux de Mélina Verger (Sorbonne Université / The Conversation, 2024), même une IA conçue pour recommander des exercices comporte des angles morts :
+            </p>
+
+            <div class="pill-track" style="margin-top: var(--space-md); margin-bottom: var(--space-md);">
+              <button type="button" class="seg-btn active-grape" id="bias-0" onclick="selectBias(0)">Démarrage à froid</button>
+              <button type="button" class="seg-btn" id="bias-1" onclick="selectBias(1)">Vitesse &amp; handicap</button>
+              <button type="button" class="seg-btn" id="bias-2" onclick="selectBias(2)">Biais sociaux</button>
+            </div>
+
+            <div id="bias-panel" class="callout-well" style="margin-top: 0;">
+              <!-- Rempli par JS -->
+            </div>
+          </div>
+
+          <!-- Checklist interactive RGPD & Éthique (sauvegardée via notebookAppApi) -->
+          <div class="card card-sky">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-sm);">
+              <h3 class="card-title">Checklist : vérifier un outil avant de le confier à un enfant</h3>
+              <span id="audit-score-badge" class="badge badge-pink tabular">0 / 6 vérifiés</span>
+            </div>
+            <p class="caption" style="margin-top: var(--space-xs);">
+              Cochez les garanties présentes sur l’application ou la plateforme envisagée. Votre audit est mémorisé automatiquement.
+            </p>
+
+            <div style="margin: var(--space-md) 0;">
+              <div class="progress-track" aria-hidden="true">
+                <div id="audit-progress" class="progress-fill mint" style="width: 0%;"></div>
+              </div>
+              <p id="audit-feedback" class="caption" style="margin: var(--space-xs) 0 0; font-weight: 700;"></p>
+            </div>
+
+            <div class="check-list" id="rgpd-checklist">
+              <!-- Rempli par JS -->
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: var(--space-md);">
+              <button type="button" class="btn btn-soft" id="reset-audit-btn" onclick="resetAudit(this)">
+                <i data-lucide="rotate-ccw" width="16" height="16"></i>
+                Réinitialiser la liste
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- AXE 5 : LIEN ÉCOLE-FAMILLE                                          -->
+      <!-- =================================================================== -->
+      <section id="axe-famille" class="axis-section reveal">
+        <div class="section-head">
+          <span class="kicker">Axe 5 · Lien école–famille</span>
+          <h2 class="section-title">Apaiser le rituel de 18 h tout en respectant le rôle de chacun</h2>
+          <p class="prose">
+            Les technologies ne remplacent ni l’enseignant qui conçoit la progression en classe, ni le parent qui encourage son enfant. Bien pensées, elles désamorcent les conflits du soir et offrent une visibilité bienveillante sur les acquis — sans note ni classement.
+          </p>
+        </div>
+
+        <div class="asymmetric-grid">
+          <!-- Bascule Avant / Après 18h -->
+          <div class="card">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-sm); margin-bottom: var(--space-md);">
+              <h3 class="card-title">Le rituel du soir à 18 h : deux scénarios</h3>
+              <div class="pill-track" style="margin-bottom: 0;">
+                <button type="button" class="seg-btn active" id="ritual-before" onclick="setRitual('before')">Tension classique</button>
+                <button type="button" class="seg-btn" id="ritual-after" onclick="setRitual('after')">Avec médiation guidée</button>
+              </div>
+            </div>
+
+            <div id="ritual-panel">
+              <!-- Rempli par JS -->
+            </div>
+
+            <div class="callout-well" style="background: var(--warning-bg); margin-top: var(--space-md);">
+              <strong style="color: var(--warning-ink);">Signaux qui invitent à ajuster l’accompagnement :</strong>
+              <p class="caption" style="color: var(--on-surface); margin: var(--space-xs) 0 0;">
+                Des devoirs qui dépassent régulièrement les repères d’âge, un enfant qui repousse ou évite le cahier, ou des tensions répétées le soir. Confier le guidage méthodologique à un tiers adapté protège la relation affective parent-enfant.
+              </p>
+            </div>
+          </div>
+
+          <!-- Bilan sans note ni classement -->
+          <div class="card card-grape">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-sm);">
+              <h3 class="card-title">Suivi parent–enseignant sans note ni classement</h3>
+              <span class="badge badge-grape">Approche formative</span>
+            </div>
+            <p class="caption" style="margin-top: var(--space-xs);">
+              Exemple de bilan par notion (modèle retrouvé dans les outils Cycle 2 et espaces parents) : on mesure l’effort et le degré de maîtrise, jamais le mérite par une note. Filtrez par statut :
+            </p>
+
+            <div class="pill-track" style="margin-top: var(--space-md); margin-bottom: var(--space-md);">
+              <button type="button" class="seg-btn active-grape" id="filter-all" onclick="filterMastery('all')">Tout voir (4)</button>
+              <button type="button" class="seg-btn" id="filter-revoir" onclick="filterMastery('revoir')">À revoir</button>
+              <button type="button" class="seg-btn" id="filter-cours" onclick="filterMastery('cours')">En cours</button>
+              <button type="button" class="seg-btn" id="filter-acquis" onclick="filterMastery('acquis')">Acquis</button>
+            </div>
+
+            <div id="mastery-list">
+              <!-- Rempli par JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SYNTHÈSE & SOURCES -->
+      <section class="card reveal" style="background: var(--surface-3d-hero);">
+        <h2 class="card-title">En résumé : les 5 repères pour les familles et les écoles</h2>
+        <div class="card-grid" style="margin-top: var(--space-md);">
+          <div class="status-row" style="background: var(--surface-container-low); align-items: flex-start; flex-direction: column;">
+            <span class="badge badge-pink">1 · Format</span>
+            <p class="caption" style="margin: 0;">Privilégier une interaction active et immédiate (visio, IA dédiée ou P2IA) plutôt qu’une consultation passive de vidéos.</p>
+          </div>
+          <div class="status-row" style="background: var(--surface-container-low); align-items: flex-start; flex-direction: column;">
+            <span class="badge badge-grape">2 · Guidage</span>
+            <p class="caption" style="margin: 0;">Exiger une méthode qui donne des indices pas à pas sans livrer la réponse, dans le respect des 10 à 40 min par âge.</p>
+          </div>
+          <div class="status-row" style="background: var(--surface-container-low); align-items: flex-start; flex-direction: column;">
+            <span class="badge badge-sky">3 · Motivation</span>
+            <p class="caption" style="margin: 0;">Soutenir le sentiment de compétence et l’autonomie ; anticiper l’essoufflement après l’effet de nouveauté des premières séances.</p>
+          </div>
+          <div class="status-row" style="background: var(--surface-container-low); align-items: flex-start; flex-direction: column;">
+            <span class="badge badge-pos">4 · Éthique &amp; RGPD</span>
+            <p class="caption" style="margin: 0;">Vérifier l’hébergement européen, l’absence de publicité, la non-utilisation des échanges pour entraîner l’IA et la vigilance sur les biais.</p>
+          </div>
+          <div class="status-row" style="background: var(--surface-container-low); align-items: flex-start; flex-direction: column;">
+            <span class="badge badge-warn">5 · École–Famille</span>
+            <p class="caption" style="margin: 0;">Utiliser le suivi par notions (à revoir, en cours, acquis) pour dialoguer avec l’enseignant et préserver la sérénité du soir.</p>
+          </div>
+        </div>
+        <p class="caption" style="margin-top: var(--space-lg); margin-bottom: 0;">
+          <strong>Sources documentaires :</strong> Guides pratiques ClassiA (formats d’aide en ligne et repères CP–CM2, 2026) · Ministère de l’Éducation nationale — éduscol (IA et apprentissages fondamentaux au cycle 2, P2IA : Adaptiv’Math, Mathia, Smart Enseigno, Lalilo, Navi, avril 2026) · Ouafae Bouakka, « Effets des TICE sur la motivation des élèves », <em>Revue Internationale de la Recherche Scientifique</em>, vol. 3 n° 4, juillet 2025 · Mélina Verger, « Utiliser l’IA en classe pour recommander des exercices aux élèves : quel intérêt, quels biais ? », Sorbonne Université / The Conversation, mai 2024 · Retour d’expérience de classe inversée en CM1–CM2 (site de classe et ceintures de compétences).
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <api-shim></api-shim>
+  <script>
+    // =========================================================================
+    // DONNÉES STRUCTURÉES (littéraux backticks pour éviter toute erreur d'échappement)
+    // =========================================================================
+    const FORMAT_DATA = {
+      visio: {
+        title: `Cours particulier en visioconférence`,
+        badge: `Présence humaine en direct`,
+        badgeClass: `badge-grape`,
+        summary: `Reproduit le format classique du cours particulier à distance : un enseignant ou un étudiant échange en direct avec l’enfant via une plateforme dédiée, sur un créneau planifié à l’avance.`,
+        pros: [
+          `Maintient une véritable interaction humaine, rassurante pour les plus jeunes (CP–CE1).`,
+          `Élimine les déplacements et élargit le choix d’intervenants hors de sa zone géographique.`,
+          `Aussi efficace qu’un cours à domicile lorsque l’enseignant garde l’élève actif.`
+        ],
+        limits: [
+          `Ne répond pas à un blocage imprévu un mardi soir à 19 h : il faut attendre le créneau fixé.`,
+          `Tarification généralement facturée à l’heure (~30 €/h en moyenne pour un cours classique).`,
+          `Nécessite ordinateur ou tablette avec webcam, micro et connexion internet stable.`
+        ]
+      },
+      plateforme: {
+        title: `Plateforme de contenus et d’exercices`,
+        badge: `Autonomie et révisions`,
+        badgeClass: `badge-sky`,
+        summary: `Met à disposition des vidéos de cours, des fiches mémo et des exercices autocorrectifs (ex. capsules de classe inversée, parcours de révision) consultés sans interaction humaine directe.`,
+        pros: [
+          `Accessible sur n’importe quel appareil connecté (ordinateur, tablette, smartphone).`,
+          `Utile pour revoir une leçon papier, préparer une ceinture de compétence ou s’entraîner à son rythme.`,
+          `Permet une articulation hybride entre supports numériques et cahier papier.`
+        ],
+        limits: [
+          `Consultée passivement sans engagement actif, elle apporte peu de bénéfices réels.`,
+          `Demande déjà une certaine autonomie de lecture et de navigation (plutôt à partir du CE2).`,
+          `N’identifie pas toujours la cause d’une erreur de raisonnement face à un exercice du cahier.`
+        ]
+      },
+      ia: {
+        title: `Assistant IA conversationnel dédié au primaire`,
+        badge: `Disponibilité immédiate 7 j/7`,
+        badgeClass: `badge-pink`,
+        summary: `Permet à l’enfant de poser sa question à voix haute ou de photographier son cahier pour recevoir un guidage pas à pas, conçu pour le programme du CP au CM2 sans donner la réponse.`,
+        pros: [
+          `Intervient à l’instant exact du blocage, sans rendez-vous préalable ni saisie clavier fastidieuse.`,
+          `Langage et progression adaptés à l’âge (dictées lues, calcul mental, lecture, quiz de leçon).`,
+          `Coût mensuel fixe (~9,90 €/mois pour 1 enfant, ~14,90 € pour 2) avec essai gratuit sans prélèvement.`
+        ],
+        limits: [
+          `Doit impérativement être un outil conçu pour les enfants, et non un chatbot généraliste détourné.`,
+          `S’ajoute au temps d’écran de loisirs : nécessite un cadre parental sur l’équilibre global de la journée.`,
+          `Ne remplace jamais le lien humain de l’enseignant en classe ni l’encouragement parental.`
+        ]
+      }
+    };
+
+    const P2IA_DATA = {
+      maths: [
+        { name: `Adaptiv’Math`, desc: `Test initial d’environ 15 questions issues des sciences cognitives pour former des groupes évolutifs et personnaliser les exercices dès le premier essai.` },
+        { name: `Mathia`, desc: `Jeu éducatif à étoiles couvrant 55 compétences clés du cycle 2, avec tableau de bord enseignant pour piloter en classe et à la maison.` },
+        { name: `Smart Enseigno`, desc: `Parcours ludique de planète en planète fondé sur la didactique des mathématiques, avec diagnostics en temps réel et remédiation adaptative.` }
+      ],
+      francais: [
+        { name: `Lalilo`, desc: `Différenciation de la lecture au cycle 2 (conscience phonologique, décodage, fluence, compréhension) intégrant la reconnaissance vocale pour la lecture à voix haute.` },
+        { name: `Navi`, desc: `Remédiation personnalisée sur les compétences prérequises en lecture/écriture et planning de mémorisation pour ancrer les acquis dans la durée (en ligne ou papier).` }
+      ],
+      inversee: [
+        { name: `Site de classe & capsules`, desc: `En CM1–CM2, certains enseignants regroupent vidéos de leçons, quiz de vérification et exercices autocorrectifs pour libérer le temps de classe.` },
+        { name: `Ceintures de compétences`, desc: `Chaque élève avance par paliers colorés à son rythme et peut ajouter cartes mentales ou tutoriels pour consolider la notion.` }
+      ]
+    };
+
+    const EXERCISES = [
+      {
+        title: `Maths CP–CE1 · Soustraction`,
+        prompt: `Léna a 24 billes. Elle en donne 7 à son ami. Combien lui en reste-t-il ?`,
+        directAnswer: `Léna avait 24 billes et en donne 7. Il faut faire 24 − 7 = 17. Il lui reste 17 billes.`,
+        directCritique: `L’outil généraliste résout l’exercice à la place de l’enfant en une seconde : l’élève recopie « 17 » sans comprendre le sens de l’opération.`,
+        steps: [
+          { who: `tutor`, label: `Néo · Consigne lue à voix haute`, text: `Léna a 24 billes. Elle en donne 7. Combien lui en reste-t-il ? Dis-moi comment tu ferais !` },
+          { who: `student`, label: `Élève`, text: `Euh… 24 + 7, ça fait 31 ?` },
+          { who: `tutor`, label: `Néo · Indice (sans corriger sèchement)`, text: `Léna donne 7 billes. Après les avoir données, elle en a plus ou moins qu’avant ?` },
+          { who: `student`, label: `Élève`, text: `Ah… moins ! Alors il faut enlever 7.` },
+          { who: `tutor`, label: `Néo · Étape finale`, text: `Exactement ! Alors 24 − 7, tu trouves combien en reculant de 7 ?` },
+          { who: `student`, label: `Élève`, text: `24 moins 4 ça fait 20, et encore moins 3… 17 !` }
+        ]
+      },
+      {
+        title: `Problème CE2–CM1 · Partage`,
+        prompt: `Un boulanger prépare 48 croissants et les range par boîtes de 6. Combien de boîtes remplit-il ?`,
+        directAnswer: `48 ÷ 6 = 8. Le boulanger remplit 8 boîtes.`,
+        directCritique: `Donner « 48 ÷ 6 = 8 » prive l’élève du lien concret entre la multiplication à trou (6 × ? = 48) et le partage en groupes égaux.`,
+        steps: [
+          { who: `tutor`, label: `Tuteur · Mise en situation`, text: `Imagine les 48 croissants sur la table. Dans chaque boîte, on en met 6. Quelle opération te permet de trouver le nombre de boîtes ?` },
+          { who: `student`, label: `Élève`, text: `Je crois qu’il faut faire 48 × 6 ?` },
+          { who: `tutor`, label: `Tuteur · Indice visuel`, text: `Si on faisait 48 × 6, on aurait près de 300 boîtes ! Essaie plutôt avec ta table de 6 : 6 fois combien donne 48 ?` },
+          { who: `student`, label: `Élève`, text: `6 × 8 = 48 ! Donc ça fait 8 boîtes !` },
+          { who: `tutor`, label: `Tuteur · Validation de l’effort`, text: `Bravo, tu as utilisé la multiplication pour réussir le partage : 48 ÷ 6 = 8 boîtes.` }
+        ]
+      },
+      {
+        title: `Grammaire CM1–CM2 · Accord sujet–verbe`,
+        prompt: `Conjugue au présent : « Les petites filles (chanter) dans la cour. »`,
+        directAnswer: `La phrase correcte est : « Les petites filles chantent dans la cour. »`,
+        directCritique: `Afficher directement « chantent » masque la règle d’accord du verbe avec un groupe nominal au pluriel.`,
+        steps: [
+          { who: `tutor`, label: `Tuteur · Repérage`, text: `Avant d’écrire la terminaison de « chanter », demande-toi : qui est-ce qui chante dans cette phrase ?` },
+          { who: `student`, label: `Élève`, text: `C’est « Les petites filles » ! J’écris « chante » avec un e ?` },
+          { who: `tutor`, label: `Tuteur · Indice grammatical`, text: `Regarde bien « Les petites filles » : il y en a une seule ou plusieurs ? Par quel pronom peux-tu remplacer ce groupe ?` },
+          { who: `student`, label: `Élève`, text: `Plusieurs ! Par « elles ». Alors au présent avec « elles », c’est -ent : chantent !` },
+          { who: `tutor`, label: `Tuteur · Ancrage`, text: `Parfait ! Tu viens d’accorder le verbe avec son sujet au pluriel.` }
+        ]
+      }
+    ];
+
+    const GRADE_DATA = {
+      cp: {
+        label: `CP – CE1 (6–7 ans)`,
+        duration: `10 à 15 minutes max`,
+        pct: 35,
+        focus: `Décodage de la lecture, compréhension de phrases courtes, addition et soustraction posées.`,
+        posture: `Accompagnement très guidé avec présence rassurante quasi continue, supports concrets et consignes lues à voix haute.`
+      },
+      ce2: {
+        label: `CE2 – CM1 (8–9 ans)`,
+        duration: `20 à 30 minutes max`,
+        pct: 65,
+        focus: `Fluence de lecture, tables de multiplication, division et résolution de problèmes à étapes.`,
+        posture: `Autonomie croissante : l’enfant démarre seul et reçoit un coup de pouce ciblé uniquement lorsqu’il bloque.`
+      },
+      cm2: {
+        label: `CM2 (10–11 ans)`,
+        duration: `Jusqu’à 40 minutes max`,
+        pct: 90,
+        focus: `Consolidation générale en français, mathématiques, histoire-géographie, sciences et préparation à l’autonomie du collège.`,
+        posture: `Accompagnement léger et réflexif : l’élève gère sa séance et vérifie lui-même ses démarches.`
+      }
+    };
+
+    const VIAU_DETAILS = [
+      {
+        title: `1. Perception de la valeur de l’activité`,
+        text: `L’élève juge si la tâche a du sens pour ses objectifs. Au primaire, les explications abstraites fonctionnent mal : rattacher un exercice à une situation concrète du quotidien ou à un projet ludique (enquête, parcours de planètes) rend l’apprentissage utile à ses yeux.`
+      },
+      {
+        title: `2. Sentiment de compétence (Bandura & Weiner)`,
+        text: `Selon Bandura, croire en sa capacité de réussite prédit la persévérance. Selon Weiner, l’élève attribue ses succès ou échecs à des causes : si l’erreur est traitée comme une étape normale et non comme une faute humiliante, il ne glisse pas vers la résignation apprise.`
+      },
+      {
+        title: `3. Contrôlabilité et autodétermination (Deci & Ryan)`,
+        text: `L’enfant a besoin de sentir qu’il maîtrise son parcours. La contrainte excessive, la menace de la note ou la comparaison sociale détruisent la motivation intrinsèque. Choisir l’ordre de ses exercices ou recevoir un feedback constructif nourrit l’autonomie.`
+      },
+      {
+        title: `4. Défi, curiosité, contrôle et fantaisie (Lepper & Hodell)`,
+        text: `Ces quatre ressorts stimulent l’engagement : proposer un défi calibré à son niveau, éveiller la curiosité, laisser du contrôle sur la démarche, et ajouter une dose de fantaisie (compagnon robot, costumes, étoiles pour chaque devoir terminé même avec des erreurs).`
+      }
+    ];
+
+    const BIAS_DATA = [
+      {
+        title: `Le problème du « démarrage à froid » (cold start)`,
+        impact: `Lorsqu’un élève arrive sur une plateforme sans historique préalable, le système estime son niveau par défaut.`,
+        risk: `Si le niveau initial supposé est trop élevé, l’élève risque le décrochage immédiat ; s’il est trop bas, il tombe dans l’ennui avant que l’algorithme ne s’ajuste.`
+      },
+      {
+        title: `Le biais lié à la vitesse de réponse`,
+        impact: `Certains moteurs adaptatifs utilisent le temps mis pour répondre comme indicateur de maîtrise.`,
+        risk: `Un élève en situation de handicap peut répondre parfaitement juste tout en prenant plus de temps : le modèle risque alors de ne lui proposer que des exercices trop simples et de dégrader son apprentissage.`
+      },
+      {
+        title: `La reproduction de biais sociaux historiques`,
+        impact: `Les modèles d’IA s’appuient sur des données collectées dans des contextes réels déjà marqués par des inégalités.`,
+        risk: `Si d’anciens jeux de données associent un faible accès à Internet à de moins bons résultats, un algorithme mal conçu peut sous-estimer injustement le potentiel d’élèves de milieux défavorisés.`
+      }
+    ];
+
+    const RGPD_CHECKS = [
+      { id: `c1`, title: `Outil conçu spécifiquement pour des enfants (CP–CM2)`, detail: `Garde-fous pédagogiques intégrés : pas un assistant généraliste détourné.` },
+      { id: `c2`, title: `Les échanges de l’enfant n’entraînent jamais l’IA`, detail: `Confidentialité garantie sur les copies, photos du cahier et messages.` },
+      { id: `c3`, title: `Données hébergées en Europe et conformes au RGPD`, detail: `Droit français/européen applicable et possibilité de suppression des données.` },
+      { id: `c4`, title: `Zéro publicité, zéro pistage et aucune revente`, detail: `Aucune bannière commerciale ni profilage publicitaire sur un mineur.` },
+      { id: `c5`, title: `Suivi parent–enseignant sans note ni classement`, detail: `Évaluation bienveillante par notions acquises ou en cours, centrée sur l’effort.` },
+      { id: `c6`, title: `Équilibre du temps d’écran global vérifié`, detail: `La séance reste courte (10 à 40 min) et tient compte des écrans de loisirs.` }
+    ];
+
+    const MASTERY_ITEMS = [
+      { subject: `Français · Lecture fluide`, notion: `Lire à voix haute avec intonation`, status: `acquis`, label: `Acquis`, badgeClass: `badge-pos` },
+      { subject: `Mathématiques · Calcul`, notion: `Tables de multiplication (×6, ×7, ×8)`, status: `cours`, label: `En cours`, badgeClass: `badge-sky` },
+      { subject: `Mathématiques · Opérations`, notion: `Soustraction posée avec retenue`, status: `revoir`, label: `À revoir`, badgeClass: `badge-warn` },
+      { subject: `Français · Grammaire`, notion: `Accord du verbe avec un sujet au pluriel`, status: `acquis`, label: `Acquis`, badgeClass: `badge-pos` }
+    ];
+
+    // =========================================================================
+    // ÉTAT GLOBAL & PERSISTANCE (notebookAppApi)
+    // =========================================================================
+    let appState = {
+      format: `visio`,
+      p2ia: `maths`,
+      exerciseIdx: 0,
+      tutorMode: `socratic`,
+      socraticStep: 2,
+      grade: `cp`,
+      viauIdx: 0,
+      biasIdx: 0,
+      ritualMode: `before`,
+      masteryFilter: `all`,
+      checkedIds: [`c1`, `c3`]
+    };
+
+    let motivationChartInstance = null;
+    let examChartInstance = null;
+
+    async function persistState() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === `function`) {
+          await window.notebookAppApi.setAppState({
+            grade: appState.grade,
+            checkedIds: appState.checkedIds,
+            format: appState.format,
+            exerciseIdx: appState.exerciseIdx,
+            masteryFilter: appState.masteryFilter
+          });
+        }
+      } catch (e) {
+        // Silencieux en mode aperçu hors hôte
+      }
+    }
+
+    // =========================================================================
+    // HANDLERS HOISTÉS (function declarations pour compatibilité onclick)
+    // =========================================================================
+    function selectFormat(key) {
+      if (!FORMAT_DATA[key]) return;
+      appState.format = key;
+      [`visio`, `plateforme`, `ia`].forEach(function(k) {
+        const btn = document.getElementById(`tab-` + k);
+        if (btn) btn.classList.toggle(`active`, k === key);
+      });
+      renderFormatPanel();
+      persistState();
+    }
+
+    function renderFormatPanel() {
+      const panel = document.getElementById(`format-panel`);
+      if (!panel) return;
+      const d = FORMAT_DATA[appState.format];
+      panel.innerHTML = `
+        <div>
+          <span class="badge ${d.badgeClass}">${d.badge}</span>
+          <h3 class="card-title" style="margin-top: var(--space-sm);">${d.title}</h3>
+          <p class="prose" style="margin-top: var(--space-sm);">${d.summary}</p>
+          <ul class="spec-list">
+            ${d.pros.map(function(p) {
+              return `<li><span class="spec-icon" aria-hidden="true">+</span><span>${p}</span></li>`;
+            }).join(``)}
+          </ul>
+        </div>
+        <div class="callout-well" style="margin-top: 0; background: var(--surface-container); box-shadow: var(--relief-well);">
+          <span class="badge badge-warn">Points de vigilance</span>
+          <ul class="spec-list" style="margin-top: var(--space-md);">
+            ${d.limits.map(function(l) {
+              return `<li style="background: var(--surface-container-low);"><span class="spec-icon" style="color: var(--warning);" aria-hidden="true">!</span><span>${l}</span></li>`;
+            }).join(``)}
+          </ul>
+        </div>
+      `;
+    }
+
+    function selectP2IA(key) {
+      if (!P2IA_DATA[key]) return;
+      appState.p2ia = key;
+      [`maths`, `francais`, `inversee`].forEach(function(k) {
+        const btn = document.getElementById(`p2ia-` + k);
+        if (btn) btn.classList.toggle(`active-grape`, k === key);
+      });
+      renderP2IA();
+    }
+
+    function renderP2IA() {
+      const container = document.getElementById(`p2ia-list`);
+      if (!container) return;
+      const items = P2IA_DATA[appState.p2ia] || [];
+      container.innerHTML = items.map(function(item) {
+        return `
+          <div class="status-row" style="align-items: flex-start; flex-direction: column;">
+            <strong style="color: var(--secondary);">${item.name}</strong>
+            <span class="caption">${item.desc}</span>
+          </div>
+        `;
+      }).join(``);
+    }
+
+    function selectExercise(idx) {
+      if (!EXERCISES[idx]) return;
+      appState.exerciseIdx = idx;
+      appState.socraticStep = 2;
+      [0, 1, 2].forEach(function(i) {
+        const btn = document.getElementById(`ex-btn-` + i);
+        if (btn) btn.classList.toggle(`active`, i === idx);
+      });
+      renderSocraticChat();
+      persistState();
+    }
+
+    function setTutorMode(mode) {
+      appState.tutorMode = mode;
+      const btnSoc = document.getElementById(`mode-socratic`);
+      const btnDir = document.getElementById(`mode-direct`);
+      if (btnSoc && btnDir) {
+        if (mode === `socratic`) {
+          btnSoc.className = `btn btn-primary`;
+          btnDir.className = `btn btn-soft`;
+        } else {
+          btnSoc.className = `btn btn-soft`;
+          btnDir.className = `btn btn-secondary`;
+        }
+      }
+      renderSocraticChat();
+    }
+
+    function nextSocraticStep() {
+      const ex = EXERCISES[appState.exerciseIdx];
+      if (!ex) return;
+      if (appState.socraticStep < ex.steps.length) {
+        appState.socraticStep += 1;
+        renderSocraticChat();
+      }
+    }
+
+    function restartSocratic() {
+      appState.socraticStep = 2;
+      renderSocraticChat();
+    }
+
+    function renderSocraticChat() {
+      const chat = document.getElementById(`socratic-chat`);
+      const controls = document.getElementById(`socratic-controls`);
+      if (!chat || !controls) return;
+      const ex = EXERCISES[appState.exerciseIdx];
+
+      if (appState.tutorMode === `direct`) {
+        chat.innerHTML = `
+          <div class="bubble-row student">
+            <div class="chat-bubble">
+              <span class="bubble-meta">Énoncé soumis</span>
+              ${ex.prompt}
+            </div>
+            <span class="avatar-3d avatar-student" aria-hidden="true">E</span>
+          </div>
+          <div class="bubble-row">
+            <span class="avatar-3d avatar-tutor" aria-hidden="true">IA</span>
+            <div class="chat-bubble">
+              <span class="bubble-meta">Réponse immédiate sans guidage</span>
+              ${ex.directAnswer}
+            </div>
+          </div>
+          <div class="callout-well" style="background: var(--error-bg); margin-top: 0;">
+            <strong style="color: var(--error-ink);">Pourquoi ce format nuit à l’apprentissage :</strong>
+            <p class="caption" style="color: var(--on-surface); margin: 4px 0 0;">${ex.directCritique}</p>
+          </div>
+        `;
+        controls.innerHTML = `
+          <span class="caption">Essayez l’approche socratique pour voir comment l’enfant trouve seul.</span>
+          <button type="button" class="btn btn-primary" onclick="setTutorMode('socratic')">Passer en mode socratique</button>
+        `;
+        return;
+      }
+
+      const visibleSteps = ex.steps.slice(0, appState.socraticStep);
+      chat.innerHTML = `
+        <div style="font-size: 0.9rem; font-weight: 700; color: var(--secondary);">${ex.title}</div>
+        ${visibleSteps.map(function(st) {
+          const isStudent = st.who === `student`;
+          return `
+            <div class="bubble-row ${isStudent ? `student` : ``}">
+              ${!isStudent ? `<span class="avatar-3d avatar-tutor" aria-hidden="true">N</span>` : ``}
+              <div class="chat-bubble">
+                <span class="bubble-meta">${st.label}</span>
+                ${st.text}
+              </div>
+              ${isStudent ? `<span class="avatar-3d avatar-student" aria-hidden="true">E</span>` : ``}
+            </div>
+          `;
+        }).join(``)}
+      `;
+
+      const finished = appState.socraticStep >= ex.steps.length;
+      controls.innerHTML = `
+        <span class="caption tabular">Étape ${appState.socraticStep} sur ${ex.steps.length}</span>
+        <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+          ${!finished
+            ? `<button type="button" class="btn btn-primary" onclick="nextSocraticStep()">Donner l’indice suivant →</button>`
+            : `<span class="badge badge-pos">Réponse trouvée par l’enfant !</span>`
+          }
+          <button type="button" class="btn btn-soft" onclick="restartSocratic()">Rejouer le dialogue</button>
+        </div>
+      `;
+    }
+
+    function selectGrade(gradeKey) {
+      if (!GRADE_DATA[gradeKey]) return;
+      appState.grade = gradeKey;
+      [`cp`, `ce2`, `cm2`].forEach(function(k) {
+        const btn = document.getElementById(`grade-` + k);
+        if (btn) btn.classList.toggle(`active-grape`, k === gradeKey);
+      });
+      renderGradePanel();
+      persistState();
+    }
+
+    function renderGradePanel() {
+      const panel = document.getElementById(`grade-panel`);
+      if (!panel) return;
+      const g = GRADE_DATA[appState.grade];
+      panel.innerHTML = `
+        <div style="background: var(--surface-container); border-radius: var(--rounded); padding: var(--space-md);">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-sm); flex-wrap: wrap;">
+            <strong>${g.label}</strong>
+            <span class="badge badge-pink tabular">${g.duration}</span>
+          </div>
+          <div class="progress-track" style="margin: var(--space-md) 0 var(--space-sm);" aria-hidden="true">
+            <div class="progress-fill pink" style="width: ${g.pct}%;"></div>
+          </div>
+          <p class="caption" style="margin: 0;">Capacité de concentration recommandée par séance quotidienne.</p>
+        </div>
+        <div style="margin-top: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm);">
+          <div class="status-row" style="flex-direction: column; align-items: flex-start;">
+            <span class="badge badge-grape">Priorités scolaires</span>
+            <span style="color: var(--on-surface);">${g.focus}</span>
+          </div>
+          <div class="status-row" style="flex-direction: column; align-items: flex-start;">
+            <span class="badge badge-sky">Posture d’aide adaptée</span>
+            <span style="color: var(--on-surface);">${g.posture}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function selectViau(idx) {
+      if (!VIAU_DETAILS[idx]) return;
+      appState.viauIdx = idx;
+      [0, 1, 2, 3].forEach(function(i) {
+        const btn = document.getElementById(`viau-` + i);
+        if (btn) btn.classList.toggle(`selected`, i === idx);
+      });
+      const detail = document.getElementById(`viau-detail`);
+      if (detail) {
+        const item = VIAU_DETAILS[idx];
+        detail.innerHTML = `
+          <strong style="color: var(--on-surface);">${item.title}</strong>
+          <p style="margin: var(--space-xs) 0 0; color: var(--on-surface);">${item.text}</p>
+        `;
+      }
+    }
+
+    function selectBias(idx) {
+      if (!BIAS_DATA[idx]) return;
+      appState.biasIdx = idx;
+      [0, 1, 2].forEach(function(i) {
+        const btn = document.getElementById(`bias-` + i);
+        if (btn) btn.classList.toggle(`active-grape`, i === idx);
+      });
+      const panel = document.getElementById(`bias-panel`);
+      if (panel) {
+        const b = BIAS_DATA[idx];
+        panel.innerHTML = `
+          <strong style="color: var(--on-surface);">${b.title}</strong>
+          <p style="margin: var(--space-xs) 0; color: var(--on-surface);">${b.impact}</p>
+          <p style="margin: 0; color: var(--error-ink); font-weight: 700;">Conséquence possible : ${b.risk}</p>
+        `;
+      }
+    }
+
+    function toggleCheck(id) {
+      const index = appState.checkedIds.indexOf(id);
+      if (index === -1) {
+        appState.checkedIds.push(id);
+      } else {
+        appState.checkedIds.splice(index, 1);
+      }
+      renderChecklist();
+      persistState();
+    }
+
+    function resetAudit(btn) {
+      if (!btn) return;
+      if (btn.dataset.armed !== `true`) {
+        btn.dataset.armed = `true`;
+        btn.textContent = `Cliquer à nouveau pour tout décocher`;
+        return;
+      }
+      btn.dataset.armed = `false`;
+      btn.innerHTML = `<i data-lucide="rotate-ccw" width="16" height="16"></i> Réinitialiser la liste`;
+      if (window.lucide) window.lucide.createIcons();
+      appState.checkedIds = [];
+      renderChecklist();
+      persistState();
+    }
+
+    function renderChecklist() {
+      const list = document.getElementById(`rgpd-checklist`);
+      const badge = document.getElementById(`audit-score-badge`);
+      const bar = document.getElementById(`audit-progress`);
+      const feedback = document.getElementById(`audit-feedback`);
+      if (!list || !badge || !bar || !feedback) return;
+
+      const count = appState.checkedIds.length;
+      const total = RGPD_CHECKS.length;
+      const pct = Math.round((count / total) * 100);
+
+      badge.textContent = `${count} / ${total} vérifiés`;
+      bar.style.width = `${pct}%`;
+
+      if (count === 0) {
+        feedback.textContent = `Aucun critère validé pour l’instant : cochez ceux que vous avez vérifiés.`;
+        feedback.style.color = `var(--on-surface-variant)`;
+      } else if (count < 4) {
+        feedback.textContent = `Vigilance requise : vérifiez la confidentialité et l’adaptation à l’âge avant usage.`;
+        feedback.style.color = `var(--warning-ink)`;
+      } else if (count < 6) {
+        feedback.textContent = `Bon niveau de garantie : complétez les derniers critères pour un cadre serein.`;
+        feedback.style.color = `var(--secondary)`;
+      } else {
+        feedback.textContent = `Cadre complet : cet outil coche les garanties de sécurité, RGPD et d’équilibre.`;
+        feedback.style.color = `var(--positive-ink)`;
+      }
+
+      list.innerHTML = RGPD_CHECKS.map(function(item) {
+        const isChecked = appState.checkedIds.indexOf(item.id) !== -1;
+        return `
+          <label class="check-item ${isChecked ? `checked` : ``}" for="chk-${item.id}">
+            <input class="check-input" type="checkbox" id="chk-${item.id}" ${isChecked ? `checked` : ``} onchange="toggleCheck('${item.id}')">
+            <div>
+              <div style="font-weight: 700; color: var(--on-surface);">${item.title}</div>
+              <div class="caption">${item.detail}</div>
+            </div>
+          </label>
+        `;
+      }).join(``);
+    }
+
+    function setRitual(mode) {
+      appState.ritualMode = mode;
+      const btnBefore = document.getElementById(`ritual-before`);
+      const btnAfter = document.getElementById(`ritual-after`);
+      if (btnBefore && btnAfter) {
+        btnBefore.classList.toggle(`active`, mode === `before`);
+        btnAfter.classList.toggle(`active`, mode === `after`);
+      }
+      renderRitualPanel();
+    }
+
+    function renderRitualPanel() {
+      const panel = document.getElementById(`ritual-panel`);
+      if (!panel) return;
+      if (appState.ritualMode === `before`) {
+        panel.innerHTML = `
+          <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+            <div class="status-row">
+              <span class="badge badge-err">18 h 05 · Fatigue</span>
+              <span style="flex: 1;">Le cahier s’ouvre après une longue journée : « Je n’y arrive pas ! »</span>
+            </div>
+            <div class="status-row">
+              <span class="badge badge-err">18 h 20 · Impasse</span>
+              <span style="flex: 1;">Le parent reformule trois fois la consigne ; les explications tournent en rond et les larmes montent.</span>
+            </div>
+            <div class="status-row">
+              <span class="badge badge-err">18 h 35 · Abandon pédagogique</span>
+              <span style="flex: 1;">Pour arrêter la crise, on finit par souffler : « Bon, écris 17, on passe à la suite. »</span>
+            </div>
+          </div>
+        `;
+      } else {
+        panel.innerHTML = `
+          <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+            <div class="status-row" style="background: var(--positive-bg);">
+              <span class="badge badge-pos">18 h 05 · Cadrage rapide</span>
+              <span style="flex: 1;">La consigne est lue à voix haute (ou le cahier photographié) : l’enfant démarre sans avoir à tout taper.</span>
+            </div>
+            <div class="status-row" style="background: var(--positive-bg);">
+              <span class="badge badge-pos">18 h 12 · Indice ciblé</span>
+              <span style="flex: 1;">Face au blocage, l’outil pose une question intermédiaire ; le parent n’a plus à endosser le rôle du censeur.</span>
+            </div>
+            <div class="status-row" style="background: var(--positive-bg);">
+              <span class="badge badge-pos">18 h 20 · Confiance</span>
+              <span style="flex: 1;">L’enfant trouve par lui-même et ferme son cahier dans les temps, avec un bilan clair pour les parents.</span>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function filterMastery(status) {
+      appState.masteryFilter = status;
+      [`all`, `revoir`, `cours`, `acquis`].forEach(function(k) {
+        const btn = document.getElementById(`filter-` + k);
+        if (btn) btn.classList.toggle(`active-grape`, k === status);
+      });
+      renderMasteryList();
+      persistState();
+    }
+
+    function renderMasteryList() {
+      const list = document.getElementById(`mastery-list`);
+      if (!list) return;
+      const filtered = MASTERY_ITEMS.filter(function(item) {
+        return appState.masteryFilter === `all` || item.status === appState.masteryFilter;
+      });
+      list.innerHTML = filtered.map(function(item) {
+        return `
+          <div class="status-row">
+            <div>
+              <div style="font-size: 0.8rem; font-weight: 700; color: var(--on-surface-variant);">${item.subject}</div>
+              <div style="font-weight: 700; color: var(--on-surface);">${item.notion}</div>
+            </div>
+            <span class="badge ${item.badgeClass}">${item.label}</span>
+          </div>
+        `;
+      }).join(``);
+    }
+
+    // =========================================================================
+    // GRAPHIQUES CHART.JS (couleurs lues depuis :root)
+    // =========================================================================
+    function initCharts() {
+      if (typeof Chart === `undefined`) return;
+      const styles = getComputedStyle(document.documentElement);
+      const cPink = styles.getPropertyValue(`--data-1`).trim();
+      const cPinkFill = styles.getPropertyValue(`--data-1-fill`).trim();
+      const cGrape = styles.getPropertyValue(`--data-2`).trim();
+      const cSky = styles.getPropertyValue(`--data-3`).trim();
+      const cWhite = styles.getPropertyValue(`--surface-container-low`).trim();
+      const cPlum = styles.getPropertyValue(`--on-surface`).trim();
+      const cMuted = styles.getPropertyValue(`--on-surface-variant`).trim();
+      const cGrid = styles.getPropertyValue(`--outline-variant`).trim();
+      const cContext = styles.getPropertyValue(`--data-context`).trim();
+
+      const ctxMot = document.getElementById(`motivationChart`);
+      if (ctxMot) {
+        if (motivationChartInstance) motivationChartInstance.destroy();
+        motivationChartInstance = new Chart(ctxMot, {
+          type: `line`,
+          data: {
+            labels: [`Avant`, `S1`, `S2`, `S3`, `S4`, `S5`, `S6`, `S7`, `S8`, `S9`, `S10`],
+            datasets: [
+              {
+                label: `Motivation observée (0–10)`,
+                data: [3.5, 6.0, 7.2, 8.3, 8.8, 7.6, 7.1, 7.0, 7.1, 7.0, 7.1],
+                borderColor: cPink,
+                backgroundColor: cPinkFill,
+                borderWidth: 3.5,
+                fill: true,
+                tension: 0.35,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointBackgroundColor: cPink,
+                pointBorderColor: cWhite,
+                pointBorderWidth: 2
+              },
+              {
+                label: `Niveau initial sans TICE`,
+                data: [3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5, 3.5],
+                borderColor: cContext,
+                borderWidth: 2,
+                borderDash: [6, 6],
+                pointRadius: 0,
+                fill: false
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: `bottom`,
+                labels: { color: cPlum, font: { family: `DM Sans`, weight: `700` } }
+              },
+              tooltip: {
+                backgroundColor: cWhite,
+                titleColor: cPlum,
+                bodyColor: cPlum,
+                borderColor: cPink,
+                borderWidth: 1.5,
+                padding: 10
+              }
+            },
+            scales: {
+              y: {
+                min: 0,
+                max: 10,
+                grid: { color: cGrid, borderDash: [4, 4] },
+                border: { display: false },
+                ticks: { color: cMuted, font: { family: `DM Sans`, weight: `600` } }
+              },
+              x: {
+                grid: { display: false },
+                border: { display: false },
+                ticks: { color: cMuted, font: { family: `DM Sans`, weight: `600` } }
+              }
+            }
+          }
+        });
+      }
+
+      const ctxExam = document.getElementById(`examChart`);
+      if (ctxExam) {
+        if (examChartInstance) examChartInstance.destroy();
+        examChartInstance = new Chart(ctxExam, {
+          type: `bar`,
+          data: {
+            labels: [`Devoir 1 (avant TICE)`, `Devoir 2 (après TICE)`],
+            datasets: [
+              {
+                label: `Classe pilote avec TICE (%)`,
+                data: [30.73, 84.61],
+                backgroundColor: cPink,
+                borderRadius: 999,
+                borderSkipped: false,
+                barPercentage: 0.55
+              },
+              {
+                label: `Classe témoin sans TICE (%)`,
+                data: [30.73, 50.0],
+                backgroundColor: cGrape,
+                borderRadius: 999,
+                borderSkipped: false,
+                barPercentage: 0.55
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: `bottom`,
+                labels: { color: cPlum, font: { family: `DM Sans`, weight: `700` } }
+              },
+              tooltip: {
+                backgroundColor: cWhite,
+                titleColor: cPlum,
+                bodyColor: cPlum,
+                borderColor: cSky,
+                borderWidth: 1.5,
+                padding: 10,
+                callbacks: {
+                  label: function(ctx) {
+                    return `${ctx.dataset.label} : ${ctx.parsed.y} %`;
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                min: 0,
+                max: 100,
+                grid: { color: cGrid, borderDash: [4, 4] },
+                border: { display: false },
+                ticks: {
+                  color: cMuted,
+                  font: { family: `DM Sans`, weight: `600` },
+                  callback: function(v) { return `${v}%`; }
+                }
+              },
+              x: {
+                grid: { display: false },
+                border: { display: false },
+                ticks: { color: cPlum, font: { family: `DM Sans`, weight: `700` } }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    // =========================================================================
+    // RÉVÉLATION AU SCROLL (IntersectionObserver)
+    // =========================================================================
+    function initScrollReveals() {
+      const els = document.querySelectorAll(`.reveal`);
+      if (!(`IntersectionObserver` in window)) {
+        els.forEach(function(el) { el.classList.add(`visible`); });
+        return;
+      }
+      const obs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add(`visible`);
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.08 });
+      els.forEach(function(el) { obs.observe(el); });
+    }
+
+    // =========================================================================
+    // INITIALISATION
+    // =========================================================================
+    async function initApp() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === `function`) {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && typeof saved === `object`) {
+            if (saved.grade && GRADE_DATA[saved.grade]) appState.grade = saved.grade;
+            if (Array.isArray(saved.checkedIds)) appState.checkedIds = saved.checkedIds;
+            if (saved.format && FORMAT_DATA[saved.format]) appState.format = saved.format;
+            if (typeof saved.exerciseIdx === `number` && EXERCISES[saved.exerciseIdx]) appState.exerciseIdx = saved.exerciseIdx;
+            if (saved.masteryFilter) appState.masteryFilter = saved.masteryFilter;
+          }
+        }
+      } catch (e) {
+        // Poursuite avec les valeurs par défaut
+      }
+
+      selectFormat(appState.format);
+      selectP2IA(appState.p2ia);
+      selectExercise(appState.exerciseIdx);
+      selectGrade(appState.grade);
+      selectViau(appState.viauIdx);
+      selectBias(appState.biasIdx);
+      setRitual(appState.ritualMode);
+      filterMastery(appState.masteryFilter);
+      renderChecklist();
+      initCharts();
+      initScrollReveals();
+
+      if (window.lucide && typeof window.lucide.createIcons === `function`) {
+        window.lucide.createIcons();
+      }
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === `function`) {
+        window.notebookAppApi.notifyAppReady();
+      }
+    }
+
+    document.addEventListener(`DOMContentLoaded`, initApp);
+  </script>
+</body>
+</html>
