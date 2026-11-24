@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="dashboard">
+  <meta name="design-style" content="showroom">
+  <title>29S Division 1 — Groupe E · Tableau de bord analytique (J7)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* 1. Base palette (Showroom light high-contrast adapted with Pixar 3D clay surfaces) */
+      --background: #eef2f8;
+      --surface-container-low: #ffffff;
+      --surface-container: #e3e9f4;
+      --surface-container-high: #d4deef;
+
+      /* Ink */
+      --on-surface: #121b2b;
+      --on-surface-variant: #475569;
+
+      /* Rules */
+      --outline: #cbd5e1;
+      --outline-variant: #e2e8f0;
+
+      /* Accents */
+      --primary: #0066d6;
+      --primary-bright: #2b88f6;
+      --primary-deep: #004ea8;
+      --on-primary: #ffffff;
+      --primary-container: #e0eeff;
+      --on-primary-container: #004699;
+
+      --secondary: #bf4800;
+      --tertiary: #121b2b;
+
+      /* Semantic & Epistemological Tokens */
+      --positive: #15803d;
+      --positive-bright: #22c55e;
+      --positive-container: #dcfce7;
+      --on-positive-container: #14532d;
+
+      --warning: #b45309;
+      --warning-bright: #f59e0b;
+      --warning-container: #fef3c7;
+      --on-warning-container: #78350f;
+
+      --error: #c81e1e;
+      --error-bright: #ef4444;
+      --error-container: #fee2e2;
+      --on-error-container: #7f1d1d;
+
+      --fact-bg: #e0f2fe;
+      --fact-fg: #0369a1;
+      --fact-border: #7dd3fc;
+
+      --synth-bg: #fef3c7;
+      --synth-fg: #92400e;
+      --synth-border: #fbbf24;
+
+      /* Zone indicator colors */
+      --zone-top: #0066d6;
+      --zone-top-bg: #e0eeff;
+      --zone-mid: #0d9488;
+      --zone-mid-bg: #ccfbf1;
+      --zone-low: #c2410c;
+      --zone-low-bg: #ffedd5;
+
+      /* Data series */
+      --data-1: #0066d6;
+      --data-2: #bf4800;
+      --data-3: #15803d;
+      --data-4: #6d28d9;
+      --data-draw: #d97706;
+      --data-loss: #dc2626;
+      --data-context: #94a3b8;
+      --chart-grid: #e2e8f0;
+      --chart-tick: #475569;
+
+      /* Fonts */
+      --font-headline: 'Inter Tight', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-label: 'JetBrains Mono', monospace;
+
+      /* Shape (Pixar soft clay rounding) */
+      --rounded: 9999px;
+      --rounded-sm: 0.875rem;
+      --rounded-md: 1.25rem;
+      --rounded-lg: 1.75rem;
+      --rounded-full: 9999px;
+
+      /* 3D Relief, Specular & Multi-layered Soft Shadows */
+      --shadow-clay:
+        0 16px 34px -12px rgb(15 23 42 / 0.12),
+        0 6px 14px -4px rgb(15 23 42 / 0.06),
+        inset 0 2px 0 0 rgb(255 255 255 / 0.96),
+        inset 0 -3px 8px 0 rgb(15 23 42 / 0.04);
+      --shadow-clay-hover:
+        0 22px 44px -14px rgb(0 102 214 / 0.18),
+        0 10px 20px -6px rgb(15 23 42 / 0.09),
+        inset 0 2px 0 0 rgb(255 255 255 / 1),
+        inset 0 -3px 8px 0 rgb(0 102 214 / 0.05);
+      --shadow-inset-well:
+        inset 0 2px 5px 0 rgb(15 23 42 / 0.08),
+        inset 0 -1px 0 0 rgb(255 255 255 / 0.9);
+      --shadow-pill-3d:
+        0 6px 14px -3px rgb(0 102 214 / 0.36),
+        0 2px 4px 0 rgb(0 102 214 / 0.2),
+        inset 0 1.5px 0 0 rgb(255 255 255 / 0.5),
+        inset 0 -2px 0 0 rgb(0 45 110 / 0.25);
+      --shadow-pill-neutral:
+        0 4px 10px -3px rgb(15 23 42 / 0.1),
+        0 1px 2px 0 rgb(15 23 42 / 0.05),
+        inset 0 1.5px 0 0 rgb(255 255 255 / 0.95),
+        inset 0 -2px 0 0 rgb(15 23 42 / 0.06);
+      --shadow-synth-3d:
+        0 6px 14px -4px rgb(180 83 9 / 0.26),
+        inset 0 1.5px 0 0 rgb(255 255 255 / 0.7),
+        inset 0 -2px 0 0 rgb(180 83 9 / 0.16);
+      --shadow-badge-3d:
+        0 2px 6px -1px rgb(15 23 42 / 0.08),
+        inset 0 1px 0 0 rgb(255 255 255 / 0.85);
+
+      --grad-card-3d: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+      --grad-well-3d: linear-gradient(180deg, #e7edf7 0%, #f1f5fb 100%);
+      --grad-primary-3d: linear-gradient(180deg, #2b88f6 0%, #0066d6 100%);
+      --grad-synth-3d: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+      --grad-fact-3d: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+      --grad-specular: linear-gradient(180deg, rgb(255 255 255 / 0.78) 0%, rgb(255 255 255 / 0) 100%);
+      --grad-bg-canvas: radial-gradient(circle at 12% 0%, #ffffff 0%, #eef2f8 48%, #e4ebf5 100%);
+
+      /* Focus */
+      --focus: var(--primary);
+
+      /* Type scale (Dashboard) */
+      --display-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem);
+      --headline-size: clamp(1.2rem, 1.08rem + 0.5vw, 1.45rem);
+      --subhead-size: clamp(1.025rem, 0.96rem + 0.25vw, 1.15rem);
+      --body-size: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);
+      --label-size: 0.75rem;
+      --headline-tracking: -0.03em;
+      --figure-tracking: -0.025em;
+
+      /* Spacing scale (4pt base) */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.25rem;
+      --space-2xl: 3.5rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.55;
+      color: var(--on-surface);
+      background: var(--grad-bg-canvas);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    header { position: static !important; }
+    button, input, select { font-family: inherit; }
+
+    .page-grid {
+      display: grid;
+      gap: var(--space-lg);
+      padding: var(--space-lg);
+      max-width: 1320px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Focus rings */
+    :focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* Clay 3D Card primitive with subtle specular rim */
+    .clay-card {
+      position: relative;
+      background: var(--grad-card-3d);
+      border-radius: var(--rounded-lg);
+      box-shadow: var(--shadow-clay);
+      padding: var(--space-lg);
+      border: 1px solid var(--outline-variant);
+      transition: transform var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out);
+    }
+    .clay-card::before {
+      content: "";
+      position: absolute;
+      inset: 2px 10% auto 10%;
+      height: 14px;
+      border-radius: var(--rounded-full);
+      background: var(--grad-specular);
+      pointer-events: none;
+    }
+    .clay-card.interactive:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-clay-hover);
+    }
+
+    /* Synthesis card variant */
+    .clay-card.synth-surface {
+      background: var(--grad-synth-3d);
+      border: 1px solid var(--synth-border);
+    }
+
+    /* Epistemological Badges */
+    .epistemic-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: 0.28rem 0.72rem;
+      border-radius: var(--rounded-full);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      box-shadow: var(--shadow-badge-3d);
+      white-space: nowrap;
+      line-height: 1.2;
+    }
+    .epistemic-badge.fact {
+      background: var(--grad-fact-3d);
+      color: var(--fact-fg);
+      border: 1px solid var(--fact-border);
+    }
+    .epistemic-badge.synth {
+      background: var(--grad-synth-3d);
+      color: var(--synth-fg);
+      border: 1px solid var(--synth-border);
+    }
+
+    .epistemic-badge i,
+    .epistemic-badge svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
+    /* Header */
+    .masthead {
+      text-align: center;
+      padding: var(--space-xl) var(--space-lg) var(--space-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .eyebrow-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 0.35rem 1rem;
+      border-radius: var(--rounded-full);
+      background: var(--surface-container-low);
+      box-shadow: var(--shadow-pill-neutral);
+      border: 1px solid var(--outline-variant);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      color: var(--on-surface-variant);
+    }
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--rounded-full);
+      background: var(--positive-bright);
+      box-shadow: 0 0 0 3px var(--positive-container);
+    }
+    .masthead h1 {
+      margin: var(--space-xs) 0 0;
+      font-family: var(--font-headline);
+      font-size: var(--display-size);
+      font-weight: 800;
+      letter-spacing: var(--headline-tracking);
+      line-height: 1.08;
+      color: var(--on-surface);
+    }
+    .masthead .lede {
+      margin: 0;
+      max-width: 64ch;
+      color: var(--on-surface-variant);
+      font-size: var(--subhead-size);
+    }
+
+    .epistemic-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-md);
+      margin-top: var(--space-sm);
+      padding: var(--space-sm) var(--space-lg);
+      border-radius: var(--rounded-md);
+      background: var(--surface-container-low);
+      box-shadow: var(--shadow-pill-neutral);
+      border: 1px solid var(--outline-variant);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-size: 0.85rem;
+      color: var(--on-surface-variant);
+    }
+
+    /* Control Dock */
+    .control-dock {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) auto;
+      gap: var(--space-lg);
+      align-items: end;
+      padding: var(--space-md) var(--space-lg);
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .control-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--on-surface-variant);
+    }
+
+    .pill-track {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      padding: 0.3rem;
+      border-radius: var(--rounded-md);
+      background: var(--grad-well-3d);
+      box-shadow: var(--shadow-inset-well);
+      border: 1px solid var(--outline-variant);
+    }
+    .zone-btn {
+      min-height: 44px;
+      padding: 0.45rem 0.95rem;
+      border-radius: var(--rounded-full);
+      border: 0;
+      background: transparent;
+      color: var(--on-surface-variant);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out),
+                  color var(--dur-micro) var(--ease-out),
+                  transform var(--dur-micro) var(--ease-out),
+                  box-shadow var(--dur-micro) var(--ease-out);
+      white-space: nowrap;
+    }
+    .zone-btn:hover {
+      color: var(--on-surface);
+      background: var(--surface-container-low);
+    }
+    .zone-btn[aria-pressed="true"] {
+      background: var(--grad-primary-3d);
+      color: var(--on-primary);
+      box-shadow: var(--shadow-pill-3d);
+    }
+    .zone-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* Select input */
+    .select-3d {
+      min-height: 46px;
+      width: 100%;
+      padding: 0.55rem 2.4rem 0.55rem 1rem;
+      border-radius: var(--rounded-full);
+      border: 1px solid var(--outline);
+      background: var(--grad-card-3d);
+      box-shadow: var(--shadow-pill-neutral);
+      color: var(--on-surface);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: box-shadow var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+    .select-3d:hover {
+      border-color: var(--primary);
+    }
+
+    /* Toggle synthesis button */
+    .btn-synth-toggle {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      padding: 0.55rem 1.2rem;
+      border-radius: var(--rounded-full);
+      border: 1px solid var(--synth-border);
+      background: var(--grad-synth-3d);
+      color: var(--on-warning-container);
+      font-size: 0.875rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow-synth-3d);
+      transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out), opacity var(--dur-micro) var(--ease-out);
+      white-space: nowrap;
+    }
+    .btn-synth-toggle:hover {
+      transform: translateY(-1px);
+    }
+    .btn-synth-toggle:active {
+      transform: translateY(1px);
+    }
+    .btn-synth-toggle[aria-pressed="false"] {
+      background: var(--grad-card-3d);
+      border-color: var(--outline);
+      color: var(--on-surface-variant);
+      box-shadow: var(--shadow-pill-neutral);
+    }
+
+    /* KPI Strip */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+    .kpi-tile {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      padding: var(--space-lg);
+    }
+    .kpi-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+    }
+    .kpi-title {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--on-surface-variant);
+    }
+    .kpi-value {
+      font-family: var(--font-headline);
+      font-size: clamp(1.35rem, 1.15rem + 0.8vw, 1.75rem);
+      font-weight: 800;
+      letter-spacing: var(--figure-tracking);
+      line-height: 1.15;
+      color: var(--on-surface);
+      font-variant-numeric: tabular-nums;
+    }
+    .kpi-sub {
+      font-family: var(--font-label);
+      font-size: 0.8rem;
+      color: var(--on-surface-variant);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Filter Context Banner */
+    .filter-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-lg);
+      border-radius: var(--rounded-md);
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      border: 1px solid var(--fact-border);
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    .btn-reset-filter {
+      min-height: 36px;
+      padding: 0.25rem 0.85rem;
+      border-radius: var(--rounded-full);
+      border: 1px solid var(--primary);
+      background: var(--surface-container-low);
+      color: var(--primary);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Main Split: Team Detail + Standings Table */
+    .explorer-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+
+    /* Section Card Header */
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .card-header h2 {
+      margin: 0;
+      font-family: var(--font-headline);
+      font-size: var(--headline-size);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--on-surface);
+      line-height: 1.2;
+    }
+    .card-subtitle {
+      margin: var(--space-xs) 0 0;
+      font-size: 0.85rem;
+      color: var(--on-surface-variant);
+    }
+
+    /* Team Detail Sheet */
+    .team-hero {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+    .rank-orb {
+      width: 56px;
+      height: 56px;
+      flex-shrink: 0;
+      border-radius: var(--rounded-md);
+      background: var(--grad-primary-3d);
+      color: var(--on-primary);
+      box-shadow: var(--shadow-pill-3d);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-headline);
+      font-size: 1.5rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+    .team-name-title {
+      margin: 0;
+      font-family: var(--font-headline);
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--on-surface);
+    }
+    .team-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      margin-top: var(--space-xs);
+    }
+    .zone-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.65rem;
+      border-radius: var(--rounded-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .zone-pill.top { background: var(--zone-top-bg); color: var(--zone-top); }
+    .zone-pill.mid { background: var(--zone-mid-bg); color: var(--zone-mid); }
+    .zone-pill.low { background: var(--zone-low-bg); color: var(--zone-low); }
+
+    .neutral-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.65rem;
+      border-radius: var(--rounded-full);
+      background: var(--surface-container);
+      color: var(--on-surface-variant);
+      font-family: var(--font-label);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .sheet-block {
+      border-radius: var(--rounded-md);
+      padding: var(--space-md);
+      margin-top: var(--space-md);
+    }
+    .sheet-block.fact-block {
+      background: var(--grad-well-3d);
+      box-shadow: var(--shadow-inset-well);
+      border: 1px solid var(--outline-variant);
+    }
+    .sheet-block.synth-block {
+      background: var(--grad-synth-3d);
+      border: 1px solid var(--synth-border);
+      box-shadow: var(--shadow-badge-3d);
+    }
+    .sheet-block-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+    .sheet-block-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--on-surface);
+    }
+
+    .stat-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-sm);
+    }
+    .stat-mini {
+      background: var(--surface-container-low);
+      border-radius: var(--rounded-sm);
+      padding: 0.6rem 0.7rem;
+      box-shadow: var(--shadow-pill-neutral);
+      border: 1px solid var(--outline-variant);
+    }
+    .stat-mini-lbl {
+      font-family: var(--font-label);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--on-surface-variant);
+    }
+    .stat-mini-val {
+      font-family: var(--font-headline);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--on-surface);
+      font-variant-numeric: tabular-nums;
+      margin-top: 2px;
+    }
+    .stat-mini-val.pos { color: var(--positive); }
+    .stat-mini-val.neg { color: var(--error); }
+
+    /* W/D/L 3D Segmented Track */
+    .wdl-bar-wrap {
+      margin-top: var(--space-sm);
+    }
+    .wdl-bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-label);
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--on-surface-variant);
+      margin-bottom: 0.3rem;
+    }
+    .wdl-track {
+      display: flex;
+      height: 14px;
+      border-radius: var(--rounded-full);
+      overflow: hidden;
+      background: var(--surface-container);
+      box-shadow: var(--shadow-inset-well);
+      gap: 2px;
+      padding: 2px;
+    }
+    .wdl-seg-g { background: var(--positive-bright); border-radius: var(--rounded-full); }
+    .wdl-seg-n { background: var(--warning-bright); border-radius: var(--rounded-full); }
+    .wdl-seg-p { background: var(--error-bright); border-radius: var(--rounded-full); }
+
+    .synth-insight-note {
+      margin: var(--space-sm) 0 0;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--rounded-sm);
+      background: var(--surface-container-low);
+      border: 1px solid var(--synth-border);
+      font-size: 0.84rem;
+      color: var(--on-surface);
+      line-height: 1.45;
+    }
+
+    /* Official Standings Table */
+    .table-scroll {
+      overflow-x: auto;
+      border-radius: var(--rounded-md);
+      background: var(--surface-container-low);
+      box-shadow: var(--shadow-inset-well);
+      border: 1px solid var(--outline-variant);
+    }
+    table.standings-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-variant-numeric: tabular-nums;
+      font-size: 0.875rem;
+    }
+    table.standings-table thead th {
+      position: sticky;
+      top: 0;
+      background: var(--surface-container);
+      color: var(--on-surface-variant);
+      font-family: var(--font-label);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.65rem 0.45rem;
+      text-align: right;
+      border-bottom: 1px solid var(--outline);
+      white-space: nowrap;
+    }
+    table.standings-table thead th:nth-child(1) { text-align: center; }
+    table.standings-table thead th:nth-child(2) { text-align: left; padding-left: 0.75rem; }
+
+    .sort-btn {
+      background: transparent;
+      border: 0;
+      color: inherit;
+      font: inherit;
+      text-transform: inherit;
+      letter-spacing: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 0.2rem 0.3rem;
+      border-radius: var(--rounded-sm);
+    }
+    .sort-btn:hover {
+      background: var(--surface-container-high);
+      color: var(--on-surface);
+    }
+    .sort-btn.active {
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    table.standings-table tbody tr {
+      cursor: pointer;
+      border-bottom: 1px solid var(--outline-variant);
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    table.standings-table tbody tr:last-child { border-bottom: 0; }
+    table.standings-table tbody tr:hover {
+      background: var(--primary-container);
+    }
+    table.standings-table tbody tr.selected-row {
+      background: var(--primary-container);
+      box-shadow: inset 4px 0 0 var(--primary);
+    }
+    table.standings-table tbody td {
+      padding: 0.62rem 0.45rem;
+      text-align: right;
+      color: var(--on-surface);
+      white-space: nowrap;
+    }
+    table.standings-table tbody td:nth-child(1) {
+      text-align: center;
+      font-family: var(--font-label);
+      font-weight: 700;
+    }
+    table.standings-table tbody td:nth-child(2) {
+      text-align: left;
+      padding-left: 0.75rem;
+      font-weight: 600;
+    }
+    .club-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .zone-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: var(--rounded-full);
+      flex-shrink: 0;
+    }
+    .zone-dot.top { background: var(--zone-top); }
+    .zone-dot.mid { background: var(--zone-mid); }
+    .zone-dot.low { background: var(--zone-low); }
+
+    .pts-cell {
+      font-family: var(--font-headline);
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .dif-pos { color: var(--positive); font-weight: 700; }
+    .dif-neg { color: var(--error); font-weight: 700; }
+    .dif-zero { color: var(--on-surface-variant); font-weight: 600; }
+
+    /* Charts Grid */
+    .charts-section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-top: var(--space-sm);
+    }
+    .charts-section-head h2 {
+      margin: 0;
+      font-family: var(--font-headline);
+      font-size: clamp(1.3rem, 1.15rem + 0.6vw, 1.65rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-lg);
+    }
+    .chart-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    .chart-card.full-span {
+      grid-column: 1 / -1;
+    }
+    .chart-canvas-wrap {
+      position: relative;
+      width: 100%;
+      min-height: 330px;
+      padding: var(--space-sm);
+      border-radius: var(--rounded-md);
+      background: var(--surface-container-low);
+      box-shadow: var(--shadow-inset-well);
+      border: 1px solid var(--outline-variant);
+    }
+    .chart-card.full-span .chart-canvas-wrap {
+      min-height: 360px;
+    }
+
+    .efficiency-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+
+    /* Synthesis Takeaways Section */
+    .takeaways-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-sm);
+    }
+    .takeaway-item {
+      background: var(--surface-container-low);
+      border-radius: var(--rounded-md);
+      padding: var(--space-md);
+      border: 1px solid var(--synth-border);
+      box-shadow: var(--shadow-pill-neutral);
+    }
+    .takeaway-item h3 {
+      margin: 0 0 var(--space-xs);
+      font-family: var(--font-headline);
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--on-surface);
+    }
+    .takeaway-item p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--on-surface-variant);
+      line-height: 1.5;
+    }
+
+    /* Hidden utility for synthesis toggle */
+    .is-hidden {
+      display: none !important;
+    }
+
+    /* Footer */
+    .source-footer {
+      text-align: center;
+      padding: var(--space-md) var(--space-lg) var(--space-xl);
+      color: var(--on-surface-variant);
+      font-size: 0.82rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+      .control-dock {
+        grid-template-columns: 1fr;
+      }
+      .explorer-split {
+        grid-template-columns: 1fr;
+      }
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-grid {
+        padding: var(--space-sm);
+        gap: var(--space-md);
+      }
+      .clay-card {
+        padding: var(--space-md);
+        border-radius: var(--rounded-md);
+      }
+      .stat-mini-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .chart-canvas-wrap {
+        min-height: 280px;
+      }
+      .zone-btn {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.7rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-grid">
+    <!-- Masthead -->
+    <header class="masthead">
+      <div class="eyebrow-pill">
+        <span class="eyebrow-dot" aria-hidden="true"></span>
+        <span>Finistère Sud · 12 clubs · Après 7 journées (Jo = 7)</span>
+      </div>
+      <h1>29S Division 1 — Groupe E</h1>
+      <p class="lede">
+        Tableau de bord analytique du classement : exploration interactive des résultats comptables, du profil offensif et défensif de chaque club, avec distinction explicite entre relevé brut et calculs de synthèse.
+      </p>
+
+      <div class="epistemic-legend" aria-label="Légende de rigueur des données">
+        <div class="legend-item">
+          <span class="epistemic-badge fact">
+            <i data-lucide="shield-check" aria-hidden="true"></i>
+            <span>Fait vérifié</span>
+          </span>
+          <span>Données brutes du classement (Pl, Pts, Jo, G, N, P, F, Bp, Bc, Dif, Pe).</span>
+        </div>
+        <div class="legend-item">
+          <span class="epistemic-badge synth">
+            <i data-lucide="calculator" aria-hidden="true"></i>
+            <span>Observation de synthèse</span>
+          </span>
+          <span>Ratios, moyennes sur 7 journées et classements d’efficacité dérivés.</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Control Dock -->
+    <section class="clay-card control-dock" aria-label="Filtres et commandes du tableau de bord">
+      <div class="control-group">
+        <span class="control-label">Filtrer par zone du classement</span>
+        <div class="pill-track" role="group" aria-label="Zones du classement">
+          <button type="button" class="zone-btn" id="zone-btn-all" aria-pressed="true" onclick="setZoneFilter('all')">Toutes (12)</button>
+          <button type="button" class="zone-btn" id="zone-btn-top" aria-pressed="false" onclick="setZoneFilter('top')">Haut (1–4)</button>
+          <button type="button" class="zone-btn" id="zone-btn-mid" aria-pressed="false" onclick="setZoneFilter('mid')">Milieu (5–8)</button>
+          <button type="button" class="zone-btn" id="zone-btn-low" aria-pressed="false" onclick="setZoneFilter('low')">Maintien (9–12)</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="team-selector">Sélecteur dynamique d’équipe</label>
+        <select id="team-selector" class="select-3d" onchange="selectTeamByRank(Number(this.value))"></select>
+      </div>
+
+      <div class="control-group">
+        <span class="control-label">Mode d’analyse</span>
+        <button type="button" id="toggle-synthesis-btn" class="btn-synth-toggle" aria-pressed="true" onclick="toggleSynthesis()">
+          <i data-lucide="eye-off" id="toggle-synth-icon" aria-hidden="true"></i>
+          <span id="toggle-synth-label">Masquer les observations de synthèse</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Active Filter Context Banner -->
+    <div id="filter-banner" class="filter-banner is-hidden" role="status" aria-live="polite">
+      <span id="filter-banner-text"></span>
+      <button type="button" class="btn-reset-filter" onclick="setZoneFilter('all')">Afficher les 12 clubs</button>
+    </div>
+
+    <!-- Top KPI Strip -->
+    <section class="kpi-grid" aria-label="Indicateurs clés du groupe">
+      <article class="clay-card kpi-tile interactive">
+        <div class="kpi-top">
+          <span class="kpi-title">Leader invaincu</span>
+          <span class="epistemic-badge fact">Fait vérifié</span>
+        </div>
+        <div class="kpi-value" id="kpi-leader-name">US PLUGUFFAN</div>
+        <div class="kpi-sub" id="kpi-leader-sub">17 pts · 5G 2N 0P · Dif +9</div>
+      </article>
+
+      <article class="clay-card kpi-tile interactive">
+        <div class="kpi-top">
+          <span class="kpi-title">Meilleure attaque (Bp)</span>
+          <span class="epistemic-badge fact">Fait vérifié</span>
+        </div>
+        <div class="kpi-value" id="kpi-attack-name">FC PONT L' ABBÉ (B)</div>
+        <div class="kpi-sub" id="kpi-attack-sub">24 buts marqués · Dif +17 (2e)</div>
+      </article>
+
+      <article class="clay-card kpi-tile interactive">
+        <div class="kpi-top">
+          <span class="kpi-title">Meilleure défense (Bc)</span>
+          <span class="epistemic-badge fact">Fait vérifié</span>
+        </div>
+        <div class="kpi-value" id="kpi-defense-name">CL. FOUESNANT</div>
+        <div class="kpi-sub" id="kpi-defense-sub">5 buts encaissés · 13 pts (4e)</div>
+      </article>
+
+      <article class="clay-card kpi-tile interactive synth-surface synthesis-only">
+        <div class="kpi-top">
+          <span class="kpi-title">Moyenne du groupe (7 j.)</span>
+          <span class="epistemic-badge synth">Observation de synthèse</span>
+        </div>
+        <div class="kpi-value" id="kpi-avg-value">3,50 buts / match</div>
+        <div class="kpi-sub" id="kpi-avg-sub">147 buts sur 42 matchs · 1,75 Bp/club</div>
+      </article>
+    </section>
+
+    <!-- Primary Explorer Split: Team Sheet + Official Table -->
+    <section class="explorer-split" aria-label="Fiche club et classement détaillé">
+      <!-- Club Detail Sheet -->
+      <article class="clay-card" id="team-detail-card" aria-live="polite">
+        <div class="card-header">
+          <div>
+            <h2>Fiche détaillée du club</h2>
+            <p class="card-subtitle">Sélectionnez un club via le menu, le tableau ou les graphiques.</p>
+          </div>
+          <span class="epistemic-badge fact">Fait vérifié</span>
+        </div>
+
+        <div class="team-hero">
+          <div class="rank-orb" id="detail-rank-orb">1</div>
+          <div>
+            <h3 class="team-name-title" id="detail-team-name">US PLUGUFFAN</h3>
+            <div class="team-tags-row">
+              <span class="zone-pill top" id="detail-zone-pill">Haut de tableau (Pl. 1–4)</span>
+              <span class="neutral-pill" id="detail-meta-pill">Jo = 7 · F = 0 · Pe = 0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Verified Facts Block -->
+        <div class="sheet-block fact-block">
+          <div class="sheet-block-head">
+            <span class="sheet-block-title">Relevé comptable brut</span>
+            <span class="epistemic-badge fact">Fait vérifié</span>
+          </div>
+          <div class="stat-mini-grid">
+            <div class="stat-mini">
+              <div class="stat-mini-lbl">Points (Pts)</div>
+              <div class="stat-mini-val" id="detail-pts">17</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-lbl">Bilan (G / N / P)</div>
+              <div class="stat-mini-val" id="detail-gnp">5 / 2 / 0</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-lbl">Différence (Dif)</div>
+              <div class="stat-mini-val pos" id="detail-dif">+9</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-lbl">Buts pour (Bp)</div>
+              <div class="stat-mini-val" id="detail-bp">16</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-lbl">Buts contre (Bc)</div>
+              <div class="stat-mini-val" id="detail-bc">7</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-lbl">Forfait / Pén.</div>
+              <div class="stat-mini-val" id="detail-fpe">0 / 0</div>
+            </div>
+          </div>
+
+          <div class="wdl-bar-wrap">
+            <div class="wdl-bar-labels">
+              <span id="wdl-lbl-g">Victoires : 5</span>
+              <span id="wdl-lbl-n">Nuls : 2</span>
+              <span id="wdl-lbl-p">Défaites : 0</span>
+            </div>
+            <div class="wdl-track" aria-hidden="true">
+              <div class="wdl-seg-g" id="wdl-seg-g"></div>
+              <div class="wdl-seg-n" id="wdl-seg-n"></div>
+              <div class="wdl-seg-p" id="wdl-seg-p"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Synthesis Observations Block -->
+        <div class="sheet-block synth-block synthesis-only" id="detail-synth-block">
+          <div class="sheet-block-head">
+            <span class="sheet-block-title">Ratios et efficacité (sur 7 journées)</span>
+            <span class="epistemic-badge synth">Observation de synthèse</span>
+          </div>
+          <div class="stat-mini-grid">
+            <div class="stat-mini">
+              <div class="stat-mini-lbl">Pts / match</div>
+              <div class="stat-mini-val" id="synth-pts-match">2,43</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-lbl">Bp / match</div>
+              <div class="stat-mini-val" id="synth-bp-match">2,29</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-lbl">Bc / match</div>
+              <div class="stat-mini-val" id="synth-bc-match">1,00</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-lbl">Taux de points</div>
+              <div class="stat-mini-val" id="synth-pts-pct">81,0 %</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-lbl">Rang attaque</div>
+              <div class="stat-mini-val" id="synth-rank-att">3e / 12</div>
+            </div>
+            <div class="stat-mini">
+              <div class="stat-mini-lbl">Rang défense</div>
+              <div class="stat-mini-val" id="synth-rank-def">2e ex. / 12</div>
+            </div>
+          </div>
+          <p class="synth-insight-note" id="synth-club-note"></p>
+        </div>
+      </article>
+
+      <!-- Official Standings Table -->
+      <article class="clay-card">
+        <div class="card-header">
+          <div>
+            <h2>Classement complet (J7)</h2>
+            <p class="card-subtitle">Cliquez sur une ligne pour ouvrir la fiche ou sur une colonne pour trier.</p>
+          </div>
+          <span class="epistemic-badge fact">Fait vérifié</span>
+        </div>
+
+        <div class="table-scroll">
+          <table class="standings-table">
+            <thead>
+              <tr>
+                <th><button type="button" class="sort-btn active" id="sort-pl" onclick="setTableSort('pl')">Pl</button></th>
+                <th>Équipe</th>
+                <th><button type="button" class="sort-btn" id="sort-pts" onclick="setTableSort('pts')">Pts</button></th>
+                <th>Jo</th>
+                <th><button type="button" class="sort-btn" id="sort-g" onclick="setTableSort('g')">G</button></th>
+                <th><button type="button" class="sort-btn" id="sort-n" onclick="setTableSort('n')">N</button></th>
+                <th><button type="button" class="sort-btn" id="sort-p" onclick="setTableSort('p')">P</button></th>
+                <th>F</th>
+                <th><button type="button" class="sort-btn" id="sort-bp" onclick="setTableSort('bp')">Bp</button></th>
+                <th><button type="button" class="sort-btn" id="sort-bc" onclick="setTableSort('bc')">Bc</button></th>
+                <th><button type="button" class="sort-btn" id="sort-dif" onclick="setTableSort('dif')">Dif</button></th>
+                <th>Pe</th>
+              </tr>
+            </thead>
+            <tbody id="standings-tbody"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <!-- Charts Section -->
+    <div class="charts-section-head">
+      <h2>Visualisations analytiques interactives</h2>
+      <span class="neutral-pill">Cliquez sur une barre pour sélectionner le club</span>
+    </div>
+
+    <section class="charts-grid" aria-label="Graphiques analytiques Chart.js">
+      <!-- Chart 1: Points -->
+      <article class="clay-card chart-card">
+        <div class="card-header">
+          <div>
+            <h2>Classement général en points</h2>
+            <p class="card-subtitle">Total des points (Pts) par club, coloré selon la zone du tableau.</p>
+          </div>
+          <span class="epistemic-badge fact">Fait vérifié</span>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="chart-points" aria-label="Graphique du classement en points"></canvas>
+        </div>
+      </article>
+
+      <!-- Chart 2: G / N / P Stacked -->
+      <article class="clay-card chart-card">
+        <div class="card-header">
+          <div>
+            <h2>Bilan comptable : Victoires / Nuls / Défaites</h2>
+            <p class="card-subtitle">Répartition exacte des 7 journées disputées (G, N, P).</p>
+          </div>
+          <span class="epistemic-badge fact">Fait vérifié</span>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="chart-wdl" aria-label="Graphique empilé Victoires Nuls Défaites"></canvas>
+        </div>
+      </article>
+
+      <!-- Chart 3: Attack vs Defense -->
+      <article class="clay-card chart-card">
+        <div class="card-header">
+          <div>
+            <h2>Attaque vs Défense (Bp vs Bc)</h2>
+            <p class="card-subtitle">Comparaison directe des buts marqués (Bp) et encaissés (Bc).</p>
+          </div>
+          <span class="epistemic-badge fact">Fait vérifié</span>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="chart-att-def" aria-label="Graphique comparatif Attaque contre Défense"></canvas>
+        </div>
+      </article>
+
+      <!-- Chart 4: Goal Difference -->
+      <article class="clay-card chart-card">
+        <div class="card-header">
+          <div>
+            <h2>Différence de buts (Dif)</h2>
+            <p class="card-subtitle">Solde de buts (Bp − Bc) divergent autour de l’équilibre (0).</p>
+          </div>
+          <span class="epistemic-badge fact">Fait vérifié</span>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="chart-dif" aria-label="Graphique divergent de différence de buts"></canvas>
+        </div>
+      </article>
+
+      <!-- Chart 5: Offensive & Defensive Efficiency per match (Synthesis) -->
+      <article class="clay-card chart-card full-span synth-surface synthesis-only" id="chart-efficiency-card">
+        <div class="card-header">
+          <div>
+            <h2>Efficacité offensive et défensive par match (moyennes sur 7 journées)</h2>
+            <p class="card-subtitle">Moyennes calculées (Bp/7 et Bc/7) comparées à la moyenne du groupe (1,75 but/match).</p>
+          </div>
+          <div class="efficiency-controls">
+            <span class="epistemic-badge synth">Observation de synthèse</span>
+            <div class="pill-track" role="group" aria-label="Tri de l'efficacité">
+              <button type="button" class="zone-btn" id="eff-sort-pl" aria-pressed="true" onclick="setEfficiencySort('pl')">Classement</button>
+              <button type="button" class="zone-btn" id="eff-sort-att" aria-pressed="false" onclick="setEfficiencySort('att')">Efficacité off.</button>
+              <button type="button" class="zone-btn" id="eff-sort-def" aria-pressed="false" onclick="setEfficiencySort('def')">Solidité déf.</button>
+            </div>
+          </div>
+        </div>
+        <div class="chart-canvas-wrap">
+          <canvas id="chart-efficiency" aria-label="Graphique d'efficacité offensive et défensive par match"></canvas>
+        </div>
+      </article>
+    </section>
+
+    <!-- Synthesis Cross-Section Summary -->
+    <section class="clay-card synth-surface synthesis-only" id="synthesis-takeaways-section" aria-label="Synthèse analytique transversale">
+      <div class="card-header">
+        <div>
+          <h2>Constats transversaux après 7 journées</h2>
+          <p class="card-subtitle">Interprétations chiffrées dérivées du classement officiel (ratios et écarts remarquables).</p>
+        </div>
+        <span class="epistemic-badge synth">Observation de synthèse</span>
+      </div>
+
+      <div class="takeaways-grid">
+        <div class="takeaway-item">
+          <h3>Régularité contre puissance de feu</h3>
+          <p>L’US Pluguffan occupe la 1re place (17 pts) en restant invaincu (5G, 2N, 0P), bien que le FC Pont l’Abbé (B) (2e, 16 pts) affiche 8 buts de plus (24 Bp contre 16) et la meilleure différence du groupe (+17).</p>
+        </div>
+        <div class="takeaway-item">
+          <h3>Le mur défensif de Cl. Fouesnant</h3>
+          <p>4e avec 13 pts, le Cl. Fouesnant détient la meilleure défense du groupe avec seulement 5 buts encaissés (0,71 Bc/match), compensant un rendement offensif modeste (8 Bp, 1,14 Bp/match).</p>
+        </div>
+        <div class="takeaway-item">
+          <h3>Contraste entre milieu et maintien</h3>
+          <p>L’Herm. Concarnoise (B) (9e, 7 pts) marque davantage (14 Bp) que 3 clubs du top 6, mais concède 2,14 buts/match. Les trois derniers clubs (4, 3 et 3 pts) accusent un déficit cumulé de −36.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="source-footer">
+      Source des données : extrait du classement « 29S Division 1 - Groupe E » (Finistère Sud, après 7 journées — Jo = 7, F = 0, Pe = 0 pour les 12 clubs). Aucune donnée externe ni extrapolation hors classement n’a été ajoutée.
+    </footer>
+  </main>
+
+  <script>
+    /* Verified raw dataset from the notebook source (29S Division 1 - Groupe E) */
+    const TEAMS = [
+      { pl: 1,  name: `US PLUGUFFAN`,               short: `US Pluguffan`,       pts: 17, jo: 7, g: 5, n: 2, p: 0, f: 0, bp: 16, bc: 7,  dif: 9,   pe: 0, zone: `top` },
+      { pl: 2,  name: `FC PONT L' ABBÉ (B)`,        short: `FC Pont l'Abbé (B)`, pts: 16, jo: 7, g: 5, n: 1, p: 1, f: 0, bp: 24, bc: 7,  dif: 17,  pe: 0, zone: `top` },
+      { pl: 3,  name: `AS PLOMELIN`,                short: `AS Plomelin`,        pts: 15, jo: 7, g: 5, n: 0, p: 2, f: 0, bp: 11, bc: 6,  dif: 5,   pe: 0, zone: `top` },
+      { pl: 4,  name: `CL. FOUESNANT`,              short: `Cl. Fouesnant`,      pts: 13, jo: 7, g: 4, n: 1, p: 2, f: 0, bp: 8,  bc: 5,  dif: 3,   pe: 0, zone: `top` },
+      { pl: 5,  name: `FC ROSPORDEN`,               short: `FC Rosporden`,       pts: 11, jo: 7, g: 3, n: 2, p: 2, f: 0, bp: 17, bc: 14, dif: 3,   pe: 0, zone: `mid` },
+      { pl: 6,  name: `FC ODET`,                    short: `FC Odet`,            pts: 11, jo: 7, g: 3, n: 2, p: 2, f: 0, bp: 13, bc: 14, dif: -1,  pe: 0, zone: `mid` },
+      { pl: 7,  name: `AS MELGVEN`,                 short: `AS Melgven`,         pts: 10, jo: 7, g: 3, n: 1, p: 3, f: 0, bp: 12, bc: 11, dif: 1,   pe: 0, zone: `mid` },
+      { pl: 8,  name: `QUIMPER ERGUÉ ARMEL FC (B)`, short: `Quimper Ergué (B)`,  pts: 10, jo: 7, g: 3, n: 1, p: 3, f: 0, bp: 9,  bc: 9,  dif: 0,   pe: 0, zone: `mid` },
+      { pl: 9,  name: `HERM. CONCARNOISE (B)`,      short: `Herm. Concarnoise B`,pts: 7,  jo: 7, g: 2, n: 1, p: 4, f: 0, bp: 14, bc: 15, dif: -1,  pe: 0, zone: `low` },
+      { pl: 10, name: `CA FORESTOIS`,               short: `CA Forestois`,       pts: 4,  jo: 7, g: 1, n: 1, p: 5, f: 0, bp: 10, bc: 23, dif: -13, pe: 0, zone: `low` },
+      { pl: 11, name: `MÉLÉNICKS ELLIANT`,          short: `Mélénicks Elliant`,  pts: 3,  jo: 7, g: 1, n: 0, p: 6, f: 0, bp: 5,  bc: 15, dif: -10, pe: 0, zone: `low` },
+      { pl: 12, name: `CS PENMARC'H (B)`,           short: `CS Penmarc'h (B)`,   pts: 3,  jo: 7, g: 1, n: 0, p: 6, f: 0, bp: 8,  bc: 21, dif: -13, pe: 0, zone: `low` }
+    ];
+
+    /* League-wide derived averages (7 matchdays, 42 total matches, 147 goals) */
+    const LEAGUE_AVG_GOALS_PER_TEAM_MATCH = 147 / 84; /* 1.75 */
+
+    /* Application state */
+    const state = {
+      selectedRank: 1,
+      zoneFilter: `all`,
+      showSynthesis: true,
+      tableSort: `pl`,
+      tableSortAsc: true,
+      efficiencySort: `pl`
+    };
+
+    const charts = {
+      points: null,
+      wdl: null,
+      attDef: null,
+      dif: null,
+      efficiency: null
+    };
+
+    /* Read CSS tokens cleanly so Chart.js inherits exact design system colors */
+    function getToken(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    function fmtNum(val, decimals) {
+      return val.toFixed(decimals).replace(`.`, `,`);
+    }
+
+    function getZoneLabel(zone) {
+      if (zone === `top`) return `Haut de tableau (Pl. 1–4)`;
+      if (zone === `mid`) return `Milieu de tableau (Pl. 5–8)`;
+      return `Zone de maintien (Pl. 9–12)`;
+    }
+
+    function getFilteredTeams() {
+      if (state.zoneFilter === `all`) return TEAMS.slice();
+      return TEAMS.filter(function(t) { return t.zone === state.zoneFilter; });
+    }
+
+    /* Compute offensive & defensive rank (competition ranking 1..12) */
+    function getEfficiencyRanks(team) {
+      const betterAtt = TEAMS.filter(function(t) { return t.bp > team.bp; }).length + 1;
+      const tieAtt = TEAMS.filter(function(t) { return t.bp === team.bp; }).length > 1;
+
+      const betterDef = TEAMS.filter(function(t) { return t.bc < team.bc; }).length + 1;
+      const tieDef = TEAMS.filter(function(t) { return t.bc === team.bc; }).length > 1;
+
+      return {
+        attLabel: betterAtt + (betterAtt === 1 ? `er` : `e`) + (tieAtt ? ` ex.` : ``) + ` / 12`,
+        defLabel: betterDef + (betterDef === 1 ? `er` : `e`) + (tieDef ? ` ex.` : ``) + ` / 12`
+      };
+    }
+
+    /* Populate selector dropdown */
+    function initTeamSelector() {
+      const sel = document.getElementById(`team-selector`);
+      if (!sel) return;
+      sel.innerHTML = ``;
+      TEAMS.forEach(function(team) {
+        const opt = document.createElement(`option`);
+        opt.value = String(team.pl);
+        opt.textContent = team.pl + `. ` + team.name + ` (` + team.pts + ` pts)`;
+        sel.appendChild(opt);
+      });
+      sel.value = String(state.selectedRank);
+    }
+
+    /* Hoisted handler: select team by official rank */
+    function selectTeamByRank(rank) {
+      const found = TEAMS.find(function(t) { return t.pl === rank; });
+      if (!found) return;
+      state.selectedRank = found.pl;
+
+      const sel = document.getElementById(`team-selector`);
+      if (sel) sel.value = String(found.pl);
+
+      renderTeamDetail();
+      renderTable();
+      renderCharts();
+    }
+
+    /* Hoisted handler: zone filter */
+    function setZoneFilter(zone) {
+      state.zoneFilter = zone;
+
+      const keys = [`all`, `top`, `mid`, `low`];
+      keys.forEach(function(k) {
+        const btn = document.getElementById(`zone-btn-` + k);
+        if (btn) btn.setAttribute(`aria-pressed`, k === zone ? `true` : `false`);
+      });
+
+      const banner = document.getElementById(`filter-banner`);
+      const bannerTxt = document.getElementById(`filter-banner-text`);
+      if (banner && bannerTxt) {
+        if (zone === `all`) {
+          banner.classList.add(`is-hidden`);
+        } else {
+          banner.classList.remove(`is-hidden`);
+          bannerTxt.textContent = `Filtre actif : ` + getZoneLabel(zone) + ` — 4 clubs affichés dans le tableau et les graphiques.`;
+        }
+      }
+
+      /* If selected team is outside the filtered zone, switch selection to the top team of that zone */
+      const visible = getFilteredTeams();
+      const inVisible = visible.some(function(t) { return t.pl === state.selectedRank; });
+      if (!inVisible && visible.length > 0) {
+        state.selectedRank = visible[0].pl;
+        const sel = document.getElementById(`team-selector`);
+        if (sel) sel.value = String(state.selectedRank);
+      }
+
+      renderKpis();
+      renderTeamDetail();
+      renderTable();
+      renderCharts();
+    }
+
+    /* Hoisted handler: toggle synthesis observations visibility */
+    function toggleSynthesis() {
+      state.showSynthesis = !state.showSynthesis;
+      const btn = document.getElementById(`toggle-synthesis-btn`);
+      const lbl = document.getElementById(`toggle-synth-label`);
+      const icon = document.getElementById(`toggle-synth-icon`);
+
+      if (btn) btn.setAttribute(`aria-pressed`, state.showSynthesis ? `true` : `false`);
+      if (lbl) {
+        lbl.textContent = state.showSynthesis
+          ? `Masquer les observations de synthèse`
+          : `Afficher les observations de synthèse`;
+      }
+      if (icon) {
+        icon.setAttribute(`data-lucide`, state.showSynthesis ? `eye-off` : `eye`);
+        if (typeof lucide !== `undefined`) lucide.createIcons();
+      }
+
+      const synthEls = document.querySelectorAll(`.synthesis-only`);
+      synthEls.forEach(function(el) {
+        if (state.showSynthesis) {
+          el.classList.remove(`is-hidden`);
+        } else {
+          el.classList.add(`is-hidden`);
+        }
+      });
+
+      if (state.showSynthesis) {
+        renderEfficiencyChart();
+      }
+    }
+
+    /* Hoisted handler: sort official table */
+    function setTableSort(col) {
+      if (state.tableSort === col) {
+        state.tableSortAsc = !state.tableSortAsc;
+      } else {
+        state.tableSort = col;
+        /* Default descending for Pts, G, N, Bp, Dif; ascending for Pl, P, Bc */
+        state.tableSortAsc = (col === `pl` || col === `p` || col === `bc`);
+      }
+
+      const cols = [`pl`, `pts`, `g`, `n`, `p`, `bp`, `bc`, `dif`];
+      cols.forEach(function(c) {
+        const btn = document.getElementById(`sort-` + c);
+        if (!btn) return;
+        if (c === state.tableSort) {
+          btn.classList.add(`active`);
+        } else {
+          btn.classList.remove(`active`);
+        }
+      });
+
+      renderTable();
+    }
+
+    /* Hoisted handler: efficiency chart sort */
+    function setEfficiencySort(mode) {
+      state.efficiencySort = mode;
+      [`pl`, `att`, `def`].forEach(function(m) {
+        const btn = document.getElementById(`eff-sort-` + m);
+        if (btn) btn.setAttribute(`aria-pressed`, m === mode ? `true` : `false`);
+      });
+      renderEfficiencyChart();
+    }
+
+    /* Render KPI Strip dynamically for active zone */
+    function renderKpis() {
+      const list = getFilteredTeams();
+      if (list.length === 0) return;
+
+      const leader = list.slice().sort(function(a, b) { return a.pl - b.pl; })[0];
+      const bestAtt = list.slice().sort(function(a, b) { return b.bp - a.bp || a.pl - b.pl; })[0];
+      const bestDef = list.slice().sort(function(a, b) { return a.bc - b.bc || a.pl - b.pl; })[0];
+
+      const kpiLeaderName = document.getElementById(`kpi-leader-name`);
+      const kpiLeaderSub = document.getElementById(`kpi-leader-sub`);
+      if (kpiLeaderName) kpiLeaderName.textContent = leader.name;
+      if (kpiLeaderSub) {
+        const difStr = leader.dif > 0 ? `+` + leader.dif : String(leader.dif);
+        kpiLeaderSub.textContent = leader.pts + ` pts · ` + leader.g + `G ` + leader.n + `N ` + leader.p + `P · Dif ` + difStr;
+      }
+
+      const kpiAttName = document.getElementById(`kpi-attack-name`);
+      const kpiAttSub = document.getElementById(`kpi-attack-sub`);
+      if (kpiAttName) kpiAttName.textContent = bestAtt.name;
+      if (kpiAttSub) {
+        const difStr = bestAtt.dif > 0 ? `+` + bestAtt.dif : String(bestAtt.dif);
+        kpiAttSub.textContent = bestAtt.bp + ` buts marqués · Dif ` + difStr + ` (` + bestAtt.pl + (bestAtt.pl === 1 ? `er` : `e`) + `)`;
+      }
+
+      const kpiDefName = document.getElementById(`kpi-defense-name`);
+      const kpiDefSub = document.getElementById(`kpi-defense-sub`);
+      if (kpiDefName) kpiDefName.textContent = bestDef.name;
+      if (kpiDefSub) {
+        kpiDefSub.textContent = bestDef.bc + ` buts encaissés · ` + bestDef.pts + ` pts (` + bestDef.pl + (bestDef.pl === 1 ? `er` : `e`) + `)`;
+      }
+
+      const totalBp = list.reduce(function(acc, t) { return acc + t.bp; }, 0);
+      const totalBc = list.reduce(function(acc, t) { return acc + t.bc; }, 0);
+      const avgBpPerClub = totalBp / (list.length * 7);
+      const avgBcPerClub = totalBc / (list.length * 7);
+
+      const kpiAvgVal = document.getElementById(`kpi-avg-value`);
+      const kpiAvgSub = document.getElementById(`kpi-avg-sub`);
+      if (state.zoneFilter === `all`) {
+        if (kpiAvgVal) kpiAvgVal.textContent = `3,50 buts / match`;
+        if (kpiAvgSub) kpiAvgSub.textContent = `147 buts sur 42 matchs · 1,75 Bp/club`;
+      } else {
+        if (kpiAvgVal) kpiAvgVal.textContent = fmtNum(avgBpPerClub, 2) + ` Bp / m.`;
+        if (kpiAvgSub) kpiAvgSub.textContent = totalBp + ` Bp et ` + totalBc + ` Bc sur la zone (` + fmtNum(avgBcPerClub, 2) + ` Bc/m.)`;
+      }
+    }
+
+    /* Render Club Detail Card */
+    function renderTeamDetail() {
+      const team = TEAMS.find(function(t) { return t.pl === state.selectedRank; }) || TEAMS[0];
+      const ranks = getEfficiencyRanks(team);
+
+      const setTxt = function(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      };
+
+      setTxt(`detail-rank-orb`, String(team.pl));
+      setTxt(`detail-team-name`, team.name);
+      setTxt(`detail-meta-pill`, `Jo = ` + team.jo + ` · F = ` + team.f + ` · Pe = ` + team.pe);
+
+      const zonePill = document.getElementById(`detail-zone-pill`);
+      if (zonePill) {
+        zonePill.className = `zone-pill ` + team.zone;
+        zonePill.textContent = getZoneLabel(team.zone);
+      }
+
+      setTxt(`detail-pts`, String(team.pts));
+      setTxt(`detail-gnp`, team.g + ` / ` + team.n + ` / ` + team.p);
+
+      const difEl = document.getElementById(`detail-dif`);
+      if (difEl) {
+        difEl.textContent = team.dif > 0 ? `+` + team.dif : String(team.dif);
+        difEl.className = `stat-mini-val ` + (team.dif > 0 ? `pos` : (team.dif < 0 ? `neg` : ``));
+      }
+
+      setTxt(`detail-bp`, String(team.bp));
+      setTxt(`detail-bc`, String(team.bc));
+      setTxt(`detail-fpe`, team.f + ` / ` + team.pe);
+
+      setTxt(`wdl-lbl-g`, `Victoires : ` + team.g);
+      setTxt(`wdl-lbl-n`, `Nuls : ` + team.n);
+      setTxt(`wdl-lbl-p`, `Défaites : ` + team.p);
+
+      const segG = document.getElementById(`wdl-seg-g`);
+      const segN = document.getElementById(`wdl-seg-n`);
+      const segP = document.getElementById(`wdl-seg-p`);
+      if (segG) {
+        segG.style.width = ((team.g / 7) * 100) + `%`;
+        segG.style.display = team.g > 0 ? `block` : `none`;
+      }
+      if (segN) {
+        segN.style.width = ((team.n / 7) * 100) + `%`;
+        segN.style.display = team.n > 0 ? `block` : `none`;
+      }
+      if (segP) {
+        segP.style.width = ((team.p / 7) * 100) + `%`;
+        segP.style.display = team.p > 0 ? `block` : `none`;
+      }
+
+      /* Synthesis ratios */
+      const ptsMatch = team.pts / team.jo;
+      const bpMatch = team.bp / team.jo;
+      const bcMatch = team.bc / team.jo;
+      const ptsPct = (team.pts / 21) * 100;
+
+      setTxt(`synth-pts-match`, fmtNum(ptsMatch, 2));
+      setTxt(`synth-bp-match`, fmtNum(bpMatch, 2));
+      setTxt(`synth-bc-match`, fmtNum(bcMatch, 2));
+      setTxt(`synth-pts-pct`, fmtNum(ptsPct, 1) + ` %`);
+      setTxt(`synth-rank-att`, ranks.attLabel);
+      setTxt(`synth-rank-def`, ranks.defLabel);
+
+      const attDiff = bpMatch - LEAGUE_AVG_GOALS_PER_TEAM_MATCH;
+      const defDiff = LEAGUE_AVG_GOALS_PER_TEAM_MATCH - bcMatch;
+      const attPhrase = attDiff >= 0
+        ? `supérieure de ` + fmtNum(attDiff, 2) + ` but/m.`
+        : `inférieure de ` + fmtNum(Math.abs(attDiff), 2) + ` but/m.`;
+      const defPhrase = defDiff >= 0
+        ? `plus solide de ` + fmtNum(defDiff, 2) + ` but/m.`
+        : `plus perméable de ` + fmtNum(Math.abs(defDiff), 2) + ` but/m.`;
+
+      setTxt(
+        `synth-club-note`,
+        `Par rapport à la moyenne du groupe (1,75 but/match), l’attaque de ` + team.short + ` est ` + attPhrase + ` et sa défense est ` + defPhrase + ` que la moyenne.`
+      );
+    }
+
+    /* Render Standings Table */
+    function renderTable() {
+      const tbody = document.getElementById(`standings-tbody`);
+      if (!tbody) return;
+
+      const list = getFilteredTeams().sort(function(a, b) {
+        const key = state.tableSort;
+        const diff = a[key] - b[key];
+        if (diff !== 0) return state.tableSortAsc ? diff : -diff;
+        return a.pl - b.pl;
+      });
+
+      tbody.innerHTML = ``;
+      list.forEach(function(team) {
+        const tr = document.createElement(`tr`);
+        if (team.pl === state.selectedRank) tr.className = `selected-row`;
+        tr.setAttribute(`tabindex`, `0`);
+        tr.setAttribute(`aria-label`, `Sélectionner ` + team.name + `, ` + team.pl + `e avec ` + team.pts + ` points`);
+        tr.onclick = function() { selectTeamByRank(team.pl); };
+        tr.onkeydown = function(e) {
+          if (e.key === `Enter` || e.key === ` `) {
+            e.preventDefault();
+            selectTeamByRank(team.pl);
+          }
+        };
+
+        const difStr = team.dif > 0 ? `+` + team.dif : String(team.dif);
+        const difCls = team.dif > 0 ? `dif-pos` : (team.dif < 0 ? `dif-neg` : `dif-zero`);
+
+        tr.innerHTML =
+          `<td>` + team.pl + `</td>` +
+          `<td><div class="club-cell"><span class="zone-dot ` + team.zone + `" aria-hidden="true"></span><span>` + team.name + `</span></div></td>` +
+          `<td class="pts-cell">` + team.pts + `</td>` +
+          `<td>` + team.jo + `</td>` +
+          `<td>` + team.g + `</td>` +
+          `<td>` + team.n + `</td>` +
+          `<td>` + team.p + `</td>` +
+          `<td>` + team.f + `</td>` +
+          `<td>` + team.bp + `</td>` +
+          `<td>` + team.bc + `</td>` +
+          `<td class="` + difCls + `">` + difStr + `</td>` +
+          `<td>` + team.pe + `</td>`;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function zoneColor(zone, selected) {
+      if (selected) return getToken(`--on-surface`);
+      if (zone === `top`) return getToken(`--zone-top`);
+      if (zone === `mid`) return getToken(`--zone-mid`);
+      return getToken(`--zone-low`);
+    }
+
+    function commonChartOptions(onBarClick) {
+      const tickColor = getToken(`--chart-tick`);
+      const gridColor = getToken(`--chart-grid`);
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        onClick: function(evt, elements) {
+          if (elements && elements.length > 0 && typeof onBarClick === `function`) {
+            onBarClick(elements[0].index);
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: getToken(`--on-surface`),
+              font: { family: getToken(`--font-body`), weight: `600`, size: 12 },
+              usePointStyle: true,
+              boxWidth: 10
+            }
+          },
+          tooltip: {
+            backgroundColor: getToken(`--on-surface`),
+            titleColor: getToken(`--on-primary`),
+            bodyColor: getToken(`--on-primary`),
+            padding: 10,
+            cornerRadius: 10
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: gridColor, drawBorder: false },
+            ticks: { color: tickColor, font: { family: getToken(`--font-body`), size: 11, weight: `600` } }
+          },
+          y: {
+            grid: { color: gridColor, drawBorder: false },
+            ticks: { color: tickColor, font: { family: getToken(`--font-label`), size: 11 } }
+          }
+        }
+      };
+    }
+
+    function renderCharts() {
+      if (typeof Chart === `undefined`) return;
+      const list = getFilteredTeams();
+      const labels = list.map(function(t) { return t.short; });
+
+      /* 1. Points horizontal bar chart */
+      const ctxPts = document.getElementById(`chart-points`);
+      if (ctxPts) {
+        if (charts.points) charts.points.destroy();
+        const optsPts = commonChartOptions(function(idx) {
+          if (list[idx]) selectTeamByRank(list[idx].pl);
+        });
+        optsPts.indexAxis = `y`;
+        optsPts.plugins.legend.display = false;
+        optsPts.scales.x.suggestedMax = 18;
+        optsPts.scales.y.grid.display = false;
+
+        charts.points = new Chart(ctxPts, {
+          type: `bar`,
+          data: {
+            labels: labels,
+            datasets: [{
+              label: `Points (Pts)`,
+              data: list.map(function(t) { return t.pts; }),
+              backgroundColor: list.map(function(t) { return zoneColor(t.zone, t.pl === state.selectedRank); }),
+              borderRadius: 8,
+              borderSkipped: false
+            }]
+          },
+          options: optsPts
+        });
+      }
+
+      /* 2. Stacked W/D/L chart */
+      const ctxWdl = document.getElementById(`chart-wdl`);
+      if (ctxWdl) {
+        if (charts.wdl) charts.wdl.destroy();
+        const optsWdl = commonChartOptions(function(idx) {
+          if (list[idx]) selectTeamByRank(list[idx].pl);
+        });
+        optsWdl.indexAxis = `y`;
+        optsWdl.scales.x.stacked = true;
+        optsWdl.scales.x.max = 7;
+        optsWdl.scales.y.stacked = true;
+        optsWdl.scales.y.grid.display = false;
+
+        charts.wdl = new Chart(ctxWdl, {
+          type: `bar`,
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: `Victoires (G)`,
+                data: list.map(function(t) { return t.g; }),
+                backgroundColor: getToken(`--positive`),
+                borderRadius: 6
+              },
+              {
+                label: `Nuls (N)`,
+                data: list.map(function(t) { return t.n; }),
+                backgroundColor: getToken(`--data-draw`),
+                borderRadius: 6
+              },
+              {
+                label: `Défaites (P)`,
+                data: list.map(function(t) { return t.p; }),
+                backgroundColor: getToken(`--data-loss`),
+                borderRadius: 6
+              }
+            ]
+          },
+          options: optsWdl
+        });
+      }
+
+      /* 3. Attack vs Defense grouped bar chart */
+      const ctxAttDef = document.getElementById(`chart-att-def`);
+      if (ctxAttDef) {
+        if (charts.attDef) charts.attDef.destroy();
+        const optsAd = commonChartOptions(function(idx) {
+          if (list[idx]) selectTeamByRank(list[idx].pl);
+        });
+        optsAd.scales.x.grid.display = false;
+        optsAd.scales.y.beginAtZero = true;
+
+        charts.attDef = new Chart(ctxAttDef, {
+          type: `bar`,
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: `Buts marqués (Bp)`,
+                data: list.map(function(t) { return t.bp; }),
+                backgroundColor: getToken(`--data-1`),
+                borderRadius: 6
+              },
+              {
+                label: `Buts encaissés (Bc)`,
+                data: list.map(function(t) { return t.bc; }),
+                backgroundColor: getToken(`--data-2`),
+                borderRadius: 6
+              }
+            ]
+          },
+          options: optsAd
+        });
+      }
+
+      /* 4. Diverging Goal Difference chart */
+      const ctxDif = document.getElementById(`chart-dif`);
+      if (ctxDif) {
+        if (charts.dif) charts.dif.destroy();
+        const optsDif = commonChartOptions(function(idx) {
+          if (list[idx]) selectTeamByRank(list[idx].pl);
+        });
+        optsDif.indexAxis = `y`;
+        optsDif.plugins.legend.display = false;
+        optsDif.scales.y.grid.display = false;
+        optsDif.scales.x.suggestedMin = -15;
+        optsDif.scales.x.suggestedMax = 18;
+
+        charts.dif = new Chart(ctxDif, {
+          type: `bar`,
+          data: {
+            labels: labels,
+            datasets: [{
+              label: `Différence de buts (Dif)`,
+              data: list.map(function(t) { return t.dif; }),
+              backgroundColor: list.map(function(t) {
+                if (t.dif > 0) return getToken(`--positive`);
+                if (t.dif < 0) return getToken(`--data-loss`);
+                return getToken(`--data-context`);
+              }),
+              borderRadius: 6
+            }]
+          },
+          options: optsDif
+        });
+      }
+
+      if (state.showSynthesis) {
+        renderEfficiencyChart();
+      }
+    }
+
+    function renderEfficiencyChart() {
+      if (typeof Chart === `undefined`) return;
+      const ctxEff = document.getElementById(`chart-efficiency`);
+      if (!ctxEff) return;
+
+      const list = getFilteredTeams().sort(function(a, b) {
+        if (state.efficiencySort === `att`) return b.bp - a.bp || a.pl - b.pl;
+        if (state.efficiencySort === `def`) return a.bc - b.bc || a.pl - b.pl;
+        return a.pl - b.pl;
+      });
+
+      if (charts.efficiency) charts.efficiency.destroy();
+      const optsEff = commonChartOptions(function(idx) {
+        if (list[idx]) selectTeamByRank(list[idx].pl);
+      });
+      optsEff.scales.x.grid.display = false;
+      optsEff.scales.y.beginAtZero = true;
+
+      charts.efficiency = new Chart(ctxEff, {
+        type: `bar`,
+        data: {
+          labels: list.map(function(t) { return t.short; }),
+          datasets: [
+            {
+              label: `Bp / match (moyenne sur 7 j.)`,
+              data: list.map(function(t) { return Number((t.bp / t.jo).toFixed(2)); }),
+              backgroundColor: getToken(`--data-1`),
+              borderRadius: 6
+            },
+            {
+              label: `Bc / match (moyenne sur 7 j.)`,
+              data: list.map(function(t) { return Number((t.bc / t.jo).toFixed(2)); }),
+              backgroundColor: getToken(`--data-2`),
+              borderRadius: 6
+            },
+            {
+              type: `line`,
+              label: `Moyenne du championnat (1,75 but/m.)`,
+              data: list.map(function() { return 1.75; }),
+              borderColor: getToken(`--warning`),
+              borderWidth: 2,
+              borderDash: [6, 4],
+              pointRadius: 0,
+              fill: false
+            }
+          ]
+        },
+        options: optsEff
+      });
+    }
+
+    /* Boot sequence */
+    document.addEventListener(`DOMContentLoaded`, function() {
+      initTeamSelector();
+      renderKpis();
+      renderTeamDetail();
+      renderTable();
+      renderCharts();
+      if (typeof lucide !== `undefined`) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>
