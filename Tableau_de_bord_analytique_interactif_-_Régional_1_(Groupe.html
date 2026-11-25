@@ -1,0 +1,2145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="dashboard">
+  <meta name="design-style" content="showroom">
+  <title>Ligue de Bretagne — Régional 1 (Groupe A) | Tableau de bord analytique</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* 1. Showroom base palette adapted for high-contrast analytical clarity */
+      --background: #eef2f7;
+      --surface-container-low: #ffffff;
+      --surface-container: #e6ebf2;
+      --surface-container-high: #d9e1ec;
+
+      /* Ink */
+      --on-surface: #141923;
+      --on-surface-variant: #4c566a;
+
+      /* Rules */
+      --outline: #c5cedb;
+      --outline-variant: #e2e8f0;
+
+      /* Accents */
+      --primary: #0066cc;
+      --primary-hover: #0052a3;
+      --on-primary: #ffffff;
+      --primary-container: #e6f0fc;
+      --on-primary-container: #004c99;
+      --secondary: #d95d16;
+      --tertiary: #141923;
+      --error: #c81e32;
+      --on-error: #ffffff;
+
+      /* Semantic & Data series */
+      --positive: #0f8a5f;
+      --positive-soft: #e6f6f0;
+      --warning: #b45309;
+      --warning-soft: #fef3c7;
+      --danger-soft: #fdebed;
+
+      --data-1: #0066cc;
+      --data-2: #d95d16;
+      --data-3: #0f8a5f;
+      --data-4: #7c3aed;
+      --data-5: #dc2626;
+      --data-context: #94a3b8;
+
+      /* Epistemic badges: Faits vérifiés vs Observation de synthèse */
+      --fact-bg: #e6f4f1;
+      --fact-border: #99d6c8;
+      --fact-text: #0b5d47;
+      --fact-dot: #0f8a5f;
+
+      --synth-bg: #f3ecff;
+      --synth-border: #cbb2ff;
+      --synth-text: #5b21b6;
+      --synth-accent: #d95d16;
+      --synth-grad: linear-gradient(135deg, #f3ecff 0%, #fff1e8 100%);
+
+      /* Fonts */
+      --font-headline: 'Inter Tight', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-label: 'Inter', sans-serif;
+
+      /* Shape: Pixar 3D generous radii */
+      --rounded: 9999px;
+      --rounded-md: 1rem;       /* 16px */
+      --rounded-lg: 1.25rem;    /* 20px */
+      --rounded-xl: 1.5rem;     /* 24px */
+      --rounded-full: 9999px;
+
+      /* Pixar 3D multi-layered shadows & specular highlights */
+      --shadow-3d:
+        0 2px 4px rgb(20 25 35 / 0.04),
+        0 10px 24px -4px rgb(20 35 60 / 0.08),
+        0 20px 40px -12px rgb(20 35 60 / 0.06),
+        inset 0 2px 0 rgb(255 255 255 / 0.95),
+        inset 0 -2px 0 rgb(20 35 60 / 0.04);
+
+      --shadow-3d-hover:
+        0 4px 8px rgb(20 25 35 / 0.06),
+        0 16px 32px -4px rgb(0 102 204 / 0.14),
+        0 24px 48px -12px rgb(20 35 60 / 0.10),
+        inset 0 2px 0 rgb(255 255 255 / 1),
+        inset 0 -2px 0 rgb(20 35 60 / 0.05);
+
+      --shadow-pill:
+        0 2px 6px rgb(20 35 60 / 0.08),
+        0 6px 14px -2px rgb(20 35 60 / 0.06),
+        inset 0 1.5px 0 rgb(255 255 255 / 0.9),
+        inset 0 -2px 0 rgb(20 35 60 / 0.08);
+
+      --shadow-pill-primary:
+        0 4px 12px rgb(0 102 204 / 0.28),
+        0 10px 20px -4px rgb(0 102 204 / 0.22),
+        inset 0 1.5px 0 rgb(255 255 255 / 0.45),
+        inset 0 -2.5px 0 rgb(0 50 110 / 0.28);
+
+      --shadow-pill-synth:
+        0 4px 12px rgb(124 58 237 / 0.22),
+        0 8px 18px -4px rgb(217 93 22 / 0.18),
+        inset 0 1.5px 0 rgb(255 255 255 / 0.85),
+        inset 0 -2px 0 rgb(109 40 217 / 0.14);
+
+      --card-gradient: linear-gradient(180deg, #ffffff 0%, #f9fbfd 100%);
+      --hero-gradient: linear-gradient(145deg, #ffffff 0%, #f5f8fc 55%, #edf3fa 100%);
+      --inset-well: linear-gradient(180deg, #eaf0f7 0%, #f3f6fb 100%);
+      --inset-shadow: inset 0 2px 5px rgb(20 35 60 / 0.07), inset 0 -1px 0 rgb(255 255 255 / 0.8);
+      --border-soft: 1px solid rgb(255 255 255 / 0.9);
+      --border-control: 1px solid #cbd5e1;
+
+      /* Type tracking & scale (Dashboard scale) */
+      --headline-tracking: -0.025em;
+      --figure-tracking: -0.03em;
+      --display-size: clamp(1.75rem, 1.35rem + 1.4vw, 2.5rem);
+      --headline-size: clamp(1.2rem, 1.05rem + 0.5vw, 1.45rem);
+      --subhead-size: clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
+      --body-size: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);
+      --label-size: 0.75rem;
+
+      /* Focus */
+      --focus: #0066cc;
+
+      /* Spacing scale (4pt base) */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.25rem;
+      --space-2xl: 3.5rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    header { position: static !important; }
+    button, input, select { font-family: inherit; }
+
+    .page-grid {
+      display: grid;
+      gap: var(--space-lg);
+      padding: var(--space-lg);
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Focus rings */
+    :focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* Typography */
+    h1, h2, h3 {
+      font-family: var(--font-headline);
+      letter-spacing: var(--headline-tracking);
+      color: var(--on-surface);
+      margin: 0;
+    }
+    .tabular { font-variant-numeric: tabular-nums; }
+
+    /* Tactile Pixar 3D Surface Card */
+    .card-3d {
+      background: var(--card-gradient);
+      border-radius: var(--rounded-lg);
+      border: var(--border-soft);
+      box-shadow: var(--shadow-3d);
+      padding: var(--space-lg);
+      transition: transform var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out);
+    }
+    .card-3d.interactive:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-3d-hover);
+    }
+    .card-3d.hero-card {
+      background: var(--hero-gradient);
+      border-radius: var(--rounded-xl);
+      padding: var(--space-xl);
+    }
+
+    /* Epistemic Badges */
+    .badge-epistemic {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: 0.3rem 0.75rem;
+      border-radius: var(--rounded-full);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      line-height: 1.2;
+      white-space: nowrap;
+      box-shadow: var(--shadow-pill);
+    }
+    .badge-fact {
+      background: var(--fact-bg);
+      color: var(--fact-text);
+      border: 1px solid var(--fact-border);
+    }
+    .badge-fact::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: var(--rounded-full);
+      background: var(--fact-dot);
+      flex-shrink: 0;
+    }
+    .badge-synth {
+      background: var(--synth-grad);
+      color: var(--synth-text);
+      border: 1px solid var(--synth-border);
+      box-shadow: var(--shadow-pill-synth);
+    }
+    .badge-synth::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: var(--rounded-full);
+      background: var(--synth-accent);
+      flex-shrink: 0;
+    }
+
+    /* Zone Badges */
+    .zone-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--rounded-full);
+      font-size: var(--label-size);
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    .zone-podium { background: var(--primary-container); color: var(--on-primary-container); }
+    .zone-mid { background: var(--surface-container); color: var(--on-surface-variant); }
+    .zone-danger { background: var(--danger-soft); color: var(--error); }
+
+    /* Hero Header */
+    .hero-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-lg);
+    }
+    .hero-title-group {
+      max-width: 68ch;
+      display: grid;
+      gap: var(--space-sm);
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-size: var(--label-size);
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .hero-title-group h1 {
+      font-size: var(--display-size);
+      font-weight: 800;
+      line-height: 1.08;
+    }
+    .hero-lede {
+      margin: 0;
+      color: var(--on-surface-variant);
+      font-size: var(--subhead-size);
+      max-width: 62ch;
+    }
+    .epistemic-legend {
+      display: grid;
+      gap: var(--space-sm);
+      background: var(--surface-container-low);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md);
+      box-shadow: var(--inset-shadow);
+      border: 1px solid var(--outline-variant);
+      max-width: 440px;
+    }
+    .legend-row {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      font-size: 0.85rem;
+      color: var(--on-surface-variant);
+    }
+    .legend-row strong { color: var(--on-surface); }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+    .kpi-card {
+      display: grid;
+      gap: var(--space-sm);
+      align-content: start;
+    }
+    .kpi-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .kpi-label {
+      font-size: var(--label-size);
+      font-weight: 600;
+      color: var(--on-surface-variant);
+    }
+    .kpi-value {
+      font-family: var(--font-headline);
+      font-size: clamp(1.65rem, 1.35rem + 0.8vw, 2.15rem);
+      font-weight: 800;
+      letter-spacing: var(--figure-tracking);
+      line-height: 1.1;
+      color: var(--on-surface);
+    }
+    .kpi-sub {
+      font-size: 0.85rem;
+      color: var(--on-surface-variant);
+      font-weight: 500;
+    }
+    .kpi-synth-note {
+      margin-top: var(--space-xs);
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--rounded-md);
+      background: var(--synth-grad);
+      border: 1px solid var(--synth-border);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--synth-text);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    /* Controls Bar */
+    .controls-panel {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: var(--space-md);
+    }
+    .control-group {
+      display: grid;
+      gap: var(--space-xs);
+    }
+    .control-label {
+      font-size: var(--label-size);
+      font-weight: 600;
+      color: var(--on-surface-variant);
+      padding-left: var(--space-xs);
+    }
+    .pill-track {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      background: var(--inset-well);
+      padding: var(--space-xs);
+      border-radius: var(--rounded-lg);
+      box-shadow: var(--inset-shadow);
+    }
+    .btn-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      min-height: 44px;
+      padding: 0 var(--space-md);
+      border-radius: var(--rounded-full);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--on-surface-variant);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--dur-short) var(--ease-out),
+                  color var(--dur-short) var(--ease-out),
+                  transform var(--dur-micro) var(--ease-out),
+                  box-shadow var(--dur-short) var(--ease-out);
+    }
+    .btn-pill:hover {
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+    }
+    .btn-pill:active {
+      transform: scale(0.97);
+    }
+    .btn-pill.active {
+      background: var(--primary);
+      color: var(--on-primary);
+      box-shadow: var(--shadow-pill-primary);
+    }
+    .btn-pill.active:hover {
+      background: var(--primary-hover);
+      color: var(--on-primary);
+    }
+
+    .right-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: var(--space-md);
+    }
+    .select-3d {
+      min-height: 44px;
+      padding: 0 2.5rem 0 var(--space-md);
+      border-radius: var(--rounded-full);
+      border: var(--border-control);
+      background-color: var(--surface-container-low);
+      color: var(--on-surface);
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-pill);
+      cursor: pointer;
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, var(--on-surface-variant) 50%),
+                        linear-gradient(135deg, var(--on-surface-variant) 50%, transparent 50%);
+      background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      transition: box-shadow var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
+    }
+    .select-3d:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-3d-hover);
+    }
+
+    .btn-toggle-synth {
+      min-height: 44px;
+      padding: 0 var(--space-lg);
+      border-radius: var(--rounded-full);
+      border: 1px solid var(--synth-border);
+      background: var(--synth-grad);
+      color: var(--synth-text);
+      font-size: 0.875rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      cursor: pointer;
+      box-shadow: var(--shadow-pill-synth);
+      transition: transform var(--dur-micro) var(--ease-out),
+                  box-shadow var(--dur-short) var(--ease-out),
+                  background-color var(--dur-short) var(--ease-out);
+    }
+    .btn-toggle-synth:hover {
+      transform: translateY(-1px);
+    }
+    .btn-toggle-synth:active {
+      transform: scale(0.98);
+    }
+    .btn-toggle-synth[aria-pressed="false"] {
+      background: var(--surface-container-low);
+      border-color: var(--outline);
+      color: var(--on-surface-variant);
+      box-shadow: var(--shadow-pill);
+    }
+
+    /* Interactive Team Sheet */
+    .team-sheet-wrapper {
+      container-type: inline-size;
+    }
+    .team-sheet-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-md);
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid var(--outline-variant);
+      margin-bottom: var(--space-lg);
+    }
+    .team-identity {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-md);
+    }
+    .rank-orb {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--rounded-md);
+      background: var(--primary);
+      color: var(--on-primary);
+      font-family: var(--font-headline);
+      font-size: 1.5rem;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow-pill-primary);
+      flex-shrink: 0;
+    }
+    .team-name-block h2 {
+      font-size: clamp(1.3rem, 1.1rem + 0.6vw, 1.75rem);
+      font-weight: 800;
+    }
+    .team-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-top: var(--space-xs);
+    }
+    .team-points-hero {
+      text-align: right;
+    }
+    .team-points-hero .pts-big {
+      font-family: var(--font-headline);
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+    }
+    .team-points-hero .pts-sub {
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      font-weight: 600;
+    }
+
+    .team-sheet-columns {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .team-sheet-columns.facts-only {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    @container (max-width: 780px) {
+      .team-sheet-columns { grid-template-columns: minmax(0, 1fr); }
+      .team-points-hero { text-align: left; }
+    }
+
+    .sheet-subpanel {
+      background: var(--inset-well);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md);
+      box-shadow: var(--inset-shadow);
+      display: grid;
+      gap: var(--space-md);
+    }
+    .sheet-subpanel-synth {
+      background: var(--synth-grad);
+      border: 1px solid var(--synth-border);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md);
+      box-shadow: var(--shadow-pill-synth);
+      display: grid;
+      gap: var(--space-md);
+    }
+    .subpanel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+    .subpanel-head h3 {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .mini-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(115px, 100%), 1fr));
+      gap: var(--space-sm);
+    }
+    .mini-stat {
+      background: var(--surface-container-low);
+      border-radius: var(--rounded-md);
+      padding: var(--space-sm) var(--space-md);
+      box-shadow: var(--shadow-pill);
+      display: grid;
+      gap: 2px;
+    }
+    .mini-stat .ms-label {
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      font-weight: 600;
+    }
+    .mini-stat .ms-val {
+      font-family: var(--font-headline);
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--on-surface);
+    }
+    .mini-stat .ms-val.pos { color: var(--positive); }
+    .mini-stat .ms-val.neg { color: var(--error); }
+
+    /* Recent Matches J5-J9 inside Team Sheet */
+    .form-list {
+      display: grid;
+      gap: var(--space-xs);
+    }
+    .form-match-row {
+      display: grid;
+      grid-template-columns: 74px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: var(--space-sm);
+      background: var(--surface-container-low);
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--rounded-md);
+      font-size: 0.85rem;
+      box-shadow: 0 1px 2px rgb(20 35 60 / 0.04);
+    }
+    .match-j {
+      font-weight: 700;
+      color: var(--on-surface-variant);
+      font-size: var(--label-size);
+    }
+    .match-res-badge {
+      padding: 0.15rem 0.55rem;
+      border-radius: var(--rounded-full);
+      font-size: var(--label-size);
+      font-weight: 700;
+      text-align: center;
+    }
+    .res-V { background: var(--positive-soft); color: var(--positive); }
+    .res-N { background: var(--warning-soft); color: var(--warning); }
+    .res-D { background: var(--danger-soft); color: var(--error); }
+
+    .player-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+    .player-chip {
+      background: var(--surface-container-low);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--rounded-full);
+      padding: 0.25rem 0.7rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      box-shadow: 0 1px 3px rgb(20 35 60 / 0.05);
+    }
+
+    /* Section Headings */
+    .section-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .section-head h2 {
+      font-size: var(--headline-size);
+      font-weight: 800;
+    }
+    .section-sub {
+      color: var(--on-surface-variant);
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    /* Charts Grid */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-lg);
+    }
+    .chart-card {
+      display: grid;
+      gap: var(--space-md);
+      align-content: start;
+    }
+    .chart-card.full-span {
+      grid-column: 1 / -1;
+    }
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-sm);
+    }
+    .chart-header h3 {
+      font-size: var(--subhead-size);
+      font-weight: 700;
+    }
+    .chart-desc {
+      margin: var(--space-xs) 0 0;
+      font-size: 0.85rem;
+      color: var(--on-surface-variant);
+    }
+    .chart-box {
+      position: relative;
+      width: 100%;
+      min-height: 350px;
+      height: 360px;
+    }
+    .chart-box.tall {
+      min-height: 410px;
+      height: 420px;
+    }
+
+    /* Standings Table */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: var(--rounded-md);
+      background: var(--surface-container-low);
+    }
+    table.standings-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    .standings-table thead th {
+      text-align: left;
+      padding: 0.75rem 0.65rem;
+      font-size: var(--label-size);
+      font-weight: 700;
+      color: var(--on-surface-variant);
+      border-bottom: 2px solid var(--outline-variant);
+      white-space: nowrap;
+      background: var(--surface-container-low);
+    }
+    .standings-table thead th.num,
+    .standings-table tbody td.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .sort-btn {
+      background: none;
+      border: 0;
+      padding: 0;
+      font: inherit;
+      font-weight: 700;
+      color: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .sort-btn:hover { color: var(--primary); }
+    .sort-btn.active-sort { color: var(--primary); }
+    .standings-table thead th.synth-col,
+    .standings-table tbody td.synth-col {
+      background: var(--synth-bg);
+      color: var(--synth-text);
+    }
+    .standings-table tbody tr {
+      border-bottom: 1px solid var(--outline-variant);
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .standings-table tbody tr:hover {
+      background: var(--primary-container);
+    }
+    .standings-table tbody tr.selected-row {
+      background: var(--primary-container);
+      box-shadow: inset 4px 0 0 var(--primary);
+    }
+    .standings-table tbody td {
+      padding: 0.7rem 0.65rem;
+      white-space: nowrap;
+    }
+    .club-cell {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-weight: 600;
+    }
+    .rank-dot {
+      width: 24px;
+      height: 24px;
+      border-radius: var(--rounded-full);
+      display: inline-grid;
+      place-items: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .rank-dot.podium { background: var(--primary); color: var(--on-primary); }
+    .rank-dot.mid { background: var(--surface-container); color: var(--on-surface); }
+    .rank-dot.danger { background: var(--danger-soft); color: var(--error); }
+
+    /* Annexes Grid: Top Scorers, Top Assists, Attack/Defense, Matchdays J5-J9 */
+    .annexes-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-lg);
+    }
+    .leader-list {
+      display: grid;
+      gap: var(--space-xs);
+    }
+    .leader-row {
+      display: grid;
+      grid-template-columns: 32px 1fr auto;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--rounded-md);
+      background: var(--background);
+      border: 1px solid var(--outline-variant);
+      font-size: 0.875rem;
+    }
+    .leader-row.highlight-club {
+      background: var(--primary-container);
+      border-color: var(--primary);
+    }
+    .leader-rank {
+      font-weight: 700;
+      color: var(--on-surface-variant);
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .leader-info {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: var(--space-xs);
+    }
+    .leader-club {
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      font-weight: 600;
+    }
+    .leader-val {
+      font-family: var(--font-headline);
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Matchdays Explorer */
+    .matchday-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+      gap: var(--space-sm);
+    }
+    .fixture-card {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--background);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--rounded-md);
+      font-size: 0.85rem;
+    }
+    .fixture-card.highlight-club {
+      background: var(--primary-container);
+      border-color: var(--primary);
+    }
+    .fixture-home { text-align: right; font-weight: 600; }
+    .fixture-away { text-align: left; font-weight: 600; }
+    .fixture-score {
+      padding: 0.25rem 0.6rem;
+      border-radius: var(--rounded-full);
+      background: var(--surface-container-low);
+      font-family: var(--font-headline);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      box-shadow: var(--shadow-pill);
+      color: var(--on-surface);
+    }
+
+    /* Hidden state for Observations de synthèse */
+    .is-hidden-synth {
+      display: none !important;
+    }
+
+    /* Footer */
+    .footer-note {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-md);
+      color: var(--on-surface-variant);
+      font-size: 0.85rem;
+      padding: var(--space-md) var(--space-lg);
+    }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 960px) {
+      .charts-grid,
+      .annexes-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+    @media (max-width: 640px) {
+      .page-grid {
+        padding: var(--space-sm);
+        gap: var(--space-md);
+      }
+      .card-3d,
+      .card-3d.hero-card {
+        padding: var(--space-md);
+        border-radius: var(--rounded-md);
+      }
+      .chart-box,
+      .chart-box.tall {
+        min-height: 300px;
+        height: 320px;
+      }
+      .fixture-card {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-grid">
+    <!-- 1. Hero Header & Epistemic Distinction -->
+    <header class="card-3d hero-card">
+      <div class="hero-header">
+        <div class="hero-title-group">
+          <div class="hero-eyebrow">
+            <i data-lucide="trophy" width="16" height="16" aria-hidden="true"></i>
+            <span>Ligue de Bretagne — Saison 2026</span>
+          </div>
+          <h1>Régional 1 (Groupe A) : Bilan après 9 journées</h1>
+          <p class="hero-lede">
+            Tableau de bord analytique interactif des 14 clubs engagés : classement général, efficacité offensive et défensive, classements individuels et dynamique récente (journées 5 à 9).
+          </p>
+        </div>
+
+        <aside class="epistemic-legend" aria-label="Distinction analytique des données">
+          <div class="legend-row">
+            <span class="badge-epistemic badge-fact">Faits vérifiés</span>
+            <span><strong>Données officielles brutes</strong> issues du dossier complet après 9 journées (Pts, J, G, N, P, Bp, Bc, Dif, buteurs, passeurs, scores J5–J9).</span>
+          </div>
+          <div class="legend-row">
+            <span class="badge-epistemic badge-synth">Observation de synthèse</span>
+            <span><strong>Ratios dérivés par calcul</strong> (moyennes par match, part de victoires, ratio attaque/défense). Masquables d’un clic.</span>
+          </div>
+        </aside>
+      </div>
+    </header>
+
+    <!-- 2. Top-line KPI Summary Cards -->
+    <section class="kpi-grid" aria-label="Indicateurs clés du championnat">
+      <article class="card-3d interactive kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Leader officiel</span>
+          <span class="badge-epistemic badge-fact">Faits vérifiés</span>
+        </div>
+        <div class="kpi-value">AG PLOUVORN</div>
+        <div class="kpi-sub tabular">22 pts · 7 G · 1 N · 1 P · +16 Dif</div>
+        <div class="kpi-synth-note synthesis-block">
+          <i data-lucide="sparkles" width="14" height="14" aria-hidden="true"></i>
+          <span>Observation de synthèse : 2,44 pts/match (77,8 % victoires)</span>
+        </div>
+      </article>
+
+      <article class="card-3d interactive kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Meilleure attaque</span>
+          <span class="badge-epistemic badge-fact">Faits vérifiés</span>
+        </div>
+        <div class="kpi-value tabular">25 buts</div>
+        <div class="kpi-sub">AG PLOUVORN (1er) · Plaintel SP (24) · Pluvigner (22)</div>
+        <div class="kpi-synth-note synthesis-block">
+          <i data-lucide="sparkles" width="14" height="14" aria-hidden="true"></i>
+          <span>Observation de synthèse : 2,78 buts/match pour Plouvorn</span>
+        </div>
+      </article>
+
+      <article class="card-3d interactive kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Meilleure défense</span>
+          <span class="badge-epistemic badge-fact">Faits vérifiés</span>
+        </div>
+        <div class="kpi-value tabular">7 buts enc.</div>
+        <div class="kpi-sub">ST PLABENNÉCOIS (1er) · Plouvorn &amp; Paotred Dispount (9)</div>
+        <div class="kpi-synth-note synthesis-block">
+          <i data-lucide="sparkles" width="14" height="14" aria-hidden="true"></i>
+          <span>Observation de synthèse : 0,78 but enc./match (Plabennec)</span>
+        </div>
+      </article>
+
+      <article class="card-3d interactive kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Buteur &amp; passeur n°1</span>
+          <span class="badge-epistemic badge-fact">Faits vérifiés</span>
+        </div>
+        <div class="kpi-value">J. Dano · T. Guillou</div>
+        <div class="kpi-sub tabular">10 buts (Pluvigner) · 4 passes (Plouvorn)</div>
+        <div class="kpi-synth-note synthesis-block">
+          <i data-lucide="sparkles" width="14" height="14" aria-hidden="true"></i>
+          <span>Observation de synthèse : 206 buts au total (3,27 buts/match)</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- 3. Controls: Zone Filters, Club Selector & Synthesis Toggle -->
+    <section class="card-3d controls-panel" aria-label="Filtres et contrôles interactifs">
+      <div class="control-group">
+        <span class="control-label">Filtrer par zone du classement</span>
+        <div class="pill-track" role="group" aria-label="Zone du classement">
+          <button type="button" class="btn-pill active" id="zone-btn-all" onclick="setZoneFilter('all')">Tous (14)</button>
+          <button type="button" class="btn-pill" id="zone-btn-podium" onclick="setZoneFilter('podium')">Top 3 — Podium (1–3)</button>
+          <button type="button" class="btn-pill" id="zone-btn-mid" onclick="setZoneFilter('mid')">Milieu de tableau (4–10)</button>
+          <button type="button" class="btn-pill" id="zone-btn-danger" onclick="setZoneFilter('danger')">Zone rouge / Maintien (11–14)</button>
+        </div>
+      </div>
+
+      <div class="right-controls">
+        <div class="control-group">
+          <label class="control-label" for="team-select">Inspecter un club (Fiche dédiée)</label>
+          <select id="team-select" class="select-3d" onchange="selectTeam(this.value)"></select>
+        </div>
+
+        <div class="control-group">
+          <span class="control-label">Mode de lecture</span>
+          <button type="button" id="toggle-synth-btn" class="btn-toggle-synth" aria-pressed="true" onclick="toggleSynthesis()">
+            <i data-lucide="eye" width="16" height="16" id="toggle-synth-icon" aria-hidden="true"></i>
+            <span id="toggle-synth-text">Masquer les Observations de synthèse</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Interactive Team Sheet -->
+    <section class="card-3d team-sheet-wrapper" aria-label="Fiche synthétique d'équipe">
+      <div id="team-sheet-content"></div>
+    </section>
+
+    <!-- 5. Five Interactive Charts (Chart.js) -->
+    <section aria-label="Visualisations analytiques interactives">
+      <div class="section-head" style="margin-bottom: var(--space-md);">
+        <div>
+          <h2>Analyse graphique des 14 clubs</h2>
+          <p class="section-sub" id="charts-zone-summary">Zone affichée : Tous les clubs (14 équipes · 9 journées). Survolez pour détailler ou cliquez sur un club pour ouvrir sa fiche.</p>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <!-- Chart 1 -->
+        <article class="card-3d interactive chart-card">
+          <div class="chart-header">
+            <div>
+              <h3>1. Classement général en points</h3>
+              <p class="chart-desc">Barres horizontales triées par total de points officiel après 9 journées.</p>
+            </div>
+            <span class="badge-epistemic badge-fact">Faits vérifiés</span>
+          </div>
+          <div class="chart-box tall">
+            <canvas id="chart-points"></canvas>
+          </div>
+        </article>
+
+        <!-- Chart 2 -->
+        <article class="card-3d interactive chart-card">
+          <div class="chart-header">
+            <div>
+              <h3>2. Répartition Victoires / Nuls / Défaites</h3>
+              <p class="chart-desc">Empilement exact des 9 rencontres par club (G, N, P).</p>
+            </div>
+            <span class="badge-epistemic badge-fact">Faits vérifiés</span>
+          </div>
+          <div class="chart-box tall">
+            <canvas id="chart-gnp"></canvas>
+          </div>
+        </article>
+
+        <!-- Chart 3 -->
+        <article class="card-3d interactive chart-card">
+          <div class="chart-header">
+            <div>
+              <h3>3. Attaque vs Défense (Bp / Bc)</h3>
+              <p class="chart-desc">Croisement des buts marqués (axe X) et encaissés (axe Y). En bas à droite : profil dominant.</p>
+            </div>
+            <span class="badge-epistemic badge-fact">Faits vérifiés</span>
+          </div>
+          <div class="chart-box">
+            <canvas id="chart-scatter"></canvas>
+          </div>
+        </article>
+
+        <!-- Chart 4 -->
+        <article class="card-3d interactive chart-card">
+          <div class="chart-header">
+            <div>
+              <h3>4. Différence de buts (Dif)</h3>
+              <p class="chart-desc">Écart net entre buts marqués et buts encaissés autour de l’équilibre (0).</p>
+            </div>
+            <span class="badge-epistemic badge-fact">Faits vérifiés</span>
+          </div>
+          <div class="chart-box">
+            <canvas id="chart-diff"></canvas>
+          </div>
+        </article>
+
+        <!-- Chart 5 (Observation de synthèse) -->
+        <article class="card-3d interactive chart-card full-span synthesis-block" id="chart-card-efficiency">
+          <div class="chart-header">
+            <div>
+              <h3>5. Efficacité offensive &amp; défensive par match (Bp/9J vs Bc/9J)</h3>
+              <p class="chart-desc">Moyennes calculées sur 9 journées : buts inscrits par match (bleu) comparés aux buts concédés par match (orange).</p>
+            </div>
+            <span class="badge-epistemic badge-synth">Observation de synthèse</span>
+          </div>
+          <div class="chart-box">
+            <canvas id="chart-efficiency"></canvas>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 6. Full Interactive Standings Table -->
+    <section class="card-3d" aria-label="Tableau détaillé du classement">
+      <div class="section-head" style="margin-bottom: var(--space-md);">
+        <div>
+          <h2>Classement général complet &amp; indicateurs dérivés</h2>
+          <p class="section-sub">Cliquez sur un en-tête pour trier ou sur une ligne pour charger la fiche du club.</p>
+        </div>
+        <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap;">
+          <span class="badge-epistemic badge-fact">Colonnes blanches : Faits vérifiés</span>
+          <span class="badge-epistemic badge-synth synthesis-block">Colonnes violettes : Observation de synthèse</span>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="standings-table">
+          <thead>
+            <tr>
+              <th><button type="button" class="sort-btn" onclick="sortTable('pl')">Pl <span id="sort-ind-pl"></span></button></th>
+              <th>Équipe</th>
+              <th class="num"><button type="button" class="sort-btn active-sort" onclick="sortTable('pts')">Pts <span id="sort-ind-pts">▼</span></button></th>
+              <th class="num">J</th>
+              <th class="num"><button type="button" class="sort-btn" onclick="sortTable('g')">G <span id="sort-ind-g"></span></button></th>
+              <th class="num"><button type="button" class="sort-btn" onclick="sortTable('n')">N <span id="sort-ind-n"></span></button></th>
+              <th class="num"><button type="button" class="sort-btn" onclick="sortTable('p')">P <span id="sort-ind-p"></span></button></th>
+              <th class="num">F</th>
+              <th class="num"><button type="button" class="sort-btn" onclick="sortTable('bp')">Bp <span id="sort-ind-bp"></span></button></th>
+              <th class="num"><button type="button" class="sort-btn" onclick="sortTable('bc')">Bc <span id="sort-ind-bc"></span></button></th>
+              <th class="num"><button type="button" class="sort-btn" onclick="sortTable('dif')">Dif <span id="sort-ind-dif"></span></button></th>
+              <th class="num">Pe</th>
+              <th class="num synth-col synthesis-block"><button type="button" class="sort-btn" onclick="sortTable('ptsPg')">Pts/J <span id="sort-ind-ptsPg"></span></button></th>
+              <th class="num synth-col synthesis-block"><button type="button" class="sort-btn" onclick="sortTable('bpPg')">Bp/J <span id="sort-ind-bpPg"></span></button></th>
+              <th class="num synth-col synthesis-block"><button type="button" class="sort-btn" onclick="sortTable('bcPg')">Bc/J <span id="sort-ind-bcPg"></span></button></th>
+              <th class="num synth-col synthesis-block"><button type="button" class="sort-btn" onclick="sortTable('winPct')">% Vic <span id="sort-ind-winPct"></span></button></th>
+            </tr>
+          </thead>
+          <tbody id="standings-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 7. Annexes: Top Scorers, Top Assists, Attack & Defense, Matchdays J5-J9 -->
+    <section class="annexes-grid" aria-label="Classements individuels et résultats récents">
+      <!-- Top Buteurs -->
+      <article class="card-3d">
+        <div class="chart-header" style="margin-bottom: var(--space-md);">
+          <div>
+            <h3>Meilleurs buteurs (Top 20 officiel)</h3>
+            <p class="chart-desc">Les joueurs du club sélectionné sont mis en surbrillance.</p>
+          </div>
+          <span class="badge-epistemic badge-fact">Faits vérifiés</span>
+        </div>
+        <div style="display: flex; gap: var(--space-xs); margin-bottom: var(--space-sm); flex-wrap: wrap;">
+          <button type="button" class="btn-pill active" id="scorers-top9-btn" onclick="setScorersLimit(9)">Top 9 (≥ 6 buts)</button>
+          <button type="button" class="btn-pill" id="scorers-top20-btn" onclick="setScorersLimit(20)">Tout le Top 20</button>
+        </div>
+        <div class="leader-list" id="scorers-list"></div>
+      </article>
+
+      <!-- Top Passeurs -->
+      <article class="card-3d">
+        <div class="chart-header" style="margin-bottom: var(--space-md);">
+          <div>
+            <h3>Meilleurs passeurs (Top 20 officiel)</h3>
+            <p class="chart-desc">Les passeurs du club sélectionné sont mis en surbrillance.</p>
+          </div>
+          <span class="badge-epistemic badge-fact">Faits vérifiés</span>
+        </div>
+        <div style="display: flex; gap: var(--space-xs); margin-bottom: var(--space-sm); flex-wrap: wrap;">
+          <button type="button" class="btn-pill active" id="assists-top12-btn" onclick="setAssistsLimit(12)">Top 12 (≥ 2 passes)</button>
+          <button type="button" class="btn-pill" id="assists-top20-btn" onclick="setAssistsLimit(20)">Tout le Top 20</button>
+        </div>
+        <div class="leader-list" id="assists-list"></div>
+      </article>
+
+      <!-- Matchdays J5-J9 Explorer -->
+      <article class="card-3d" style="grid-column: 1 / -1;">
+        <div class="section-head" style="margin-bottom: var(--space-md);">
+          <div>
+            <h3>Résultats officiels des journées 5 à 9</h3>
+            <p class="section-sub" id="matchday-date-label">Journée 9 — Dim. 22 nov. 2026</p>
+          </div>
+          <span class="badge-epistemic badge-fact">Faits vérifiés</span>
+        </div>
+        <div class="pill-track" style="margin-bottom: var(--space-md); width: fit-content;" role="group" aria-label="Sélectionner une journée">
+          <button type="button" class="btn-pill active" id="j-btn-9" onclick="setMatchday(9)">J9 (22 nov.)</button>
+          <button type="button" class="btn-pill" id="j-btn-8" onclick="setMatchday(8)">J8 (8 nov.)</button>
+          <button type="button" class="btn-pill" id="j-btn-7" onclick="setMatchday(7)">J7 (25 oct.)</button>
+          <button type="button" class="btn-pill" id="j-btn-6" onclick="setMatchday(6)">J6 (18 oct.)</button>
+          <button type="button" class="btn-pill" id="j-btn-5" onclick="setMatchday(5)">J5 (4 oct.)</button>
+        </div>
+        <div class="matchday-grid" id="matchday-fixtures"></div>
+      </article>
+    </section>
+
+    <!-- 8. Footer -->
+    <footer class="card-3d footer-note">
+      <span>Source : Ligue de Bretagne — Régional 1 - A (Dossier Complet), synthèse officielle après 9 journées et résultats des journées 5 à 9.</span>
+      <span>14 clubs · 63 matchs disputés · 206 buts inscrits</span>
+    </footer>
+  </main>
+
+  <script>
+    // =========================================================================
+    // 1. VERIFIED SOURCE DATA (100% grounded in the official dossier)
+    // =========================================================================
+    const TEAMS = [
+      { pl: 1,  name: `AG PLOUVORN`,            pts: 22, jo: 9, g: 7, n: 1, p: 1, f: 0, bp: 25, bc: 9,  dif: 16,  pe: 0, atkRank: 1,  defRank: 2  },
+      { pl: 2,  name: `KÉRIOLETS PLUVIGNER`,    pts: 20, jo: 9, g: 6, n: 2, p: 1, f: 0, bp: 22, bc: 11, dif: 11,  pe: 0, atkRank: 3,  defRank: 4  },
+      { pl: 3,  name: `SM DOUARNENEZ`,          pts: 19, jo: 9, g: 6, n: 1, p: 2, f: 0, bp: 15, bc: 15, dif: 0,   pe: 0, atkRank: 8,  defRank: 9  },
+      { pl: 4,  name: `ST PLABENNÉCOIS`,        pts: 17, jo: 9, g: 5, n: 2, p: 2, f: 0, bp: 20, bc: 7,  dif: 13,  pe: 0, atkRank: 4,  defRank: 1  },
+      { pl: 5,  name: `US CONCARNEAU (B)`,      pts: 16, jo: 9, g: 5, n: 1, p: 3, f: 0, bp: 15, bc: 12, dif: 3,   pe: 0, atkRank: 7,  defRank: 5  },
+      { pl: 6,  name: `PAOTRED DISPOUNT`,       pts: 13, jo: 9, g: 4, n: 1, p: 4, f: 0, bp: 15, bc: 9,  dif: 6,   pe: 0, atkRank: 6,  defRank: 3  },
+      { pl: 7,  name: `COB SAINT BRIEUC`,       pts: 13, jo: 9, g: 4, n: 1, p: 4, f: 0, bp: 13, bc: 12, dif: 1,   pe: 0, atkRank: 10, defRank: 6  },
+      { pl: 8,  name: `GDR GUIPAVAS`,           pts: 12, jo: 9, g: 3, n: 3, p: 3, f: 0, bp: 16, bc: 17, dif: -1,  pe: 0, atkRank: 5,  defRank: 10 },
+      { pl: 9,  name: `PLAINTEL SP`,            pts: 11, jo: 9, g: 3, n: 2, p: 4, f: 0, bp: 24, bc: 19, dif: 5,   pe: 0, atkRank: 2,  defRank: 12 },
+      { pl: 10, name: `US MONTAGNARDE`,         pts: 11, jo: 9, g: 3, n: 2, p: 4, f: 0, bp: 13, bc: 18, dif: -5,  pe: 0, atkRank: 9,  defRank: 11 },
+      { pl: 11, name: `EA SAINT RENAN`,         pts: 10, jo: 9, g: 3, n: 1, p: 5, f: 0, bp: 12, bc: 13, dif: -1,  pe: 0, atkRank: 11, defRank: 7  },
+      { pl: 12, name: `ST PONTIVYEN`,           pts: 8,  jo: 9, g: 2, n: 2, p: 5, f: 0, bp: 5,  bc: 14, dif: -9,  pe: 0, atkRank: 13, defRank: 8  },
+      { pl: 13, name: `PLOUGASTEL FC`,          pts: 4,  jo: 9, g: 1, n: 1, p: 7, f: 0, bp: 7,  bc: 22, dif: -15, pe: 0, atkRank: 12, defRank: 13 },
+      { pl: 14, name: `ST BRANDAN QUINTIN FC`,  pts: 2,  jo: 9, g: 0, n: 2, p: 7, f: 0, bp: 4,  bc: 28, dif: -24, pe: 0, atkRank: 14, defRank: 14 }
+    ];
+
+    const SCORERS = [
+      { pl: 1,  player: `Julian DANO`,              team: `KÉRIOLETS PLUVIGNER`, goals: 10 },
+      { pl: 2,  player: `Ichiam BINCHEHI`,          team: `PLAINTEL SP`,         goals: 9 },
+      { pl: 3,  player: `Mathieu LE HAN`,           team: `AG PLOUVORN`,         goals: 8 },
+      { pl: 4,  player: `Kévin GOBA`,               team: `KÉRIOLETS PLUVIGNER`, goals: 7 },
+      { pl: 5,  player: `Dylan KERRIOU PLASSART`,   team: `AG PLOUVORN`,         goals: 6 },
+      { pl: 6,  player: `Orélien PASCO`,            team: `PLAINTEL SP`,         goals: 6 },
+      { pl: 7,  player: `Corentin KEREBEL`,         team: `EA SAINT RENAN`,      goals: 6 },
+      { pl: 8,  player: `Youenn TANGUY`,            team: `US MONTAGNARDE`,      goals: 6 },
+      { pl: 9,  player: `Antoine BERGOT`,           team: `ST PLABENNÉCOIS`,     goals: 6 },
+      { pl: 10, player: `Killian LE MENEC`,         team: `GDR GUIPAVAS`,        goals: 4 },
+      { pl: 11, player: `Enzo SAULNIER`,            team: `PLAINTEL SP`,         goals: 4 },
+      { pl: 12, player: `Lucas LE LANN`,            team: `AG PLOUVORN`,         goals: 4 },
+      { pl: 13, player: `Nathan MADEC`,             team: `GDR GUIPAVAS`,        goals: 4 },
+      { pl: 14, player: `Théo GUILLOU`,             team: `AG PLOUVORN`,         goals: 3 },
+      { pl: 15, player: `Mathieu PUREN`,            team: `ST PLABENNÉCOIS`,     goals: 3 },
+      { pl: 16, player: `Léo FERTIL`,               team: `PLOUGASTEL FC`,       goals: 3 },
+      { pl: 17, player: `Thibault SAOUT`,           team: `GDR GUIPAVAS`,        goals: 3 },
+      { pl: 18, player: `Sami CHEBIKA`,             team: `SM DOUARNENEZ`,       goals: 3 },
+      { pl: 19, player: `Baptiste DANION`,          team: `SM DOUARNENEZ`,       goals: 3 },
+      { pl: 20, player: `Dréo BROCARD`,             team: `COB SAINT BRIEUC`,    goals: 3 }
+    ];
+
+    const ASSISTS = [
+      { pl: 1,  player: `Théo GUILLOU`,             team: `AG PLOUVORN`,         assists: 4 },
+      { pl: 2,  player: `Mathieu LE HAN`,           team: `AG PLOUVORN`,         assists: 3 },
+      { pl: 3,  player: `Bryan OLIVIER`,            team: `GDR GUIPAVAS`,        assists: 3 },
+      { pl: 4,  player: `Lucas LE LANN`,            team: `AG PLOUVORN`,         assists: 2 },
+      { pl: 5,  player: `Angelo GOMES`,             team: `PAOTRED DISPOUNT`,    assists: 2 },
+      { pl: 6,  player: `Killian LE MENEC`,         team: `GDR GUIPAVAS`,        assists: 2 },
+      { pl: 7,  player: `Kristofer INMAN`,          team: `SM DOUARNENEZ`,       assists: 2 },
+      { pl: 8,  player: `Dylan KERRIOU PLASSART`,   team: `AG PLOUVORN`,         assists: 2 },
+      { pl: 9,  player: `Ichiam BINCHEHI`,          team: `PLAINTEL SP`,         assists: 2 },
+      { pl: 10, player: `Théo PAUGAM`,              team: `AG PLOUVORN`,         assists: 2 },
+      { pl: 11, player: `Théo KERSUZAN`,            team: `KÉRIOLETS PLUVIGNER`, assists: 2 },
+      { pl: 12, player: `Melvan REMOND`,            team: `EA SAINT RENAN`,      assists: 2 },
+      { pl: 13, player: `Youssef BENALI`,           team: `PAOTRED DISPOUNT`,    assists: 1 },
+      { pl: 14, player: `Falou NJIE`,               team: `PAOTRED DISPOUNT`,    assists: 1 },
+      { pl: 15, player: `Kévin GOBA`,               team: `KÉRIOLETS PLUVIGNER`, assists: 1 },
+      { pl: 16, player: `Kylian BELBEOCH`,          team: `SM DOUARNENEZ`,       assists: 1 },
+      { pl: 17, player: `Alan BROUQUEL`,            team: `SM DOUARNENEZ`,       assists: 1 },
+      { pl: 18, player: `Julien FAUSSURIER`,        team: `KÉRIOLETS PLUVIGNER`, assists: 1 },
+      { pl: 19, player: `Morgan CLOAREC`,           team: `US CONCARNEAU (B)`,   assists: 1 },
+      { pl: 20, player: `Jeremy GLOAGUEN`,          team: `SM DOUARNENEZ`,       assists: 1 }
+    ];
+
+    const MATCHDAYS = {
+      9: {
+        label: `Journée 9 — Dim. 22 nov. 2026`,
+        matches: [
+          { home: `AG PLOUVORN`,       hs: 1, as: 0, away: `PLOUGASTEL FC` },
+          { home: `PLAINTEL SP`,       hs: 3, as: 0, away: `ST PONTIVYEN` },
+          { home: `GDR GUIPAVAS`,      hs: 4, as: 1, away: `US MONTAGNARDE` },
+          { home: `EA SAINT RENAN`,    hs: 2, as: 2, away: `KÉRIOLETS PLUVIGNER` },
+          { home: `ST PLABENNÉCOIS`,   hs: 3, as: 1, away: `COB SAINT BRIEUC` },
+          { home: `SM DOUARNENEZ`,     hs: 4, as: 3, away: `US CONCARNEAU (B)` },
+          { home: `PAOTRED DISPOUNT`,  hs: 5, as: 0, away: `ST BRANDAN QUINTIN FC` }
+        ]
+      },
+      8: {
+        label: `Journée 8 — Dim. 8 nov. 2026`,
+        matches: [
+          { home: `ST BRANDAN QUINTIN FC`, hs: 0, as: 1, away: `SM DOUARNENEZ` },
+          { home: `PLOUGASTEL FC`,         hs: 1, as: 4, away: `GDR GUIPAVAS` },
+          { home: `US MONTAGNARDE`,        hs: 3, as: 1, away: `PAOTRED DISPOUNT` },
+          { home: `COB SAINT BRIEUC`,      hs: 1, as: 0, away: `EA SAINT RENAN` },
+          { home: `US CONCARNEAU (B)`,     hs: 5, as: 1, away: `PLAINTEL SP` },
+          { home: `ST PONTIVYEN`,          hs: 1, as: 4, away: `ST PLABENNÉCOIS` },
+          { home: `KÉRIOLETS PLUVIGNER`,   hs: 1, as: 5, away: `AG PLOUVORN` }
+        ]
+      },
+      7: {
+        label: `Journée 7 — Dim. 25 oct. 2026`,
+        matches: [
+          { home: `PLAINTEL SP`,         hs: 7, as: 0, away: `ST BRANDAN QUINTIN FC` },
+          { home: `AG PLOUVORN`,         hs: 1, as: 1, away: `GDR GUIPAVAS` },
+          { home: `EA SAINT RENAN`,      hs: 0, as: 2, away: `ST PONTIVYEN` },
+          { home: `SM DOUARNENEZ`,       hs: 2, as: 2, away: `US MONTAGNARDE` },
+          { home: `ST PLABENNÉCOIS`,     hs: 2, as: 0, away: `US CONCARNEAU (B)` },
+          { home: `PAOTRED DISPOUNT`,    hs: 2, as: 0, away: `PLOUGASTEL FC` },
+          { home: `KÉRIOLETS PLUVIGNER`, hs: 3, as: 1, away: `COB SAINT BRIEUC` }
+        ]
+      },
+      6: {
+        label: `Journée 6 — Dim. 18 oct. 2026`,
+        matches: [
+          { home: `ST PONTIVYEN`,          hs: 0, as: 2, away: `KÉRIOLETS PLUVIGNER` },
+          { home: `US MONTAGNARDE`,        hs: 1, as: 5, away: `PLAINTEL SP` },
+          { home: `COB SAINT BRIEUC`,      hs: 1, as: 2, away: `AG PLOUVORN` },
+          { home: `PLOUGASTEL FC`,         hs: 2, as: 0, away: `SM DOUARNENEZ` },
+          { home: `US CONCARNEAU (B)`,     hs: 2, as: 1, away: `EA SAINT RENAN` },
+          { home: `GDR GUIPAVAS`,          hs: 0, as: 2, away: `PAOTRED DISPOUNT` },
+          { home: `ST BRANDAN QUINTIN FC`, hs: 0, as: 5, away: `ST PLABENNÉCOIS` }
+        ]
+      },
+      5: {
+        label: `Journée 5 — Dim. 4 oct. 2026`,
+        matches: [
+          { home: `PLAINTEL SP`,         hs: 3, as: 3, away: `PLOUGASTEL FC` },
+          { home: `AG PLOUVORN`,         hs: 3, as: 2, away: `PAOTRED DISPOUNT` },
+          { home: `EA SAINT RENAN`,      hs: 4, as: 1, away: `ST BRANDAN QUINTIN FC` },
+          { home: `ST PLABENNÉCOIS`,     hs: 0, as: 1, away: `US MONTAGNARDE` },
+          { home: `COB SAINT BRIEUC`,    hs: 1, as: 0, away: `ST PONTIVYEN` },
+          { home: `SM DOUARNENEZ`,       hs: 4, as: 1, away: `GDR GUIPAVAS` },
+          { home: `KÉRIOLETS PLUVIGNER`, hs: 3, as: 0, away: `US CONCARNEAU (B)` }
+        ]
+      }
+    };
+
+    // Enrich with derived synthetic metrics (strictly calculated from verified facts)
+    const ENRICHED_TEAMS = TEAMS.map(function (t) {
+      const ptsPg = t.pts / t.jo;
+      const bpPg = t.bp / t.jo;
+      const bcPg = t.bc / t.jo;
+      const difPg = t.dif / t.jo;
+      const winPct = (t.g / t.jo) * 100;
+      const unbeatenPct = ((t.g + t.n) / t.jo) * 100;
+      const atkDefRatio = t.bc > 0 ? t.bp / t.bc : t.bp;
+      const zone = t.pl <= 3 ? `podium` : (t.pl <= 10 ? `mid` : `danger`);
+      const zoneLabel = t.pl <= 3 ? `Top 3 — Podium` : (t.pl <= 10 ? `Milieu de tableau` : `Zone rouge / Maintien`);
+      return Object.assign({}, t, {
+        ptsPg: ptsPg,
+        bpPg: bpPg,
+        bcPg: bcPg,
+        difPg: difPg,
+        winPct: winPct,
+        unbeatenPct: unbeatenPct,
+        atkDefRatio: atkDefRatio,
+        zone: zone,
+        zoneLabel: zoneLabel
+      });
+    });
+
+    // =========================================================================
+    // 2. APPLICATION STATE & CSS TOKEN HELPERS
+    // =========================================================================
+    const state = {
+      zone: `all`,
+      selectedTeam: `AG PLOUVORN`,
+      showSynthesis: true,
+      sortKey: `pts`,
+      sortDir: `desc`,
+      scorersLimit: 9,
+      assistsLimit: 12,
+      matchday: 9
+    };
+
+    const charts = {};
+
+    function token(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    function fmtNum(val, decimals) {
+      return val.toFixed(decimals).replace(`.`, `,`);
+    }
+
+    function fmtDif(val) {
+      return val > 0 ? `+` + val : String(val);
+    }
+
+    function getFilteredTeams() {
+      if (state.zone === `all`) return ENRICHED_TEAMS.slice();
+      return ENRICHED_TEAMS.filter(function (t) { return t.zone === state.zone; });
+    }
+
+    function getTeamMatches(teamName) {
+      const results = [];
+      [9, 8, 7, 6, 5].forEach(function (j) {
+        const day = MATCHDAYS[j];
+        if (!day) return;
+        day.matches.forEach(function (m) {
+          if (m.home === teamName || m.away === teamName) {
+            const isHome = m.home === teamName;
+            const myScore = isHome ? m.hs : m.as;
+            const oppScore = isHome ? m.as : m.hs;
+            const opp = isHome ? m.away : m.home;
+            const outcome = myScore > oppScore ? `V` : (myScore === oppScore ? `N` : `D`);
+            results.push({
+              j: j,
+              venue: isHome ? `Dom.` : `Ext.`,
+              opp: opp,
+              score: myScore + ` - ` + oppScore,
+              outcome: outcome
+            });
+          }
+        });
+      });
+      return results;
+    }
+
+    // =========================================================================
+    // 3. INTERACTIVE CONTROLLERS (Hoisted function declarations)
+    // =========================================================================
+    function setZoneFilter(zone) {
+      state.zone = zone;
+      [`all`, `podium`, `mid`, `danger`].forEach(function (z) {
+        const btn = document.getElementById(`zone-btn-` + z);
+        if (btn) btn.classList.toggle(`active`, z === zone);
+      });
+
+      const filtered = getFilteredTeams();
+      const summaryEl = document.getElementById(`charts-zone-summary`);
+      if (summaryEl) {
+        const zoneNames = {
+          all: `Tous les clubs (14 équipes · 9 journées)`,
+          podium: `Top 3 — Podium (3 équipes : Pl. 1 à 3)`,
+          mid: `Milieu de tableau (7 équipes : Pl. 4 à 10)`,
+          danger: `Zone rouge / Maintien (4 équipes : Pl. 11 à 14)`
+        };
+        summaryEl.textContent = `Zone affichée : ` + zoneNames[zone] + `. Survolez pour détailler ou cliquez sur un club pour ouvrir sa fiche.`;
+      }
+
+      // If selected team isn't in the filtered subset, auto-select the top team of that zone
+      const stillVisible = filtered.some(function (t) { return t.name === state.selectedTeam; });
+      if (!stillVisible && filtered.length > 0) {
+        state.selectedTeam = filtered[0].name;
+        const selectEl = document.getElementById(`team-select`);
+        if (selectEl) selectEl.value = state.selectedTeam;
+      }
+
+      renderTeamSheet();
+      renderCharts();
+      renderTable();
+      renderLeaders();
+      renderMatchday();
+    }
+
+    function selectTeam(teamName) {
+      state.selectedTeam = teamName;
+      const selectEl = document.getElementById(`team-select`);
+      if (selectEl && selectEl.value !== teamName) {
+        selectEl.value = teamName;
+      }
+      renderTeamSheet();
+      renderTable();
+      renderLeaders();
+      renderMatchday();
+      renderCharts();
+    }
+
+    function toggleSynthesis() {
+      state.showSynthesis = !state.showSynthesis;
+      const btn = document.getElementById(`toggle-synth-btn`);
+      const txt = document.getElementById(`toggle-synth-text`);
+      if (btn) btn.setAttribute(`aria-pressed`, state.showSynthesis ? `true` : `false`);
+      if (txt) {
+        txt.textContent = state.showSynthesis
+          ? `Masquer les Observations de synthèse`
+          : `Afficher les Observations de synthèse`;
+      }
+
+      const synthEls = document.querySelectorAll(`.synthesis-block`);
+      synthEls.forEach(function (el) {
+        el.classList.toggle(`is-hidden-synth`, !state.showSynthesis);
+      });
+
+      if (!state.showSynthesis && [`ptsPg`, `bpPg`, `bcPg`, `winPct`].indexOf(state.sortKey) !== -1) {
+        state.sortKey = `pts`;
+        state.sortDir = `desc`;
+        renderTable();
+      }
+
+      renderTeamSheet();
+      if (state.showSynthesis && charts.efficiency) {
+        charts.efficiency.resize();
+      }
+    }
+
+    function sortTable(key) {
+      if (state.sortKey === key) {
+        state.sortDir = state.sortDir === `desc` ? `asc` : `desc`;
+      } else {
+        state.sortKey = key;
+        state.sortDir = (key === `pl` || key === `bc` || key === `bcPg` || key === `p`) ? `asc` : `desc`;
+      }
+      renderTable();
+    }
+
+    function setScorersLimit(limit) {
+      state.scorersLimit = limit;
+      const b9 = document.getElementById(`scorers-top9-btn`);
+      const b20 = document.getElementById(`scorers-top20-btn`);
+      if (b9) b9.classList.toggle(`active`, limit === 9);
+      if (b20) b20.classList.toggle(`active`, limit === 20);
+      renderLeaders();
+    }
+
+    function setAssistsLimit(limit) {
+      state.assistsLimit = limit;
+      const b12 = document.getElementById(`assists-top12-btn`);
+      const b20 = document.getElementById(`assists-top20-btn`);
+      if (b12) b12.classList.toggle(`active`, limit === 12);
+      if (b20) b20.classList.toggle(`active`, limit === 20);
+      renderLeaders();
+    }
+
+    function setMatchday(j) {
+      state.matchday = j;
+      [9, 8, 7, 6, 5].forEach(function (num) {
+        const btn = document.getElementById(`j-btn-` + num);
+        if (btn) btn.classList.toggle(`active`, num === j);
+      });
+      renderMatchday();
+    }
+
+    // =========================================================================
+    // 4. RENDER TEAM SHEET
+    // =========================================================================
+    function renderTeamSheet() {
+      const container = document.getElementById(`team-sheet-content`);
+      if (!container) return;
+      const team = ENRICHED_TEAMS.find(function (t) { return t.name === state.selectedTeam; }) || ENRICHED_TEAMS[0];
+      const teamScorers = SCORERS.filter(function (s) { return s.team === team.name; });
+      const teamAssists = ASSISTS.filter(function (a) { return a.team === team.name; });
+      const recentMatches = getTeamMatches(team.name);
+
+      const zoneClass = team.zone === `podium` ? `zone-podium` : (team.zone === `mid` ? `zone-mid` : `zone-danger`);
+      const difClass = team.dif > 0 ? `pos` : (team.dif < 0 ? `neg` : ``);
+
+      const scorersHtml = teamScorers.length > 0
+        ? teamScorers.map(function (s) {
+            return `<span class="player-chip">` + s.player + ` · ` + s.goals + ` but` + (s.goals > 1 ? `s` : ``) + ` (#` + s.pl + `)</span>`;
+          }).join(``)
+        : `<span class="player-chip">Aucun joueur classé dans le Top 20 officiel</span>`;
+
+      const assistsHtml = teamAssists.length > 0
+        ? teamAssists.map(function (a) {
+            return `<span class="player-chip">` + a.player + ` · ` + a.assists + ` passe` + (a.assists > 1 ? `s` : ``) + ` (#` + a.pl + `)</span>`;
+          }).join(``)
+        : `<span class="player-chip">Aucun joueur classé dans le Top 20 officiel</span>`;
+
+      const matchesHtml = recentMatches.map(function (m) {
+        return `
+          <div class="form-match-row">
+            <span class="match-j">J` + m.j + ` · ` + m.venue + `</span>
+            <span>vs <strong>` + m.opp + `</strong> (` + m.score + `)</span>
+            <span class="match-res-badge res-` + m.outcome + `">` + m.outcome + `</span>
+          </div>
+        `;
+      }).join(``);
+
+      // Factual balance observation
+      const profileText = team.dif >= 10
+        ? `Écart très favorable (+` + fmtNum(team.difPg, 2) + ` but/match), porté par un différentiel positif sur les deux tableaux.`
+        : (team.dif > 0
+          ? `Solde positif (+` + fmtNum(team.difPg, 2) + ` but/match) avec un ratio attaque/défense de ` + fmtNum(team.atkDefRatio, 2) + `.`
+          : (team.dif === 0
+            ? `Équilibre parfait entre buts marqués et encaissés (ratio 1,00), avec ` + fmtNum(team.ptsPg, 2) + ` pt/match.`
+            : `Déficit de ` + fmtNum(Math.abs(team.difPg), 2) + ` but/match sur 9 journées (ratio attaque/défense : ` + fmtNum(team.atkDefRatio, 2) + `).`));
+
+      const synthColumnHtml = state.showSynthesis ? `
+        <div class="sheet-subpanel-synth synthesis-block">
+          <div class="subpanel-head">
+            <h3>Indicateurs dérivés &amp; ratios (sur 9 J)</h3>
+            <span class="badge-epistemic badge-synth">Observation de synthèse</span>
+          </div>
+          <div class="mini-stats-grid">
+            <div class="mini-stat">
+              <span class="ms-label">Points / match</span>
+              <span class="ms-val tabular">` + fmtNum(team.ptsPg, 2) + `</span>
+            </div>
+            <div class="mini-stat">
+              <span class="ms-label">Buts pour / match</span>
+              <span class="ms-val tabular">` + fmtNum(team.bpPg, 2) + `</span>
+            </div>
+            <div class="mini-stat">
+              <span class="ms-label">Buts contre / match</span>
+              <span class="ms-val tabular">` + fmtNum(team.bcPg, 2) + `</span>
+            </div>
+            <div class="mini-stat">
+              <span class="ms-label">Différentiel / match</span>
+              <span class="ms-val tabular ` + difClass + `">` + (team.difPg > 0 ? `+` : ``) + fmtNum(team.difPg, 2) + `</span>
+            </div>
+            <div class="mini-stat">
+              <span class="ms-label">Part de victoires</span>
+              <span class="ms-val tabular">` + fmtNum(team.winPct, 1) + ` %</span>
+            </div>
+            <div class="mini-stat">
+              <span class="ms-label">Matchs sans défaite</span>
+              <span class="ms-val tabular">` + fmtNum(team.unbeatenPct, 1) + ` %</span>
+            </div>
+            <div class="mini-stat">
+              <span class="ms-label">Ratio Bp / Bc</span>
+              <span class="ms-val tabular">` + fmtNum(team.atkDefRatio, 2) + `</span>
+            </div>
+          </div>
+          <div style="font-size: 0.875rem; color: var(--synth-text); font-weight: 500; line-height: 1.5;">
+            <strong>Lecture analytique :</strong> ` + profileText + `
+          </div>
+        </div>
+      ` : ``;
+
+      container.innerHTML = `
+        <div class="team-sheet-header">
+          <div class="team-identity">
+            <div class="rank-orb tabular">#` + team.pl + `</div>
+            <div class="team-name-block">
+              <h2>` + team.name + `</h2>
+              <div class="team-meta-row">
+                <span class="zone-pill ` + zoneClass + `">` + team.zoneLabel + `</span>
+                <span class="badge-epistemic badge-fact">9 journées jouées · 0 forfait · 0 pénalité</span>
+              </div>
+            </div>
+          </div>
+          <div class="team-points-hero">
+            <div class="pts-big tabular">` + team.pts + ` pts</div>
+            <div class="pts-sub tabular">Bilan : ` + team.g + ` G · ` + team.n + ` N · ` + team.p + ` P</div>
+          </div>
+        </div>
+
+        <div class="team-sheet-columns ` + (state.showSynthesis ? `` : `facts-only`) + `">
+          <div class="sheet-subpanel">
+            <div class="subpanel-head">
+              <h3>Données officielles du club</h3>
+              <span class="badge-epistemic badge-fact">Faits vérifiés</span>
+            </div>
+            <div class="mini-stats-grid">
+              <div class="mini-stat">
+                <span class="ms-label">Attaque (Rang)</span>
+                <span class="ms-val tabular">` + team.bp + ` Bp (#` + team.atkRank + `)</span>
+              </div>
+              <div class="mini-stat">
+                <span class="ms-label">Défense (Rang)</span>
+                <span class="ms-val tabular">` + team.bc + ` Bc (#` + team.defRank + `)</span>
+              </div>
+              <div class="mini-stat">
+                <span class="ms-label">Différence</span>
+                <span class="ms-val tabular ` + difClass + `">` + fmtDif(team.dif) + `</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="control-label" style="margin-bottom: var(--space-xs);">Buteurs du club (Top 20 officiel)</div>
+              <div class="player-chips">` + scorersHtml + `</div>
+            </div>
+
+            <div>
+              <div class="control-label" style="margin-bottom: var(--space-xs);">Passeurs du club (Top 20 officiel)</div>
+              <div class="player-chips">` + assistsHtml + `</div>
+            </div>
+
+            <div>
+              <div class="control-label" style="margin-bottom: var(--space-xs);">Résultats vérifiés (Journées 5 à 9)</div>
+              <div class="form-list">` + matchesHtml + `</div>
+            </div>
+          </div>
+
+          ` + synthColumnHtml + `
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // 5. RENDER 5 CHARTS (Chart.js using CSS :root tokens)
+    // =========================================================================
+    function getZoneColor(zone) {
+      if (zone === `podium`) return token(`--data-1`);
+      if (zone === `mid`) return token(`--data-3`);
+      return token(`--data-2`);
+    }
+
+    function destroyChart(key) {
+      if (charts[key]) {
+        charts[key].destroy();
+        charts[key] = null;
+      }
+    }
+
+    function renderCharts() {
+      if (typeof Chart === `undefined`) return;
+      const list = getFilteredTeams();
+      const labels = list.map(function (t) { return t.pl + `. ` + t.name; });
+      const cText = token(`--on-surface-variant`);
+      const cInk = token(`--on-surface`);
+      const cGrid = token(`--outline-variant`);
+      const cBlue = token(`--data-1`);
+      const cOrange = token(`--data-2`);
+      const cGreen = token(`--data-3`);
+      const cDanger = token(`--data-5`);
+      const cWarn = token(`--warning`);
+
+      Chart.defaults.font.family = token(`--font-body`);
+      Chart.defaults.color = cText;
+
+      // 1. Points horizontal bar
+      destroyChart(`points`);
+      const ctxPts = document.getElementById(`chart-points`);
+      if (ctxPts) {
+        charts.points = new Chart(ctxPts, {
+          type: `bar`,
+          data: {
+            labels: labels,
+            datasets: [{
+              label: `Points`,
+              data: list.map(function (t) { return t.pts; }),
+              backgroundColor: list.map(function (t) {
+                return t.name === state.selectedTeam ? token(`--data-4`) : getZoneColor(t.zone);
+              }),
+              borderRadius: 8,
+              borderSkipped: false
+            }]
+          },
+          options: {
+            indexAxis: `y`,
+            responsive: true,
+            maintainAspectRatio: false,
+            onClick: function (_evt, elements) {
+              if (elements.length > 0) {
+                selectTeam(list[elements[0].index].name);
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function (ctx) {
+                    const t = list[ctx.dataIndex];
+                    return ` ` + t.pts + ` pts (` + t.g + `G · ` + t.n + `N · ` + t.p + `P | Dif ` + fmtDif(t.dif) + `)`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                beginAtZero: true,
+                max: 24,
+                grid: { color: cGrid },
+                ticks: { stepSize: 4 }
+              },
+              y: {
+                grid: { display: false },
+                ticks: { color: cInk, font: { weight: 600, size: 11 } }
+              }
+            }
+          }
+        });
+      }
+
+      // 2. Stacked G / N / P
+      destroyChart(`gnp`);
+      const ctxGnp = document.getElementById(`chart-gnp`);
+      if (ctxGnp) {
+        charts.gnp = new Chart(ctxGnp, {
+          type: `bar`,
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: `Victoires (G)`,
+                data: list.map(function (t) { return t.g; }),
+                backgroundColor: cGreen,
+                borderRadius: 4
+              },
+              {
+                label: `Nuls (N)`,
+                data: list.map(function (t) { return t.n; }),
+                backgroundColor: cWarn,
+                borderRadius: 4
+              },
+              {
+                label: `Défaites (P)`,
+                data: list.map(function (t) { return t.p; }),
+                backgroundColor: cDanger,
+                borderRadius: 4
+              }
+            ]
+          },
+          options: {
+            indexAxis: `y`,
+            responsive: true,
+            maintainAspectRatio: false,
+            onClick: function (_evt, elements) {
+              if (elements.length > 0) {
+                selectTeam(list[elements[0].index].name);
+              }
+            },
+            plugins: {
+              legend: { position: `top`, labels: { usePointStyle: true, boxWidth: 8 } }
+            },
+            scales: {
+              x: { stacked: true, max: 9, ticks: { stepSize: 1 }, grid: { color: cGrid } },
+              y: { stacked: true, grid: { display: false }, ticks: { color: cInk, font: { weight: 600, size: 11 } } }
+            }
+          }
+        });
+      }
+
+      // 3. Scatter Attack vs Defense (Bp vs Bc)
+      destroyChart(`scatter`);
+      const ctxScatter = document.getElementById(`chart-scatter`);
+      if (ctxScatter) {
+        charts.scatter = new Chart(ctxScatter, {
+          type: `scatter`,
+          data: {
+            datasets: [{
+              label: `Clubs R1-A`,
+              data: list.map(function (t) {
+                return { x: t.bp, y: t.bc, team: t };
+              }),
+              backgroundColor: list.map(function (t) {
+                return t.name === state.selectedTeam ? token(`--data-4`) : getZoneColor(t.zone);
+              }),
+              pointRadius: list.map(function (t) {
+                return t.name === state.selectedTeam ? 10 : 7;
+              }),
+              pointHoverRadius: 11
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            onClick: function (_evt, elements) {
+              if (elements.length > 0) {
+                const pt = list[elements[0].index];
+                if (pt) selectTeam(pt.name);
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function (ctx) {
+                    const t = ctx.raw.team;
+                    return `#` + t.pl + ` ` + t.name + ` : ` + t.bp + ` Bp / ` + t.bc + ` Bc (Dif ` + fmtDif(t.dif) + `)`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                title: { display: true, text: `Buts marqués (Bp)`, color: cInk, font: { weight: 600 } },
+                min: 0,
+                max: 28,
+                grid: { color: cGrid }
+              },
+              y: {
+                title: { display: true, text: `Buts encaissés (Bc)`, color: cInk, font: { weight: 600 } },
+                min: 4,
+                max: 30,
+                grid: { color: cGrid }
+              }
+            }
+          }
+        });
+      }
+
+      // 4. Diverging Goal Difference
+      destroyChart(`diff`);
+      const ctxDiff = document.getElementById(`chart-diff`);
+      if (ctxDiff) {
+        charts.diff = new Chart(ctxDiff, {
+          type: `bar`,
+          data: {
+            labels: list.map(function (t) { return t.name; }),
+            datasets: [{
+              label: `Différence de buts (Dif)`,
+              data: list.map(function (t) { return t.dif; }),
+              backgroundColor: list.map(function (t) {
+                return t.dif >= 0 ? cBlue : cDanger;
+              }),
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            onClick: function (_evt, elements) {
+              if (elements.length > 0) {
+                selectTeam(list[elements[0].index].name);
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function (ctx) {
+                    const t = list[ctx.dataIndex];
+                    return ` Dif : ` + fmtDif(t.dif) + ` (` + t.bp + ` Bp / ` + t.bc + ` Bc)`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: { grid: { display: false }, ticks: { maxRotation: 45, minRotation: 25, font: { size: 10, weight: 600 } } },
+              y: { min: -26, max: 18, grid: { color: cGrid } }
+            }
+          }
+        });
+      }
+
+      // 5. Offensive & Defensive Efficiency per Match (Observation de synthèse)
+      destroyChart(`efficiency`);
+      const ctxEff = document.getElementById(`chart-efficiency`);
+      if (ctxEff) {
+        charts.efficiency = new Chart(ctxEff, {
+          type: `bar`,
+          data: {
+            labels: list.map(function (t) { return t.name; }),
+            datasets: [
+              {
+                label: `Bp / match (moy. 9J)`,
+                data: list.map(function (t) { return Number(t.bpPg.toFixed(2)); }),
+                backgroundColor: cBlue,
+                borderRadius: 6
+              },
+              {
+                label: `Bc / match (moy. 9J)`,
+                data: list.map(function (t) { return Number(t.bcPg.toFixed(2)); }),
+                backgroundColor: cOrange,
+                borderRadius: 6
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            onClick: function (_evt, elements) {
+              if (elements.length > 0) {
+                selectTeam(list[elements[0].index].name);
+              }
+            },
+            plugins: {
+              legend: { position: `top`, labels: { usePointStyle: true, boxWidth: 8 } },
+              tooltip: {
+                callbacks: {
+                  label: function (ctx) {
+                    return ` ` + ctx.dataset.label + ` : ` + fmtNum(ctx.parsed.y, 2);
+                  }
+                }
+              }
+            },
+            scales: {
+              x: { grid: { display: false }, ticks: { maxRotation: 35, minRotation: 20, font: { size: 11, weight: 600 } } },
+              y: { beginAtZero: true, max: 3.5, grid: { color: cGrid }, title: { display: true, text: `Buts par match`, color: cInk } }
+            }
+          }
+        });
+      }
+    }
+
+    // =========================================================================
+    // 6. RENDER SORTABLE TABLE
+    // =========================================================================
+    function renderTable() {
+      const tbody = document.getElementById(`standings-tbody`);
+      if (!tbody) return;
+
+      const sortKeys = [`pl`, `pts`, `g`, `n`, `p`, `bp`, `bc`, `dif`, `ptsPg`, `bpPg`, `bcPg`, `winPct`];
+      sortKeys.forEach(function (k) {
+        const ind = document.getElementById(`sort-ind-` + k);
+        if (ind) {
+          const btn = ind.parentElement;
+          if (k === state.sortKey) {
+            ind.textContent = state.sortDir === `desc` ? `▼` : `▲`;
+            if (btn) btn.classList.add(`active-sort`);
+          } else {
+            ind.textContent = ``;
+            if (btn) btn.classList.remove(`active-sort`);
+          }
+        }
+      });
+
+      const list = getFilteredTeams().sort(function (a, b) {
+        const av = a[state.sortKey];
+        const bv = b[state.sortKey];
+        if (av === bv) return a.pl - b.pl;
+        return state.sortDir === `desc` ? (bv - av) : (av - bv);
+      });
+
+      tbody.innerHTML = list.map(function (t) {
+        const isSelected = t.name === state.selectedTeam;
+        const hiddenClass = state.showSynthesis ? `` : ` is-hidden-synth`;
+        return `
+          <tr class="` + (isSelected ? `selected-row` : ``) + `" onclick="selectTeam('` + t.name + `')">
+            <td class="num"><span class="rank-dot ` + t.zone + `">` + t.pl + `</span></td>
+            <td><div class="club-cell"><span>` + t.name + `</span></div></td>
+            <td class="num"><strong>` + t.pts + `</strong></td>
+            <td class="num">` + t.jo + `</td>
+            <td class="num">` + t.g + `</td>
+            <td class="num">` + t.n + `</td>
+            <td class="num">` + t.p + `</td>
+            <td class="num">` + t.f + `</td>
+            <td class="num">` + t.bp + `</td>
+            <td class="num">` + t.bc + `</td>
+            <td class="num" style="color: ` + (t.dif > 0 ? `var(--positive)` : (t.dif < 0 ? `var(--error)` : `var(--on-surface-variant)`)) + `; font-weight: 700;">` + fmtDif(t.dif) + `</td>
+            <td class="num">` + t.pe + `</td>
+            <td class="num synth-col synthesis-block` + hiddenClass + `">` + fmtNum(t.ptsPg, 2) + `</td>
+            <td class="num synth-col synthesis-block` + hiddenClass + `">` + fmtNum(t.bpPg, 2) + `</td>
+            <td class="num synth-col synthesis-block` + hiddenClass + `">` + fmtNum(t.bcPg, 2) + `</td>
+            <td class="num synth-col synthesis-block` + hiddenClass + `">` + fmtNum(t.winPct, 1) + ` %</td>
+          </tr>
+        `;
+      }).join(``);
+    }
+
+    // =========================================================================
+    // 7. RENDER SCORERS, ASSISTS & MATCHDAYS
+    // =========================================================================
+    function renderLeaders() {
+      const scorersEl = document.getElementById(`scorers-list`);
+      if (scorersEl) {
+        scorersEl.innerHTML = SCORERS.slice(0, state.scorersLimit).map(function (s) {
+          const hl = s.team === state.selectedTeam ? ` highlight-club` : ``;
+          return `
+            <div class="leader-row` + hl + `">
+              <span class="leader-rank">` + s.pl + `</span>
+              <div class="leader-info">
+                <strong>` + s.player + `</strong>
+                <span class="leader-club">` + s.team + `</span>
+              </div>
+              <span class="leader-val">` + s.goals + `</span>
+            </div>
+          `;
+        }).join(``);
+      }
+
+      const assistsEl = document.getElementById(`assists-list`);
+      if (assistsEl) {
+        assistsEl.innerHTML = ASSISTS.slice(0, state.assistsLimit).map(function (a) {
+          const hl = a.team === state.selectedTeam ? ` highlight-club` : ``;
+          return `
+            <div class="leader-row` + hl + `">
+              <span class="leader-rank">` + a.pl + `</span>
+              <div class="leader-info">
+                <strong>` + a.player + `</strong>
+                <span class="leader-club">` + a.team + `</span>
+              </div>
+              <span class="leader-val">` + a.assists + `</span>
+            </div>
+          `;
+        }).join(``);
+      }
+    }
+
+    function renderMatchday() {
+      const day = MATCHDAYS[state.matchday];
+      if (!day) return;
+      const labelEl = document.getElementById(`matchday-date-label`);
+      if (labelEl) labelEl.textContent = day.label;
+
+      const gridEl = document.getElementById(`matchday-fixtures`);
+      if (!gridEl) return;
+
+      gridEl.innerHTML = day.matches.map(function (m) {
+        const hl = (m.home === state.selectedTeam || m.away === state.selectedTeam) ? ` highlight-club` : ``;
+        return `
+          <div class="fixture-card` + hl + `">
+            <span class="fixture-home">` + m.home + `</span>
+            <span class="fixture-score">` + m.hs + ` - ` + m.as + `</span>
+            <span class="fixture-away">` + m.away + `</span>
+          </div>
+        `;
+      }).join(``);
+    }
+
+    // =========================================================================
+    // 8. INITIALIZATION
+    // =========================================================================
+    function initDashboard() {
+      const selectEl = document.getElementById(`team-select`);
+      if (selectEl) {
+        selectEl.innerHTML = ENRICHED_TEAMS.map(function (t) {
+          return `<option value="` + t.name + `">#` + t.pl + ` — ` + t.name + ` (` + t.pts + ` pts)</option>`;
+        }).join(``);
+        selectEl.value = state.selectedTeam;
+      }
+
+      renderTeamSheet();
+      renderCharts();
+      renderTable();
+      renderLeaders();
+      renderMatchday();
+
+      if (typeof lucide !== `undefined`) {
+        lucide.createIcons();
+      }
+    }
+
+    document.addEventListener(`DOMContentLoaded`, initDashboard);
+  </script>
+</body>
+</html>
