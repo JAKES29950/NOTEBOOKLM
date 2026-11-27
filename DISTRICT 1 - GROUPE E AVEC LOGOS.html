@@ -1,0 +1,1522 @@
+﻿<html lang="fr">
+<head>
+  <meta charset="UTF-8"></meta>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"></meta>
+  <title>Tableau de Bord 3D — Finistère Sud 29S Division 1 (Groupe E)</title>
+  <!-- Google Fonts : Fredoka (rondeurs Pixar) & Nunito (lisibilité haute précision) -->
+  <link href="https://fonts.googleapis.com" rel="preconnect"></link>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"></link>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@500;700;800;900&amp;display=swap" rel="stylesheet"></link>
+  <!-- Chart.js & Plugin Datalabels via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+
+
+  <style>
+    :root {
+      --bg-studio: #eef4fb;
+      --card-cream: #fffdf9;
+      --card-white: #ffffff;
+      --navy-deep: #132238;
+      --bordeaux-studio: #6b2428;
+      --bordeaux-light: #9e3b3f;
+      --cyan-leader: #00d2d3;
+      --cyan-dark: #009798;
+      --emerald-podium: #10b981;
+      --amber-mid: #f59e0b;
+      --coral-releg: #e14949;
+      --coral-dark: #b92b2b;
+      --text-dark: #18263b;
+      --text-muted: #52647c;
+
+
+      /* Ombres multicouches 3D Pixar */
+      --shadow-pixar-card:
+        0 18px 34px -10px rgba(19, 34, 56, 0.14),
+        0 6px 14px -4px rgba(19, 34, 56, 0.08),
+        inset 0 2px 3px rgba(255, 255, 255, 0.95),
+        inset 0 -3px 6px rgba(19, 34, 56, 0.05);
+
+
+      --shadow-pixar-btn:
+        0 6px 0 #132238,
+        0 12px 20px rgba(19, 34, 56, 0.22),
+        inset 0 2px 2px rgba(255, 255, 255, 0.45);
+
+
+      --shadow-pixar-btn-active:
+        0 2px 0 #132238,
+        0 5px 10px rgba(19, 34, 56, 0.2);
+    }
+
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: radial-gradient(circle at 15% 10%, #ffffff 0%, #eaf1fa 45%, #dce7f5 100%);
+      color: var(--text-dark);
+      line-height: 1.5;
+      padding: 24px 16px 60px;
+      min-height: 100vh;
+    }
+
+
+    .container {
+      max-width: 1380px;
+      margin: 0 auto;
+    }
+
+
+    /* EN-TÊTE STUDIO 3D */
+    .hero-banner {
+      background: linear-gradient(135deg, #8b3336 0%, #571d21 55%, #2b1926 100%);
+      border-radius: 28px;
+      padding: 32px 36px;
+      color: #ffffff;
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 24px 42px -12px rgba(87, 29, 33, 0.45),
+        inset 0 3px 6px rgba(255, 255, 255, 0.32),
+        inset 0 -6px 14px rgba(0, 0, 0, 0.35);
+      margin-bottom: 28px;
+    }
+
+
+    .hero-banner::before {
+      content: "";
+      position: absolute;
+      top: -60px;
+      right: -40px;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.16) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+
+    .hero-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+
+    .pill-district {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(6px);
+      padding: 7px 16px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4);
+    }
+
+
+    .hero-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(1.75rem, 3.2vw, 2.6rem);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+    }
+
+
+    .hero-sub {
+      color: #f3dce0;
+      font-size: 1.02rem;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+
+    /* BARRE DE FILTRE & DUEL RAPIDE */
+    .control-bar {
+      background: var(--card-cream);
+      border-radius: 24px;
+      padding: 20px 26px;
+      box-shadow: var(--shadow-pixar-card);
+      margin-bottom: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+    }
+
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+
+    .filter-label {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--navy-deep);
+    }
+
+
+    select.pixar-select {
+      appearance: none;
+      background: linear-gradient(180deg, #ffffff 0%, #f1f5fb 100%);
+      border: 2px solid #cbd7ea;
+      border-radius: 16px;
+      padding: 10px 38px 10px 16px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--navy-deep);
+      cursor: pointer;
+      box-shadow:
+        0 4px 10px rgba(19, 34, 56, 0.08),
+        inset 0 2px 2px #ffffff;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23132238' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      transition: transform 0.15s ease, border-color 0.2s ease;
+    }
+
+
+    select.pixar-select:focus {
+      outline: none;
+      border-color: var(--cyan-dark);
+    }
+
+
+    .zone-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+
+    .pixar-btn {
+      border: none;
+      border-radius: 16px;
+      padding: 10px 18px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #ffffff;
+      background: linear-gradient(180deg, #2b456b 0%, #182b47 100%);
+      box-shadow: var(--shadow-pixar-btn);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+
+    .pixar-btn:hover {
+      transform: translateY(-2px);
+    }
+
+
+    .pixar-btn:active, .pixar-btn.active {
+      transform: translateY(4px);
+      box-shadow: var(--shadow-pixar-btn-active);
+      background: linear-gradient(180deg, #00b8b9 0%, #008283 100%);
+    }
+
+
+    /* EN-TÊTES DE SECTIONS & BADGES ÉPISTÉMIQUES */
+    .section-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 34px 0 18px;
+    }
+
+
+    .section-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.55rem;
+      color: var(--navy-deep);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+
+    .badge-verified {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(180deg, #16a34a 0%, #117a37 100%);
+      color: #ffffff;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 5px 13px;
+      border-radius: 999px;
+      box-shadow:
+        0 4px 10px rgba(22, 163, 74, 0.28),
+        inset 0 2px 2px rgba(255, 255, 255, 0.45);
+      text-transform: uppercase;
+    }
+
+
+    .badge-synthesis {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(180deg, #7c3aed 0%, #5b21b6 100%);
+      color: #ffffff;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 5px 13px;
+      border-radius: 999px;
+      box-shadow:
+        0 4px 10px rgba(124, 58, 237, 0.28),
+        inset 0 2px 2px rgba(255, 255, 255, 0.45);
+      text-transform: uppercase;
+    }
+
+
+    /* GRILLE KPI 3D */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+
+    .kpi-card {
+      background: var(--card-cream);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: var(--shadow-pixar-card);
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease;
+    }
+
+
+    .kpi-card:hover {
+      transform: translateY(-4px);
+    }
+
+
+    .kpi-card.leader-highlight {
+      background: linear-gradient(145deg, #e0fbfb 0%, #ffffff 100%);
+      border: 2px solid #5ce1e6;
+    }
+
+
+    .kpi-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+
+    .kpi-label {
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+
+    .kpi-value {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--navy-deep);
+      line-height: 1.1;
+      margin: 6px 0;
+    }
+
+
+    .kpi-club-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--navy-deep);
+    }
+
+
+    /* ÉCUSSONS OFFICIELS 3D */
+    .crest-3d {
+      width: 38px;
+      height: 38px;
+      object-fit: contain;
+      border-radius: 11px;
+      background: #ffffff;
+      padding: 3px;
+      box-shadow:
+        0 4px 10px rgba(19, 34, 56, 0.16),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+      flex-shrink: 0;
+    }
+
+
+    .crest-3d-lg {
+      width: 76px;
+      height: 76px;
+      object-fit: contain;
+      border-radius: 22px;
+      background: linear-gradient(180deg, #ffffff 0%, #f1f6fc 100%);
+      padding: 8px;
+      box-shadow:
+        0 12px 24px rgba(19, 34, 56, 0.18),
+        inset 0 3px 4px #ffffff;
+    }
+
+
+    /* TABLEAU CLASSEMENT INTERACTIF */
+    .table-card {
+      background: var(--card-white);
+      border-radius: 26px;
+      padding: 24px;
+      box-shadow: var(--shadow-pixar-card);
+      overflow-x: auto;
+      margin-bottom: 32px;
+    }
+
+
+    table.standings-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 8px;
+      min-width: 860px;
+    }
+
+
+    table.standings-table thead th {
+      background: var(--navy-deep);
+      color: #ffffff;
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 13px 12px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+
+
+    table.standings-table thead th:first-child {
+      border-radius: 14px 0 0 14px;
+    }
+
+
+    table.standings-table thead th:last-child {
+      border-radius: 0 14px 14px 0;
+    }
+
+
+    table.standings-table thead th:nth-child(2) {
+      text-align: left;
+      padding-left: 16px;
+    }
+
+
+    table.standings-table thead th:hover {
+      background: #233b5e;
+    }
+
+
+    table.standings-table tbody tr {
+      background: #f8fafd;
+      box-shadow: 0 3px 8px rgba(19, 34, 56, 0.06);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+
+    table.standings-table tbody tr:hover {
+      transform: scale(1.007);
+      box-shadow: 0 8px 18px rgba(19, 34, 56, 0.12);
+    }
+
+
+    table.standings-table tbody td {
+      padding: 11px 12px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+    }
+
+
+    table.standings-table tbody td:first-child {
+      border-radius: 14px 0 0 14px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.05rem;
+    }
+
+
+    table.standings-table tbody td:last-child {
+      border-radius: 0 14px 14px 0;
+    }
+
+
+    /* Codes couleurs du classement */
+    tr.row-leader {
+      background: linear-gradient(90deg, #00e1e2 0%, #7bf2f2 100%) !important;
+      box-shadow: 0 6px 16px rgba(0, 210, 211, 0.32) !important;
+    }
+    tr.row-leader td {
+      color: #08292b !important;
+      font-weight: 900 !important;
+    }
+
+
+    tr.row-podium {
+      background: linear-gradient(90deg, #ecfdf5 0%, #f6fef9 100%) !important;
+    }
+
+
+    tr.row-relegation {
+      background: linear-gradient(90deg, #d63d3d 0%, #e55858 100%) !important;
+      box-shadow: 0 6px 16px rgba(214, 61, 61, 0.28) !important;
+    }
+    tr.row-relegation td {
+      color: #ffffff !important;
+    }
+
+
+    tr.row-highlighted {
+      outline: 3px solid #132238;
+      transform: scale(1.012);
+    }
+
+
+    .team-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      font-weight: 800;
+    }
+
+
+    .rank-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: rgba(19, 34, 56, 0.08);
+    }
+
+
+    tr.row-leader .rank-pill {
+      background: #ffffff;
+      color: #008283;
+    }
+
+
+    tr.row-relegation .rank-pill {
+      background: rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+    }
+
+
+    /* OBSERVATIONS DE SYNTHÈSE (SECTION B) */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 22px;
+      margin-bottom: 34px;
+    }
+
+
+    .insight-card {
+      background: linear-gradient(160deg, #ffffff 0%, #f5f3ff 100%);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: var(--shadow-pixar-card);
+      border: 1px solid #e4dcff;
+    }
+
+
+    .insight-card h3 {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.2rem;
+      color: var(--navy-deep);
+      margin: 12px 0 8px;
+    }
+
+
+    .insight-card p {
+      font-size: 0.96rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+
+    /* GRILLE DES 6 GRAPHIQUES INTERACTIFS */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 26px;
+    }
+
+
+    @media (max-width: 980px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
+    .chart-card {
+      background: var(--card-cream);
+      border-radius: 26px;
+      padding: 24px;
+      box-shadow: var(--shadow-pixar-card);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+    }
+
+
+    .chart-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+
+    .chart-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.22rem;
+      color: var(--navy-deep);
+    }
+
+
+    .chart-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+
+    .canvas-wrapper {
+      position: relative;
+      height: 360px;
+      width: 100%;
+    }
+
+
+    /* DUEL FACE-À-FACE (GRAPHIQUE 6) */
+    .duel-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #f0f5fc;
+      padding: 14px 16px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      box-shadow: inset 0 2px 5px rgba(19, 34, 56, 0.06);
+    }
+
+
+    .duel-side {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+
+    .vs-badge {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #ffffff;
+      background: linear-gradient(135deg, #e14949, #8b3336);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(225, 73, 73, 0.35);
+    }
+
+
+    .footer-note {
+      text-align: center;
+      margin-top: 42px;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- EN-TÊTE STUDIO -->
+    <header class="hero-banner">
+      <div class="hero-top">
+        <span class="pill-district">⚽ District Finistère Sud • Officiel</span>
+        <span class="pill-district">📊 Bilan après 7 Journées</span>
+      </div>
+      <h1 class="hero-title">29S DIVISION 1 — GROUPE E</h1>
+      <p class="hero-sub">Tableau de bord analytique interactif • Données officielles certifiées sans extrapolation</p>
+    </header>
+
+
+    <!-- BARRE DE CONTRÔLE & FILTRES -->
+    <section aria-label="Filtres du tableau de bord" class="control-bar">
+      <div class="filter-group">
+        <span class="filter-label">🔍 Mettre en lumière un club :</span>
+        <select class="pixar-select" id="clubHighlightSelect">
+          <option value="ALL">Tous les clubs (Vue complète)</option>
+        </select>
+      </div>
+      <div class="zone-pills">
+        <button class="pixar-btn active" data-zone="ALL">Tous (12)</button>
+        <button class="pixar-btn" data-zone="TOP">Podium (1–3)</button>
+        <button class="pixar-btn" data-zone="MID">Ventre mou (4–9)</button>
+        <button class="pixar-btn" data-zone="REL">Relégation (10–12)</button>
+      </div>
+    </section>
+
+
+    <!-- SECTION A : FAITS VÉRIFIÉS -->
+    <div class="section-header">
+      <h2 class="section-title">Section A — Faits Vérifiés &amp; Indicateurs Officiels</h2>
+      <span class="badge-verified">✓ Fait Vérifié • Source J7</span>
+    </div>
+
+
+    <!-- CARTES KPI -->
+    <div class="kpi-grid">
+      <div class="kpi-card leader-highlight">
+        <div class="kpi-top">
+          <span class="kpi-label">Leader Invaincu</span>
+          <span class="badge-verified">Fait Vérifié</span>
+        </div>
+        <div class="kpi-value">17 Pts</div>
+        <div class="kpi-club-row">
+          <img alt="US Pluguffan" class="crest-3d" id="kpi-leader-img" />
+          <span>US PLUGUFFAN (5V • 2N • 0D)</span>
+        </div>
+      </div>
+
+
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Meilleure Attaque</span>
+          <span class="badge-verified">Fait Vérifié</span>
+        </div>
+        <div class="kpi-value">24 Buts</div>
+        <div class="kpi-club-row">
+          <img alt="FC Pont l'Abbé (B)" class="crest-3d" id="kpi-att-img" />
+          <span>FC PONT L'ABBÉ (B) • 3,43 Bp/m</span>
+        </div>
+      </div>
+
+
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Meilleure Défense</span>
+          <span class="badge-verified">Fait Vérifié</span>
+        </div>
+        <div class="kpi-value">5 Bc</div>
+        <div class="kpi-club-row">
+          <img alt="Cl. Fouesnant" class="crest-3d" id="kpi-def-img" />
+          <span>CL. FOUESNANT • 0,71 Bc/m</span>
+        </div>
+      </div>
+
+
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-label">Volume Global Groupe E</span>
+          <span class="badge-verified">Fait Vérifié</span>
+        </div>
+        <div class="kpi-value">147 Buts</div>
+        <div class="kpi-club-row">
+          <span>42 matchs joués • 3,50 buts/match • 0 forfait</span>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- TABLEAU INTERACTIF TRIABLE -->
+    <div class="table-card">
+      <table class="standings-table" id="standingsTable">
+        <thead>
+          <tr>
+            <th data-sort="pl">Pl ⇅</th>
+            <th data-sort="team">Équipe ⇅</th>
+            <th data-sort="pts">Pts ⇅</th>
+            <th data-sort="jo">Jo</th>
+            <th data-sort="g">G ⇅</th>
+            <th data-sort="n">N ⇅</th>
+            <th data-sort="p">P ⇅</th>
+            <th data-sort="f">F</th>
+            <th data-sort="bp">Bp ⇅</th>
+            <th data-sort="bc">Bc ⇅</th>
+            <th data-sort="dif">Dif ⇅</th>
+            <th data-sort="pe">Pe</th>
+            <th data-sort="winRate">% Vic. ⇅</th>
+            <th data-sort="bpMatch">Bp/M ⇅</th>
+          </tr>
+        </thead>
+        <tbody id="standingsBody"></tbody>
+      </table>
+    </div>
+
+
+    <!-- SECTION B : OBSERVATIONS DE SYNTHÈSE -->
+    <div class="section-header">
+      <h2 class="section-title">Section B — Observations de Synthèse &amp; Lectures Tactiques</h2>
+      <span class="badge-synthesis">✦ Observation de Synthèse</span>
+    </div>
+
+
+    <div class="insights-grid">
+      <article class="insight-card">
+        <span class="badge-synthesis">Observation de Synthèse</span>
+        <h3>1. Contraste de styles sur le podium</h3>
+        <p>
+          Le trio de tête se tient en 2 points (17, 16 et 15 pts) avec des profils opposés : l'<strong>US Pluguffan</strong> domine par sa régularité sans défaite, le <strong>FC Pont l'Abbé (B)</strong> écrase les compteurs offensifs (+17 de différence), tandis que l'<strong>AS Plomelin</strong> ne partage jamais les points (5 victoires, 0 nul, 2 défaites).
+        </p>
+      </article>
+
+
+      <article class="insight-card">
+        <span class="badge-synthesis">Observation de Synthèse</span>
+        <h3>2. Le mur défensif du quatuor de tête</h3>
+        <p>
+          Les quatre premiers clubs ont tous encaissé 7 buts ou moins en 7 journées (5 pour <strong>Cl. Fouesnant</strong>, 6 pour l'<strong>AS Plomelin</strong>, 7 pour <strong>US Pluguffan</strong> et <strong>FC Pont l'Abbé (B)</strong>). À partir de la 5e place (FC Rosporden, 14 Bc), les défenses concèdent au minimum le double.
+        </p>
+      </article>
+
+
+      <article class="insight-card">
+        <span class="badge-synthesis">Observation de Synthèse</span>
+        <h3>3. Rupture nette avant la zone rouge</h3>
+        <p>
+          Un écart de 3 points sépare l'<strong>Hermine Concarnoise (B)</strong> (9e, 7 pts) du <strong>CA Forestois</strong> (10e, 4 pts). Les trois relégables actuels cumulent 17 défaites en 21 rencontres et affichent tous une différence de buts égale ou inférieure à -10.
+        </p>
+      </article>
+    </div>
+
+
+    <!-- SECTION C : 6 VISUALISATIONS GRAPHIQUES INTERACTIVES -->
+    <div class="section-header">
+      <h2 class="section-title">Analyses Graphiques Interactives (6 Vues)</h2>
+      <span class="badge-verified">Fait Vérifié • Données J7</span>
+    </div>
+
+
+    <div class="charts-grid">
+      <!-- GRAPHIQUE 1 : BARRES HORIZONTALES POINTS -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">1. Classement par Points &amp; Zones</h3>
+          <span class="badge-verified">Fait Vérifié</span>
+        </div>
+        <p class="chart-desc">Hiérarchie officielle après 7 journées : Leader (cyan), Podium (émeraude), Maintien (bleu nuit), Relégation (rouge corail).</p>
+        <div class="canvas-wrapper">
+          <canvas id="chartPoints"></canvas>
+        </div>
+      </div>
+
+
+      <!-- GRAPHIQUE 2 : ATTAQUE VS DÉFENSE -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">2. Attaque (Bp) vs Défense (Bc)</h3>
+          <span class="badge-verified">Fait Vérifié</span>
+        </div>
+        <p class="chart-desc">Comparaison directe des buts marqués et des buts encaissés pour chacune des 12 équipes.</p>
+        <div class="canvas-wrapper">
+          <canvas id="chartAttDef"></canvas>
+        </div>
+      </div>
+
+
+      <!-- GRAPHIQUE 3 : DIFFÉRENCE DE BUTS DIVERGENTE -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">3. Différence de Buts (Dif)</h3>
+          <span class="badge-verified">Fait Vérifié</span>
+        </div>
+        <p class="chart-desc">Solde net autour de l'axe zéro : surplus offensif en vert émeraude, déficit en rouge corail.</p>
+        <div class="canvas-wrapper">
+          <canvas id="chartDiff"></canvas>
+        </div>
+      </div>
+
+
+      <!-- GRAPHIQUE 4 : MATRICE QUADRANTS -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">4. Matrice Efficacité Offensive vs Solidité</h3>
+          <span class="badge-synthesis">Observation de Synthèse</span>
+        </div>
+        <p class="chart-desc">Axe X = Buts Pour (Bp) • Axe Y = Buts Contre (échelle inversée : plus haut = plus hermétique) • Taille = Points.</p>
+        <div class="canvas-wrapper">
+          <canvas id="chartQuadrant"></canvas>
+        </div>
+      </div>
+
+
+      <!-- GRAPHIQUE 5 : BARRES EMPILÉES 100 % -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">5. Répartition des Résultats (G / N / P)</h3>
+          <span class="badge-verified">Fait Vérifié</span>
+        </div>
+        <p class="chart-desc">Proportion exacte de Victoires, Nuls et Défaites sur les 7 journées disputées.</p>
+        <div class="canvas-wrapper">
+          <canvas id="chartResults"></canvas>
+        </div>
+      </div>
+
+
+      <!-- GRAPHIQUE 6 : RADAR COMPARATEUR DUEL -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">6. Duel Face-à-Face (Radar 5 Axes)</h3>
+          <span class="badge-synthesis">Observation de Synthèse</span>
+        </div>
+        <div class="duel-controls">
+          <div class="duel-side">
+            <img alt="Club A" class="crest-3d-lg" id="duelImgA" />
+            <select class="pixar-select" id="duelSelectA"></select>
+          </div>
+          <div class="vs-badge">VS</div>
+          <div class="duel-side">
+            <select class="pixar-select" id="duelSelectB"></select>
+            <img alt="Club B" class="crest-3d-lg" id="duelImgB" />
+          </div>
+        </div>
+        <div class="canvas-wrapper" style="height: 300px;">
+          <canvas id="chartRadar"></canvas>
+        </div>
+      </div>
+    </div>
+
+
+    <footer class="footer-note">
+      Source unique : Classement officiel Finistère Sud - 29S Division 1 - Groupe E (7 journées) • Écussons officiels Live NewsOuest.
+    </footer>
+  </div>
+
+
+  <script>
+    // =========================================================================
+    // 1. DONNÉES STRICTEMENT CERTIFIÉES (CAPTURE OFFICIELLE J7) + ÉCUSSONS EXACTES
+    // =========================================================================
+    // Sécurité anti-entités HTML si le fichier est copié via un éditeur riche
+    function cleanText(str) {
+      return str.replace(/&#8217;|&rsquo;|’/g, "'");
+    }
+
+
+    const CLUB_LOGOS = {
+      "CL. FOUESNANT": "https://live-newsouest.b-cdn.net/assets/img/team/clohars-fouesnant-v2_1569560210.PNG",
+      "MÉLÉNICKS ELLIANT": "https://live-newsouest.b-cdn.net/assets/img/team/elliant-2_1756471046.png",
+      "AS PLOMELIN": "https://live-newsouest.b-cdn.net/assets/img/team/as-plomelin_1786349930.png",
+      "QUIMPER ERGUÉ ARMEL FC (B)": "https://live-newsouest.b-cdn.net/assets/img/team/qeafc-2_1756461082.png",
+      "AS MELGVEN": "https://live-newsouest.b-cdn.net/assets/img/team/asmelgvenlogoremovebgpreview_1714662256.png",
+      "FC ROSPORDEN": "https://live-newsouest.b-cdn.net/assets/img/team/rosporden-fc-2_1756509009.png",
+      "CS PENMARC'H (B)": "https://live-newsouest.b-cdn.net/assets/img/team/penmarch_1787901699.png",
+      "FC ODET": "https://live-newsouest.b-cdn.net/assets/img/team/fc-odet_1755598409.png",
+      "CA FORESTOIS": "https://live-newsouest.b-cdn.net/assets/img/team/ca-forestois-2_1756467375.png",
+      "FC PONT L'ABBÉ (B)": "https://live-newsouest.b-cdn.net/assets/img/team/pont-l-abbe_1755983725.png",
+      "US PLUGUFFAN": "https://live-newsouest.b-cdn.net/assets/img/team/pluguffan-2_1756460043.png",
+      "HERM. CONCARNOISE (B)": "https://live-newsouest.b-cdn.net/assets/img/team/hermine-concarnoise-2_1756461679.png"
+    };
+
+
+    const RAW_STANDINGS = [
+      { pl: 1,  team: "US PLUGUFFAN",              pts: 17, jo: 7, g: 5, n: 2, p: 0, f: 0, bp: 16, bc: 7,  dif: 9,   pe: 0 },
+      { pl: 2,  team: "FC PONT L'ABBÉ (B)",        pts: 16, jo: 7, g: 5, n: 1, p: 1, f: 0, bp: 24, bc: 7,  dif: 17,  pe: 0 },
+      { pl: 3,  team: "AS PLOMELIN",               pts: 15, jo: 7, g: 5, n: 0, p: 2, f: 0, bp: 11, bc: 6,  dif: 5,   pe: 0 },
+      { pl: 4,  team: "CL. FOUESNANT",             pts: 13, jo: 7, g: 4, n: 1, p: 2, f: 0, bp: 8,  bc: 5,  dif: 3,   pe: 0 },
+      { pl: 5,  team: "FC ROSPORDEN",              pts: 11, jo: 7, g: 3, n: 2, p: 2, f: 0, bp: 17, bc: 14, dif: 3,   pe: 0 },
+      { pl: 6,  team: "FC ODET",                   pts: 11, jo: 7, g: 3, n: 2, p: 2, f: 0, bp: 13, bc: 14, dif: -1,  pe: 0 },
+      { pl: 7,  team: "AS MELGVEN",                pts: 10, jo: 7, g: 3, n: 1, p: 3, f: 0, bp: 12, bc: 11, dif: 1,   pe: 0 },
+      { pl: 8,  team: "QUIMPER ERGUÉ ARMEL FC (B)",pts: 10, jo: 7, g: 3, n: 1, p: 3, f: 0, bp: 9,  bc: 9,  dif: 0,   pe: 0 },
+      { pl: 9,  team: "HERM. CONCARNOISE (B)",     pts: 7,  jo: 7, g: 2, n: 1, p: 4, f: 0, bp: 14, bc: 15, dif: -1,  pe: 0 },
+      { pl: 10, team: "CA FORESTOIS",              pts: 4,  jo: 7, g: 1, n: 1, p: 5, f: 0, bp: 10, bc: 23, dif: -13, pe: 0 },
+      { pl: 11, team: "MÉLÉNICKS ELLIANT",         pts: 3,  jo: 7, g: 1, n: 0, p: 6, f: 0, bp: 5,  bc: 15, dif: -10, pe: 0 },
+      { pl: 12, team: "CS PENMARC'H (B)",          pts: 3,  jo: 7, g: 1, n: 0, p: 6, f: 0, bp: 8,  bc: 21, dif: -13, pe: 0 }
+    ].map(c => {
+      const normalizedTeam = cleanText(c.team);
+      return {
+        ...c,
+        team: normalizedTeam,
+        logo: CLUB_LOGOS[normalizedTeam],
+        winRate: Number(((c.g / c.jo) * 100).toFixed(1)),
+        bpMatch: Number((c.bp / c.jo).toFixed(2)),
+        bcMatch: Number((c.bc / c.jo).toFixed(2))
+      };
+    });
+
+
+    // Fallback SVG élégant si un écusson met du temps à charger
+    function createFallbackDataUri(teamName) {
+      const initials = teamName.replace(/[^A-ZÉÈÀÂ]/g, '').slice(0, 3) || 'FC';
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1e3a5f"/><stop offset="100%" stop-color="#0f1f36"/>
+        </linearGradient></defs>
+        <circle cx="40" cy="40" r="36" fill="url(#g)" stroke="#00d2d3" stroke-width="4"/>
+        <text x="40" y="47" font-family="sans-serif" font-weight="bold" font-size="22" fill="#ffffff" text-anchor="middle">${initials}</text>
+      </svg>`;
+      return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+    }
+
+
+    function applyImgWithFallback(imgEl, teamName, url) {
+      imgEl.src = url;
+      imgEl.onerror = () => {
+        imgEl.onerror = null;
+        imgEl.src = createFallbackDataUri(teamName);
+      };
+    }
+
+
+    // Préchargement des images pour affichage direct sur les graphiques Canvas
+    const loadedLogos = {};
+    RAW_STANDINGS.forEach(c => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = c.logo;
+      img.onload = () => { loadedLogos[c.team] = img; if (window.refreshAllCharts) window.refreshAllCharts(); };
+      img.onerror = () => {
+        const fb = new Image();
+        fb.src = createFallbackDataUri(c.team);
+        loadedLogos[c.team] = fb;
+      };
+    });
+
+
+    // =========================================================================
+    // 2. INITIALISATION KPI & SÉLECTEURS
+    // =========================================================================
+    applyImgWithFallback(document.getElementById("kpi-leader-img"), "US PLUGUFFAN", CLUB_LOGOS["US PLUGUFFAN"]);
+    applyImgWithFallback(document.getElementById("kpi-att-img"), "FC PONT L'ABBÉ (B)", CLUB_LOGOS["FC PONT L'ABBÉ (B)"]);
+    applyImgWithFallback(document.getElementById("kpi-def-img"), "CL. FOUESNANT", CLUB_LOGOS["CL. FOUESNANT"]);
+
+
+    const highlightSelect = document.getElementById("clubHighlightSelect");
+    const duelSelectA = document.getElementById("duelSelectA");
+    const duelSelectB = document.getElementById("duelSelectB");
+
+
+    RAW_STANDINGS.forEach(c => {
+      const label = `${c.pl}. ${c.team}`;
+      highlightSelect.add(new Option(label, c.team));
+      duelSelectA.add(new Option(label, c.team));
+      duelSelectB.add(new Option(label, c.team));
+    });
+
+
+    // Duel par défaut : US Pluguffan (1er) vs FC Pont l'Abbé (B) (2e)
+    duelSelectA.value = "US PLUGUFFAN";
+    duelSelectB.value = "FC PONT L'ABBÉ (B)";
+
+
+    // =========================================================================
+    // 3. RENDU DU TABLEAU INTERACTIF TRIABLE & FILTRABLE
+    // =========================================================================
+    let currentSort = { key: "pl", asc: true };
+    let currentZone = "ALL";
+    let highlightedClub = "ALL";
+
+
+    function renderTable() {
+      const tbody = document.getElementById("standingsBody");
+      tbody.innerHTML = "";
+
+
+      let filtered = RAW_STANDINGS.filter(c => {
+        if (currentZone === "TOP") return c.pl <= 3;
+        if (currentZone === "MID") return c.pl >= 4 && c.pl <= 9;
+        if (currentZone === "REL") return c.pl >= 10;
+        return true;
+      });
+
+
+      filtered.sort((a, b) => {
+        const valA = a[currentSort.key];
+        const valB = b[currentSort.key];
+        if (typeof valA === "string") {
+          return currentSort.asc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        }
+        return currentSort.asc ? valA - valB : valB - valA;
+      });
+
+
+      filtered.forEach(c => {
+        const tr = document.createElement("tr");
+        if (c.pl === 1) tr.classList.add("row-leader");
+        else if (c.pl <= 3) tr.classList.add("row-podium");
+        else if (c.pl >= 10) tr.classList.add("row-relegation");
+
+
+        if (highlightedClub === c.team) tr.classList.add("row-highlighted");
+
+
+        const difFormatted = c.dif > 0 ? `+{c.dif}`;
+        const fallbackUri = createFallbackDataUri(c.team);
+
+
+        tr.innerHTML = `
+          <td><span class="rank-pill">${c.pl}</span></td>
+          <td>
+            <div class="team-cell">
+              <img class="crest-3d" src="{c.team}" onerror="this.onerror=null;this.src='${fallbackUri}'" />
+              <span>${c.team}</span>
+            </div>
+          </td>
+          <td style="font-size:1.08rem;font-weight:900;">${c.pts}</td>
+          <td>${c.jo}</td>
+          <td>${c.g}</td>
+          <td>${c.n}</td>
+          <td>${c.p}</td>
+          <td>${c.f}</td>
+          <td>${c.bp}</td>
+          <td>${c.bc}</td>
+          <td>${difFormatted}</td>
+          <td>${c.pe}</td>
+          <td>${c.winRate}%</td>
+          <td>${c.bpMatch.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+
+    document.querySelectorAll("#standingsTable thead th[data-sort]").forEach(th => {
+      th.addEventListener("click", () => {
+        const key = th.dataset.sort;
+        if (currentSort.key === key) {
+          currentSort.asc = !currentSort.asc;
+        } else {
+          currentSort.key = key;
+          currentSort.asc = (key === "pl" || key === "bc" || key === "p" || key === "team");
+        }
+        renderTable();
+      });
+    });
+
+
+    document.querySelectorAll(".zone-pills .pixar-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".zone-pills .pixar-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentZone = btn.dataset.zone;
+        renderTable();
+      });
+    });
+
+
+    highlightSelect.addEventListener("change", (e) => {
+      highlightedClub = e.target.value;
+      renderTable();
+      if (window.refreshAllCharts) window.refreshAllCharts();
+    });
+
+
+    renderTable();
+
+
+    // =========================================================================
+    // 4. CONFIGURATION GLOBALE CHART.JS (ESTHÉTIQUE STUDIO PIXAR 3D)
+    // =========================================================================
+    Chart.register(ChartDataLabels);
+    Chart.defaults.font.family = "'Nunito', sans-serif";
+    Chart.defaults.font.weight = 700;
+    Chart.defaults.color = "#18263b";
+
+
+    const shortLabels = RAW_STANDINGS.map(c => c.team.replace("QUIMPER ERGUÉ ARMEL FC (B)", "QEAFC (B)").replace("HERM. CONCARNOISE (B)", "H. CONCARNEAU (B)"));
+
+
+    // Plugin personnalisé : dessine les écussons officiels à côté des barres du Graphique 1
+    const barLogoPlugin = {
+      id: "barLogoPlugin",
+      afterDatasetsDraw(chart) {
+        if (chart.canvas.id !== "chartPoints") return;
+        const { ctx } = chart;
+        const meta = chart.getDatasetMeta(0);
+        meta.data.forEach((bar, index) => {
+          const team = RAW_STANDINGS[index].team;
+          const img = loadedLogos[team];
+          if (img && img.complete) {
+            const size = 22;
+            ctx.save();
+            ctx.drawImage(img, bar.x + 28, bar.y - size / 2, size, size);
+            ctx.restore();
+          }
+        });
+      }
+    };
+
+
+    // GRAPHIQUE 1 : BARRES HORIZONTALES POINTS
+    const chartPoints = new Chart(document.getElementById("chartPoints"), {
+      type: "bar",
+      plugins: [barLogoPlugin],
+      data: {
+        labels: shortLabels,
+        datasets: [{
+          label: "Points (Pts)",
+          data: RAW_STANDINGS.map(c => c.pts),
+          backgroundColor: RAW_STANDINGS.map(c => {
+            if (highlightedClub !== "ALL" && highlightedClub !== c.team) return "rgba(180, 194, 212, 0.35)";
+            if (c.pl === 1) return "#00d2d3";
+            if (c.pl <= 3) return "#10b981";
+            if (c.pl >= 10) return "#e14949";
+            return "#24436e";
+          }),
+          borderRadius: 10,
+          borderSkipped: false,
+          barThickness: 18
+        }]
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { right: 56 } },
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            anchor: "end",
+            align: "right",
+            offset: 6,
+            color: "#132238",
+            font: { family: "'Fredoka', sans-serif", size: 12, weight: 700 },
+            formatter: v => `${v} pts`
+          }
+        },
+        scales: {
+          x: { max: 20, grid: { color: "rgba(19,34,56,0.06)" } },
+          y: { grid: { display: false }, ticks: { font: { size: 11, weight: 800 } } }
+        }
+      }
+    });
+
+
+    // GRAPHIQUE 2 : ATTAQUE VS DÉFENSE
+    const chartAttDef = new Chart(document.getElementById("chartAttDef"), {
+      type: "bar",
+      data: {
+        labels: shortLabels,
+        datasets: [
+          {
+            label: "Buts Pour (Bp)",
+            data: RAW_STANDINGS.map(c => c.bp),
+            backgroundColor: "#10b981",
+            borderRadius: 8
+          },
+          {
+            label: "Buts Contre (Bc)",
+            data: RAW_STANDINGS.map(c => c.bc),
+            backgroundColor: "#f43f5e",
+            borderRadius: 8
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: "top", labels: { usePointStyle: true, padding: 16 } },
+          datalabels: {
+            anchor: "end",
+            align: "top",
+            offset: -2,
+            font: { size: 10, weight: 800 }
+          }
+        },
+        scales: {
+          x: { ticks: { maxRotation: 42, minRotation: 32, font: { size: 10, weight: 800 } }, grid: { display: false } },
+          y: { max: 28, grid: { color: "rgba(19,34,56,0.06)" } }
+        }
+      }
+    });
+
+
+    // GRAPHIQUE 3 : DIFFÉRENCE DE BUTS DIVERGENTE
+    const chartDiff = new Chart(document.getElementById("chartDiff"), {
+      type: "bar",
+      data: {
+        labels: shortLabels,
+        datasets: [{
+          label: "Différence de buts (Dif)",
+          data: RAW_STANDINGS.map(c => c.dif),
+          backgroundColor: RAW_STANDINGS.map(c => c.dif >= 0 ? "#0ea5e9" : "#e14949"),
+          borderRadius: 8
+        }]
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { left: 14, right: 24 } },
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            anchor: ctx => ctx.dataset.data[ctx.dataIndex] >= 0 ? "end" : "start",
+            align: ctx => ctx.dataset.data[ctx.dataIndex] >= 0 ? "right" : "left",
+            font: { size: 11, weight: 800 },
+            formatter: v => (v > 0 ? `+${v}` : v)
+          }
+        },
+        scales: {
+          x: { min: -16, max: 20, grid: { color: "rgba(19,34,56,0.08)" } },
+          y: { grid: { display: false }, ticks: { font: { size: 11, weight: 800 } } }
+        }
+      }
+    });
+
+
+    // GRAPHIQUE 4 : MATRICE QUADRANTS (BULLE : Bp vs Bc inversé)
+    const chartQuadrant = new Chart(document.getElementById("chartQuadrant"), {
+      type: "bubble",
+      data: {
+        datasets: RAW_STANDINGS.map(c => ({
+          label: c.team,
+          data: [{ x: c.bp, y: c.bc, r: Math.max(7, c.pts * 1.15) }],
+          backgroundColor: c.pl === 1 ? "rgba(0, 210, 211, 0.85)" :
+                           c.pl <= 3 ? "rgba(16, 185, 129, 0.82)" :
+                           c.pl >= 10 ? "rgba(225, 73, 73, 0.85)" : "rgba(36, 67, 110, 0.78)",
+          borderColor: "#ffffff",
+          borderWidth: 2
+        }))
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const c = RAW_STANDINGS[ctx.datasetIndex];
+                return `${c.team} : ${c.bp} Bp, {c.pts} pts)`;
+              }
+            }
+          },
+          datalabels: {
+            color: "#132238",
+            font: { size: 9.5, weight: 800 },
+            align: "top",
+            offset: 4,
+            formatter: (_, ctx) => shortLabels[ctx.datasetIndex]
+          }
+        },
+        scales: {
+          x: {
+            title: { display: true, text: "Buts Marqués (Bp) → Plus offensif", font: { weight: 800 } },
+            min: 3, max: 27
+          },
+          y: {
+            reverse: true,
+            title: { display: true, text: "Buts Encaissés (Bc) ↑ Plus hermétique", font: { weight: 800 } },
+            min: 3, max: 25
+          }
+        }
+      }
+    });
+
+
+    // GRAPHIQUE 5 : BARRES EMPILÉES 100 % (VICTOIRES / NULS / DÉFAITES)
+    const chartResults = new Chart(document.getElementById("chartResults"), {
+      type: "bar",
+      data: {
+        labels: shortLabels,
+        datasets: [
+          {
+            label: "Victoires (G)",
+            data: RAW_STANDINGS.map(c => Number(((c.g / c.jo) * 100).toFixed(1))),
+            backgroundColor: "#10b981",
+            borderRadius: 4
+          },
+          {
+            label: "Nuls (N)",
+            data: RAW_STANDINGS.map(c => Number(((c.n / c.jo) * 100).toFixed(1))),
+            backgroundColor: "#f59e0b",
+            borderRadius: 4
+          },
+          {
+            label: "Défaites (P)",
+            data: RAW_STANDINGS.map(c => Number(((c.p / c.jo) * 100).toFixed(1))),
+            backgroundColor: "#e14949",
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: "top", labels: { usePointStyle: true } },
+          datalabels: {
+            color: "#ffffff",
+            font: { size: 10, weight: 800 },
+            formatter: v => (v > 12 ? `${Math.round(v)}%` : "")
+          }
+        },
+        scales: {
+          x: { stacked: true, max: 100, ticks: { callback: v => v + "%" } },
+          y: { stacked: true, grid: { display: false }, ticks: { font: { size: 11, weight: 800 } } }
+        }
+      }
+    });
+
+
+    // GRAPHIQUE 6 : RADAR DUEL FACE-À-FACE
+    function getNormalizedMetrics(club) {
+      const ptsScore = (club.pts / 17) * 100;
+      const winScore = (club.g / 5) * 100;
+      const attScore = (club.bp / 24) * 100;
+      const defScore = ((25 - club.bc) / 20) * 100;
+      const difScore = ((club.dif + 15) / 32) * 100;
+      return [ptsScore, winScore, attScore, defScore, difScore].map(v => Math.max(8, Math.min(100, Math.round(v))));
+    }
+
+
+    const chartRadar = new Chart(document.getElementById("chartRadar"), {
+      type: "radar",
+      data: {
+        labels: ["Points (Pts)", "Victoires (G)", "Attaque (Bp)", "Solidité Déf.", "Diff. Buts"],
+        datasets: [
+          {
+            label: "Club A",
+            data: [100, 100, 67, 90, 75],
+            backgroundColor: "rgba(0, 210, 211, 0.28)",
+            borderColor: "#009798",
+            borderWidth: 3,
+            pointBackgroundColor: "#00d2d3"
+          },
+          {
+            label: "Club B",
+            data: [94, 100, 100, 90, 100],
+            backgroundColor: "rgba(139, 51, 54, 0.25)",
+            borderColor: "#8b3336",
+            borderWidth: 3,
+            pointBackgroundColor: "#e14949"
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: "bottom", labels: { usePointStyle: true, padding: 14 } },
+          datalabels: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const teamName = ctx.dataset.label;
+                const club = RAW_STANDINGS.find(x => x.team === teamName);
+                if (!club) return "";
+                const rawVals = [
+                  `${club.pts} pts`,
+                  `${club.g} victoires`,
+                  `${club.bp} buts pour`,
+                  `${club.bc} buts contre`,
+                  `${club.dif > 0 ? "+" + club.dif : club.dif} dif.`
+                ];
+                return `${teamName} — ${rawVals[ctx.dataIndex]}`;
+              }
+            }
+          }
+        },
+        scales: {
+          r: {
+            min: 0,
+            max: 100,
+            ticks: { display: false },
+            pointLabels: { font: { size: 11, weight: 800 }, color: "#132238" }
+          }
+        }
+      }
+    });
+
+
+    function updateDuel() {
+      const clubA = RAW_STANDINGS.find(c => c.team === duelSelectA.value) || RAW_STANDINGS[0];
+      const clubB = RAW_STANDINGS.find(c => c.team === duelSelectB.value) || RAW_STANDINGS[1];
+
+
+      applyImgWithFallback(document.getElementById("duelImgA"), clubA.team, clubA.logo);
+      applyImgWithFallback(document.getElementById("duelImgB"), clubB.team, clubB.logo);
+
+
+      chartRadar.data.datasets[0].label = clubA.team;
+      chartRadar.data.datasets[0].data = getNormalizedMetrics(clubA);
+
+
+      chartRadar.data.datasets[1].label = clubB.team;
+      chartRadar.data.datasets[1].data = getNormalizedMetrics(clubB);
+
+
+      chartRadar.update();
+    }
+
+
+    duelSelectA.addEventListener("change", updateDuel);
+    duelSelectB.addEventListener("change", updateDuel);
+    updateDuel();
+
+
+    window.refreshAllCharts = function() {
+      chartPoints.data.datasets[0].backgroundColor = RAW_STANDINGS.map(c => {
+        if (highlightedClub !== "ALL" && highlightedClub !== c.team) return "rgba(180, 194, 212, 0.35)";
+        if (c.pl === 1) return "#00d2d3";
+        if (c.pl <= 3) return "#10b981";
+        if (c.pl >= 10) return "#e14949";
+        return "#24436e";
+      });
+      chartPoints.update();
+    };
+  </script>
+</body>
+</html>
