@@ -1,7 +1,8 @@
-﻿<html lang="fr">
+<html lang="fr">
 <head>
   <meta charset="UTF-8"></meta>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"></meta>
+  <link rel="icon" href="data:,">
   <title>Tableau de Bord 3D — Finistère Sud 29S Division 1 (Groupe E)</title>
   <!-- Google Fonts : Fredoka (rondeurs Pixar) & Nunito (lisibilité haute précision) -->
   <link href="https://fonts.googleapis.com" rel="preconnect"></link>
@@ -1099,7 +1100,7 @@
         if (highlightedClub === c.team) tr.classList.add("row-highlighted");
 
 
-        const difFormatted = c.dif > 0 ? `+{c.dif}`;
+        const difFormatted = c.dif > 0 ? `+${c.dif}` : c.dif;
         const fallbackUri = createFallbackDataUri(c.team);
 
 
@@ -1107,7 +1108,7 @@
           <td><span class="rank-pill">${c.pl}</span></td>
           <td>
             <div class="team-cell">
-              <img class="crest-3d" src="{c.team}" onerror="this.onerror=null;this.src='${fallbackUri}'" />
+              <img class="crest-3d" src="${c.logo}" alt="${c.team}" onerror="this.onerror=null;this.src='${fallbackUri}'" />
               <span>${c.team}</span>
             </div>
           </td>
@@ -1338,7 +1339,7 @@
             callbacks: {
               label: ctx => {
                 const c = RAW_STANDINGS[ctx.datasetIndex];
-                return `${c.team} : ${c.bp} Bp, {c.pts} pts)`;
+                return `${c.team} : ${c.bp} Bp, ${c.bc} Bc (${c.pts} pts)`;
               }
             }
           },
