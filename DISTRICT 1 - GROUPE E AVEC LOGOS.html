@@ -1,17 +1,17 @@
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8"></meta>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"></meta>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <link rel="icon" href="data:,">
   <title>Tableau de Bord 3D — Finistère Sud 29S Division 1 (Groupe E)</title>
   <!-- Google Fonts : Fredoka (rondeurs Pixar) & Nunito (lisibilité haute précision) -->
-  <link href="https://fonts.googleapis.com" rel="preconnect"></link>
-  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"></link>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@500;700;800;900&amp;display=swap" rel="stylesheet"></link>
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@500;700;800;900&amp;display=swap" rel="stylesheet">
   <!-- Chart.js & Plugin Datalabels via CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-
 
   <style>
     :root {
@@ -30,7 +30,6 @@
       --text-dark: #18263b;
       --text-muted: #52647c;
 
-
       /* Ombres multicouches 3D Pixar */
       --shadow-pixar-card:
         0 18px 34px -10px rgba(19, 34, 56, 0.14),
@@ -38,25 +37,21 @@
         inset 0 2px 3px rgba(255, 255, 255, 0.95),
         inset 0 -3px 6px rgba(19, 34, 56, 0.05);
 
-
       --shadow-pixar-btn:
         0 6px 0 #132238,
         0 12px 20px rgba(19, 34, 56, 0.22),
         inset 0 2px 2px rgba(255, 255, 255, 0.45);
-
 
       --shadow-pixar-btn-active:
         0 2px 0 #132238,
         0 5px 10px rgba(19, 34, 56, 0.2);
     }
 
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-
 
     body {
       font-family: 'Nunito', sans-serif;
@@ -67,12 +62,10 @@
       min-height: 100vh;
     }
 
-
     .container {
       max-width: 1380px;
       margin: 0 auto;
     }
-
 
     /* EN-TÊTE STUDIO 3D */
     .hero-banner {
@@ -89,7 +82,6 @@
       margin-bottom: 28px;
     }
 
-
     .hero-banner::before {
       content: "";
       position: absolute;
@@ -102,7 +94,6 @@
       pointer-events: none;
     }
 
-
     .hero-top {
       display: flex;
       flex-wrap: wrap;
@@ -111,7 +102,6 @@
       gap: 16px;
       margin-bottom: 14px;
     }
-
 
     .pill-district {
       display: inline-flex;
@@ -128,7 +118,6 @@
       box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4);
     }
 
-
     .hero-title {
       font-family: 'Fredoka', sans-serif;
       font-size: clamp(1.75rem, 3.2vw, 2.6rem);
@@ -137,14 +126,12 @@
       text-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
     }
 
-
     .hero-sub {
       color: #f3dce0;
       font-size: 1.02rem;
       font-weight: 600;
       margin-top: 4px;
     }
-
 
     /* BARRE DE FILTRE & DUEL RAPIDE */
     .control-bar {
@@ -161,7 +148,6 @@
       border: 1px solid rgba(255, 255, 255, 0.9);
     }
 
-
     .filter-group {
       display: flex;
       flex-wrap: wrap;
@@ -169,14 +155,12 @@
       gap: 12px;
     }
 
-
     .filter-label {
       font-family: 'Fredoka', sans-serif;
       font-weight: 600;
       font-size: 1rem;
       color: var(--navy-deep);
     }
-
 
     select.pixar-select {
       appearance: none;
@@ -198,19 +182,16 @@
       transition: transform 0.15s ease, border-color 0.2s ease;
     }
 
-
     select.pixar-select:focus {
       outline: none;
       border-color: var(--cyan-dark);
     }
-
 
     .zone-pills {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
     }
-
 
     .pixar-btn {
       border: none;
@@ -226,18 +207,15 @@
       transition: transform 0.12s ease, box-shadow 0.12s ease;
     }
 
-
     .pixar-btn:hover {
       transform: translateY(-2px);
     }
-
 
     .pixar-btn:active, .pixar-btn.active {
       transform: translateY(4px);
       box-shadow: var(--shadow-pixar-btn-active);
       background: linear-gradient(180deg, #00b8b9 0%, #008283 100%);
     }
-
 
     /* EN-TÊTES DE SECTIONS & BADGES ÉPISTÉMIQUES */
     .section-header {
@@ -249,7 +227,6 @@
       margin: 34px 0 18px;
     }
 
-
     .section-title {
       font-family: 'Fredoka', sans-serif;
       font-size: 1.55rem;
@@ -258,7 +235,6 @@
       align-items: center;
       gap: 12px;
     }
-
 
     .badge-verified {
       display: inline-flex;
@@ -278,7 +254,6 @@
       text-transform: uppercase;
     }
 
-
     .badge-synthesis {
       display: inline-flex;
       align-items: center;
@@ -297,7 +272,6 @@
       text-transform: uppercase;
     }
 
-
     /* GRILLE KPI 3D */
     .kpi-grid {
       display: grid;
@@ -305,7 +279,6 @@
       gap: 20px;
       margin-bottom: 28px;
     }
-
 
     .kpi-card {
       background: var(--card-cream);
@@ -320,17 +293,14 @@
       transition: transform 0.2s ease;
     }
 
-
     .kpi-card:hover {
       transform: translateY(-4px);
     }
-
 
     .kpi-card.leader-highlight {
       background: linear-gradient(145deg, #e0fbfb 0%, #ffffff 100%);
       border: 2px solid #5ce1e6;
     }
-
 
     .kpi-top {
       display: flex;
@@ -339,7 +309,6 @@
       margin-bottom: 12px;
     }
 
-
     .kpi-label {
       font-size: 0.85rem;
       font-weight: 800;
@@ -347,7 +316,6 @@
       letter-spacing: 0.04em;
       color: var(--text-muted);
     }
-
 
     .kpi-value {
       font-family: 'Fredoka', sans-serif;
@@ -358,7 +326,6 @@
       margin: 6px 0;
     }
 
-
     .kpi-club-row {
       display: flex;
       align-items: center;
@@ -368,7 +335,6 @@
       font-size: 0.95rem;
       color: var(--navy-deep);
     }
-
 
     /* ÉCUSSONS OFFICIELS 3D */
     .crest-3d {
@@ -384,7 +350,6 @@
       flex-shrink: 0;
     }
 
-
     .crest-3d-lg {
       width: 76px;
       height: 76px;
@@ -397,7 +362,6 @@
         inset 0 3px 4px #ffffff;
     }
 
-
     /* TABLEAU CLASSEMENT INTERACTIF */
     .table-card {
       background: var(--card-white);
@@ -408,14 +372,12 @@
       margin-bottom: 32px;
     }
 
-
     table.standings-table {
       width: 100%;
       border-collapse: separate;
       border-spacing: 0 8px;
       min-width: 860px;
     }
-
 
     table.standings-table thead th {
       background: var(--navy-deep);
@@ -430,27 +392,22 @@
       transition: background 0.15s;
     }
 
-
     table.standings-table thead th:first-child {
       border-radius: 14px 0 0 14px;
     }
 
-
     table.standings-table thead th:last-child {
       border-radius: 0 14px 14px 0;
     }
-
 
     table.standings-table thead th:nth-child(2) {
       text-align: left;
       padding-left: 16px;
     }
 
-
     table.standings-table thead th:hover {
       background: #233b5e;
     }
-
 
     table.standings-table tbody tr {
       background: #f8fafd;
@@ -458,12 +415,10 @@
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
-
     table.standings-table tbody tr:hover {
       transform: scale(1.007);
       box-shadow: 0 8px 18px rgba(19, 34, 56, 0.12);
     }
-
 
     table.standings-table tbody td {
       padding: 11px 12px;
@@ -473,18 +428,15 @@
       color: var(--text-dark);
     }
 
-
     table.standings-table tbody td:first-child {
       border-radius: 14px 0 0 14px;
       font-family: 'Fredoka', sans-serif;
       font-size: 1.05rem;
     }
 
-
     table.standings-table tbody td:last-child {
       border-radius: 0 14px 14px 0;
     }
-
 
     /* Codes couleurs du classement */
     tr.row-leader {
@@ -496,11 +448,9 @@
       font-weight: 900 !important;
     }
 
-
     tr.row-podium {
       background: linear-gradient(90deg, #ecfdf5 0%, #f6fef9 100%) !important;
     }
-
 
     tr.row-relegation {
       background: linear-gradient(90deg, #d63d3d 0%, #e55858 100%) !important;
@@ -510,12 +460,10 @@
       color: #ffffff !important;
     }
 
-
     tr.row-highlighted {
       outline: 3px solid #132238;
       transform: scale(1.012);
     }
-
 
     .team-cell {
       display: flex;
@@ -524,7 +472,6 @@
       text-align: left;
       font-weight: 800;
     }
-
 
     .rank-pill {
       display: inline-flex;
@@ -536,18 +483,15 @@
       background: rgba(19, 34, 56, 0.08);
     }
 
-
     tr.row-leader .rank-pill {
       background: #ffffff;
       color: #008283;
     }
 
-
     tr.row-relegation .rank-pill {
       background: rgba(255, 255, 255, 0.22);
       color: #ffffff;
     }
-
 
     /* OBSERVATIONS DE SYNTHÈSE (SECTION B) */
     .insights-grid {
@@ -557,7 +501,6 @@
       margin-bottom: 34px;
     }
 
-
     .insight-card {
       background: linear-gradient(160deg, #ffffff 0%, #f5f3ff 100%);
       border-radius: 24px;
@@ -566,7 +509,6 @@
       border: 1px solid #e4dcff;
     }
 
-
     .insight-card h3 {
       font-family: 'Fredoka', sans-serif;
       font-size: 1.2rem;
@@ -574,13 +516,11 @@
       margin: 12px 0 8px;
     }
 
-
     .insight-card p {
       font-size: 0.96rem;
       color: var(--text-muted);
       font-weight: 600;
     }
-
 
     /* GRILLE DES 6 GRAPHIQUES INTERACTIFS */
     .charts-grid {
@@ -589,13 +529,11 @@
       gap: 26px;
     }
 
-
     @media (max-width: 980px) {
       .charts-grid {
         grid-template-columns: 1fr;
       }
     }
-
 
     .chart-card {
       background: var(--card-cream);
@@ -607,7 +545,6 @@
       flex-direction: column;
     }
 
-
     .chart-header {
       display: flex;
       flex-wrap: wrap;
@@ -617,13 +554,11 @@
       margin-bottom: 14px;
     }
 
-
     .chart-title {
       font-family: 'Fredoka', sans-serif;
       font-size: 1.22rem;
       color: var(--navy-deep);
     }
-
 
     .chart-desc {
       font-size: 0.88rem;
@@ -632,13 +567,11 @@
       margin-bottom: 14px;
     }
 
-
     .canvas-wrapper {
       position: relative;
       height: 360px;
       width: 100%;
     }
-
 
     /* DUEL FACE-À-FACE (GRAPHIQUE 6) */
     .duel-controls {
@@ -654,13 +587,11 @@
       box-shadow: inset 0 2px 5px rgba(19, 34, 56, 0.06);
     }
 
-
     .duel-side {
       display: flex;
       align-items: center;
       gap: 10px;
     }
-
 
     .vs-badge {
       font-family: 'Fredoka', sans-serif;
@@ -676,7 +607,6 @@
       justify-content: center;
       box-shadow: 0 4px 10px rgba(225, 73, 73, 0.35);
     }
-
 
     .footer-note {
       text-align: center;
@@ -699,7 +629,6 @@
       <p class="hero-sub">Tableau de bord analytique interactif • Données officielles certifiées sans extrapolation</p>
     </header>
 
-
     <!-- BARRE DE CONTRÔLE & FILTRES -->
     <section aria-label="Filtres du tableau de bord" class="control-bar">
       <div class="filter-group">
@@ -716,13 +645,11 @@
       </div>
     </section>
 
-
     <!-- SECTION A : FAITS VÉRIFIÉS -->
     <div class="section-header">
       <h2 class="section-title">Section A — Faits Vérifiés &amp; Indicateurs Officiels</h2>
       <span class="badge-verified">✓ Fait Vérifié • Source J7</span>
     </div>
-
 
     <!-- CARTES KPI -->
     <div class="kpi-grid">
@@ -733,11 +660,10 @@
         </div>
         <div class="kpi-value">17 Pts</div>
         <div class="kpi-club-row">
-          <img alt="US Pluguffan" class="crest-3d" id="kpi-leader-img" />
+          <img alt="US Pluguffan" class="crest-3d" id="kpi-leader-img">
           <span>US PLUGUFFAN (5V • 2N • 0D)</span>
         </div>
       </div>
-
 
       <div class="kpi-card">
         <div class="kpi-top">
@@ -746,11 +672,10 @@
         </div>
         <div class="kpi-value">24 Buts</div>
         <div class="kpi-club-row">
-          <img alt="FC Pont l'Abbé (B)" class="crest-3d" id="kpi-att-img" />
+          <img alt="FC Pont l'Abbé (B)" class="crest-3d" id="kpi-att-img">
           <span>FC PONT L'ABBÉ (B) • 3,43 Bp/m</span>
         </div>
       </div>
-
 
       <div class="kpi-card">
         <div class="kpi-top">
@@ -759,11 +684,10 @@
         </div>
         <div class="kpi-value">5 Bc</div>
         <div class="kpi-club-row">
-          <img alt="Cl. Fouesnant" class="crest-3d" id="kpi-def-img" />
+          <img alt="Cl. Fouesnant" class="crest-3d" id="kpi-def-img">
           <span>CL. FOUESNANT • 0,71 Bc/m</span>
         </div>
       </div>
-
 
       <div class="kpi-card">
         <div class="kpi-top">
@@ -776,7 +700,6 @@
         </div>
       </div>
     </div>
-
 
     <!-- TABLEAU INTERACTIF TRIABLE -->
     <div class="table-card">
@@ -803,13 +726,11 @@
       </table>
     </div>
 
-
     <!-- SECTION B : OBSERVATIONS DE SYNTHÈSE -->
     <div class="section-header">
       <h2 class="section-title">Section B — Observations de Synthèse &amp; Lectures Tactiques</h2>
       <span class="badge-synthesis">✦ Observation de Synthèse</span>
     </div>
-
 
     <div class="insights-grid">
       <article class="insight-card">
@@ -820,7 +741,6 @@
         </p>
       </article>
 
-
       <article class="insight-card">
         <span class="badge-synthesis">Observation de Synthèse</span>
         <h3>2. Le mur défensif du quatuor de tête</h3>
@@ -828,7 +748,6 @@
           Les quatre premiers clubs ont tous encaissé 7 buts ou moins en 7 journées (5 pour <strong>Cl. Fouesnant</strong>, 6 pour l'<strong>AS Plomelin</strong>, 7 pour <strong>US Pluguffan</strong> et <strong>FC Pont l'Abbé (B)</strong>). À partir de la 5e place (FC Rosporden, 14 Bc), les défenses concèdent au minimum le double.
         </p>
       </article>
-
 
       <article class="insight-card">
         <span class="badge-synthesis">Observation de Synthèse</span>
@@ -839,13 +758,11 @@
       </article>
     </div>
 
-
     <!-- SECTION C : 6 VISUALISATIONS GRAPHIQUES INTERACTIVES -->
     <div class="section-header">
       <h2 class="section-title">Analyses Graphiques Interactives (6 Vues)</h2>
       <span class="badge-verified">Fait Vérifié • Données J7</span>
     </div>
-
 
     <div class="charts-grid">
       <!-- GRAPHIQUE 1 : BARRES HORIZONTALES POINTS -->
@@ -860,7 +777,6 @@
         </div>
       </div>
 
-
       <!-- GRAPHIQUE 2 : ATTAQUE VS DÉFENSE -->
       <div class="chart-card">
         <div class="chart-header">
@@ -872,7 +788,6 @@
           <canvas id="chartAttDef"></canvas>
         </div>
       </div>
-
 
       <!-- GRAPHIQUE 3 : DIFFÉRENCE DE BUTS DIVERGENTE -->
       <div class="chart-card">
@@ -886,7 +801,6 @@
         </div>
       </div>
 
-
       <!-- GRAPHIQUE 4 : MATRICE QUADRANTS -->
       <div class="chart-card">
         <div class="chart-header">
@@ -898,7 +812,6 @@
           <canvas id="chartQuadrant"></canvas>
         </div>
       </div>
-
 
       <!-- GRAPHIQUE 5 : BARRES EMPILÉES 100 % -->
       <div class="chart-card">
@@ -912,7 +825,6 @@
         </div>
       </div>
 
-
       <!-- GRAPHIQUE 6 : RADAR COMPARATEUR DUEL -->
       <div class="chart-card">
         <div class="chart-header">
@@ -921,13 +833,13 @@
         </div>
         <div class="duel-controls">
           <div class="duel-side">
-            <img alt="Club A" class="crest-3d-lg" id="duelImgA" />
+            <img alt="Club A" class="crest-3d-lg" id="duelImgA">
             <select class="pixar-select" id="duelSelectA"></select>
           </div>
           <div class="vs-badge">VS</div>
           <div class="duel-side">
             <select class="pixar-select" id="duelSelectB"></select>
-            <img alt="Club B" class="crest-3d-lg" id="duelImgB" />
+            <img alt="Club B" class="crest-3d-lg" id="duelImgB">
           </div>
         </div>
         <div class="canvas-wrapper" style="height: 300px;">
@@ -936,22 +848,18 @@
       </div>
     </div>
 
-
     <footer class="footer-note">
       Source unique : Classement officiel Finistère Sud - 29S Division 1 - Groupe E (7 journées) • Écussons officiels Live NewsOuest.
     </footer>
   </div>
 
-
   <script>
     // =========================================================================
     // 1. DONNÉES STRICTEMENT CERTIFIÉES (CAPTURE OFFICIELLE J7) + ÉCUSSONS EXACTES
     // =========================================================================
-    // Sécurité anti-entités HTML si le fichier est copié via un éditeur riche
     function cleanText(str) {
       return str.replace(/&#8217;|&rsquo;|’/g, "'");
     }
-
 
     const CLUB_LOGOS = {
       "CL. FOUESNANT": "https://live-newsouest.b-cdn.net/assets/img/team/clohars-fouesnant-v2_1569560210.PNG",
@@ -967,7 +875,6 @@
       "US PLUGUFFAN": "https://live-newsouest.b-cdn.net/assets/img/team/pluguffan-2_1756460043.png",
       "HERM. CONCARNOISE (B)": "https://live-newsouest.b-cdn.net/assets/img/team/hermine-concarnoise-2_1756461679.png"
     };
-
 
     const RAW_STANDINGS = [
       { pl: 1,  team: "US PLUGUFFAN",              pts: 17, jo: 7, g: 5, n: 2, p: 0, f: 0, bp: 16, bc: 7,  dif: 9,   pe: 0 },
@@ -994,8 +901,7 @@
       };
     });
 
-
-    // Fallback SVG élégant si un écusson met du temps à charger
+    // Fallback SVG élégant si un écusson est indisponible
     function createFallbackDataUri(teamName) {
       const initials = teamName.replace(/[^A-ZÉÈÀÂ]/g, '').slice(0, 3) || 'FC';
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
@@ -1008,7 +914,6 @@
       return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
     }
 
-
     function applyImgWithFallback(imgEl, teamName, url) {
       imgEl.src = url;
       imgEl.onerror = () => {
@@ -1017,12 +922,10 @@
       };
     }
 
-
-    // Préchargement des images pour affichage direct sur les graphiques Canvas
+    // Préchargement des images pour affichage direct sur les graphiques Canvas (sans blocage CORS)
     const loadedLogos = {};
     RAW_STANDINGS.forEach(c => {
       const img = new Image();
-      img.crossOrigin = "anonymous";
       img.src = c.logo;
       img.onload = () => { loadedLogos[c.team] = img; if (window.refreshAllCharts) window.refreshAllCharts(); };
       img.onerror = () => {
@@ -1032,7 +935,6 @@
       };
     });
 
-
     // =========================================================================
     // 2. INITIALISATION KPI & SÉLECTEURS
     // =========================================================================
@@ -1040,11 +942,9 @@
     applyImgWithFallback(document.getElementById("kpi-att-img"), "FC PONT L'ABBÉ (B)", CLUB_LOGOS["FC PONT L'ABBÉ (B)"]);
     applyImgWithFallback(document.getElementById("kpi-def-img"), "CL. FOUESNANT", CLUB_LOGOS["CL. FOUESNANT"]);
 
-
     const highlightSelect = document.getElementById("clubHighlightSelect");
     const duelSelectA = document.getElementById("duelSelectA");
     const duelSelectB = document.getElementById("duelSelectB");
-
 
     RAW_STANDINGS.forEach(c => {
       const label = `${c.pl}. ${c.team}`;
@@ -1053,11 +953,9 @@
       duelSelectB.add(new Option(label, c.team));
     });
 
-
     // Duel par défaut : US Pluguffan (1er) vs FC Pont l'Abbé (B) (2e)
     duelSelectA.value = "US PLUGUFFAN";
     duelSelectB.value = "FC PONT L'ABBÉ (B)";
-
 
     // =========================================================================
     // 3. RENDU DU TABLEAU INTERACTIF TRIABLE & FILTRABLE
@@ -1066,11 +964,9 @@
     let currentZone = "ALL";
     let highlightedClub = "ALL";
 
-
     function renderTable() {
       const tbody = document.getElementById("standingsBody");
       tbody.innerHTML = "";
-
 
       let filtered = RAW_STANDINGS.filter(c => {
         if (currentZone === "TOP") return c.pl <= 3;
@@ -1078,7 +974,6 @@
         if (currentZone === "REL") return c.pl >= 10;
         return true;
       });
-
 
       filtered.sort((a, b) => {
         const valA = a[currentSort.key];
@@ -1089,20 +984,16 @@
         return currentSort.asc ? valA - valB : valB - valA;
       });
 
-
       filtered.forEach(c => {
         const tr = document.createElement("tr");
         if (c.pl === 1) tr.classList.add("row-leader");
         else if (c.pl <= 3) tr.classList.add("row-podium");
         else if (c.pl >= 10) tr.classList.add("row-relegation");
 
-
         if (highlightedClub === c.team) tr.classList.add("row-highlighted");
-
 
         const difFormatted = c.dif > 0 ? `+${c.dif}` : c.dif;
         const fallbackUri = createFallbackDataUri(c.team);
-
 
         tr.innerHTML = `
           <td><span class="rank-pill">${c.pl}</span></td>
@@ -1129,7 +1020,6 @@
       });
     }
 
-
     document.querySelectorAll("#standingsTable thead th[data-sort]").forEach(th => {
       th.addEventListener("click", () => {
         const key = th.dataset.sort;
@@ -1143,7 +1033,6 @@
       });
     });
 
-
     document.querySelectorAll(".zone-pills .pixar-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".zone-pills .pixar-btn").forEach(b => b.classList.remove("active"));
@@ -1153,16 +1042,13 @@
       });
     });
 
-
     highlightSelect.addEventListener("change", (e) => {
       highlightedClub = e.target.value;
       renderTable();
       if (window.refreshAllCharts) window.refreshAllCharts();
     });
 
-
     renderTable();
-
 
     // =========================================================================
     // 4. CONFIGURATION GLOBALE CHART.JS (ESTHÉTIQUE STUDIO PIXAR 3D)
@@ -1172,9 +1058,7 @@
     Chart.defaults.font.weight = 700;
     Chart.defaults.color = "#18263b";
 
-
     const shortLabels = RAW_STANDINGS.map(c => c.team.replace("QUIMPER ERGUÉ ARMEL FC (B)", "QEAFC (B)").replace("HERM. CONCARNOISE (B)", "H. CONCARNEAU (B)"));
-
 
     // Plugin personnalisé : dessine les écussons officiels à côté des barres du Graphique 1
     const barLogoPlugin = {
@@ -1186,7 +1070,7 @@
         meta.data.forEach((bar, index) => {
           const team = RAW_STANDINGS[index].team;
           const img = loadedLogos[team];
-          if (img && img.complete) {
+          if (img && img.complete && img.naturalWidth > 0) {
             const size = 22;
             ctx.save();
             ctx.drawImage(img, bar.x + 28, bar.y - size / 2, size, size);
@@ -1195,7 +1079,6 @@
         });
       }
     };
-
 
     // GRAPHIQUE 1 : BARRES HORIZONTALES POINTS
     const chartPoints = new Chart(document.getElementById("chartPoints"), {
@@ -1241,7 +1124,6 @@
       }
     });
 
-
     // GRAPHIQUE 2 : ATTAQUE VS DÉFENSE
     const chartAttDef = new Chart(document.getElementById("chartAttDef"), {
       type: "bar",
@@ -1281,7 +1163,6 @@
       }
     });
 
-
     // GRAPHIQUE 3 : DIFFÉRENCE DE BUTS DIVERGENTE
     const chartDiff = new Chart(document.getElementById("chartDiff"), {
       type: "bar",
@@ -1314,7 +1195,6 @@
         }
       }
     });
-
 
     // GRAPHIQUE 4 : MATRICE QUADRANTS (BULLE : Bp vs Bc inversé)
     const chartQuadrant = new Chart(document.getElementById("chartQuadrant"), {
@@ -1365,7 +1245,6 @@
       }
     });
 
-
     // GRAPHIQUE 5 : BARRES EMPILÉES 100 % (VICTOIRES / NULS / DÉFAITES)
     const chartResults = new Chart(document.getElementById("chartResults"), {
       type: "bar",
@@ -1411,7 +1290,6 @@
       }
     });
 
-
     // GRAPHIQUE 6 : RADAR DUEL FACE-À-FACE
     function getNormalizedMetrics(club) {
       const ptsScore = (club.pts / 17) * 100;
@@ -1421,7 +1299,6 @@
       const difScore = ((club.dif + 15) / 32) * 100;
       return [ptsScore, winScore, attScore, defScore, difScore].map(v => Math.max(8, Math.min(100, Math.round(v))));
     }
-
 
     const chartRadar = new Chart(document.getElementById("chartRadar"), {
       type: "radar",
@@ -1481,32 +1358,25 @@
       }
     });
 
-
     function updateDuel() {
       const clubA = RAW_STANDINGS.find(c => c.team === duelSelectA.value) || RAW_STANDINGS[0];
       const clubB = RAW_STANDINGS.find(c => c.team === duelSelectB.value) || RAW_STANDINGS[1];
 
-
       applyImgWithFallback(document.getElementById("duelImgA"), clubA.team, clubA.logo);
       applyImgWithFallback(document.getElementById("duelImgB"), clubB.team, clubB.logo);
-
 
       chartRadar.data.datasets[0].label = clubA.team;
       chartRadar.data.datasets[0].data = getNormalizedMetrics(clubA);
 
-
       chartRadar.data.datasets[1].label = clubB.team;
       chartRadar.data.datasets[1].data = getNormalizedMetrics(clubB);
-
 
       chartRadar.update();
     }
 
-
     duelSelectA.addEventListener("change", updateDuel);
     duelSelectB.addEventListener("change", updateDuel);
     updateDuel();
-
 
     window.refreshAllCharts = function() {
       chartPoints.data.datasets[0].backgroundColor = RAW_STANDINGS.map(c => {
