@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comparateur Radar 3D — Analyse Interactive</title>
+  <!-- Bibliothèques Chart.js (graphiques Radar) et SheetJS (lecture fichiers Excel/CSV) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Police arrondie chaleureuse inspirée de l'animation 3D -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --sky-top: #dceafe;
+      --sky-bottom: #f3f7fc;
+      --surface: #ffffff;
+      --surface-soft: #f4f8ff;
+      --ink: #1e293b;
+      --muted: #5a6b85;
+      --border-light: rgba(255, 255, 255, 0.95);
+      --border-edge: #d4e1f5;
+
+      /* Couleurs Équipe A & B */
+      --blue-main: #2563eb;
+      --blue-dark: #1d4ed8;
+      --blue-glow: rgba(37, 99, 235, 0.25);
+
+      --orange-main: #f97316;
+      --orange-dark: #c2410c;
+      --orange-glow: rgba(249, 115, 22, 0.25);
+
+      --emerald-main: #10b981;
+      --emerald-dark: #047857;
+      --best-bg: #d1fae5;
+      --best-ink: #065f46;
+
+      /* Ombres 3D relief style Pixar */
+      --pixar-card-shadow:
+        0 18px 34px -10px rgba(30, 58, 110, 0.14),
+        0 6px 14px -4px rgba(30, 58, 110, 0.08),
+        inset 0 2px 3px rgba(255, 255, 255, 1),
+        inset 0 -3px 6px rgba(196, 213, 240, 0.45);
+
+      --pixar-inset-shadow:
+        inset 0 3px 6px rgba(148, 163, 184, 0.22),
+        inset 0 -1px 2px rgba(255, 255, 255, 0.9);
+
+      --radius-xl: 26px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Nunito", system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 15% 10%, #ffffff 0%, var(--sky-top) 45%, var(--sky-bottom) 100%);
+      color: var(--ink);
+      line-height: 1.45;
+      padding: 22px 18px 40px;
+      min-height: 100vh;
+    }
+
+    .app-shell {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* En-tête 3D sculpté */
+    header.hero-3d {
+      background: linear-gradient(145deg, #ffffff 0%, #f1f6ff 100%);
+      border: 2px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--pixar-card-shadow);
+      padding: 22px 28px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .hero-title-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .orb-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #3b82f6 0%, #1d4ed8 100%);
+      box-shadow:
+        0 10px 18px -4px rgba(29, 78, 216, 0.4),
+        inset 0 3px 4px rgba(255, 255, 255, 0.65),
+        inset 0 -3px 6px rgba(15, 23, 42, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.65rem;
+      flex-shrink: 0;
+    }
+
+    header.hero-3d h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #0f172a;
+      text-shadow: 0 1px 0 #ffffff;
+    }
+
+    header.hero-3d p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    /* Barre d'import Excel en relief */
+    .excel-loader-bar {
+      background: linear-gradient(145deg, #ffffff 0%, #eef5ff 100%);
+      border: 2px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--pixar-card-shadow);
+      padding: 18px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .excel-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn-3d-excel {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 22px;
+      border-radius: 16px;
+      border: none;
+      background: linear-gradient(180deg, #34d399 0%, #10b981 55%, #059669 100%);
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 0.98rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow:
+        0 6px 0 #047857,
+        0 12px 20px -4px rgba(5, 150, 105, 0.38),
+        inset 0 2px 3px rgba(255, 255, 255, 0.65);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .btn-3d-excel:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 8px 0 #047857,
+        0 15px 24px -4px rgba(5, 150, 105, 0.45),
+        inset 0 2px 3px rgba(255, 255, 255, 0.75);
+    }
+
+    .btn-3d-excel:active {
+      transform: translateY(4px);
+      box-shadow:
+        0 2px 0 #047857,
+        0 5px 10px -2px rgba(5, 150, 105, 0.35),
+        inset 0 2px 3px rgba(255, 255, 255, 0.5);
+    }
+
+    .file-status-pill {
+      background: var(--surface-soft);
+      border: 1.5px solid var(--border-edge);
+      box-shadow: var(--pixar-inset-shadow);
+      padding: 9px 16px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #1e3a8a;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-reset-demo {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 8px 14px;
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: var(--muted);
+      cursor: pointer;
+      box-shadow: 0 3px 0 #cbd5e1;
+      transition: all 0.12s ease;
+    }
+
+    .btn-reset-demo:hover {
+      color: var(--ink);
+      transform: translateY(-1px);
+    }
+
+    .btn-reset-demo:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #cbd5e1;
+    }
+
+    /* Panneau de configuration 3D */
+    .controls-panel {
+      background: linear-gradient(160deg, #ffffff 0%, #f5f9ff 100%);
+      border: 2px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--pixar-card-shadow);
+      padding: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .control-block h2 {
+      margin: 0 0 14px;
+      font-size: 1.08rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #0f172a;
+    }
+
+    .step-badge-3d {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #60a5fa 0%, #2563eb 100%);
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 900;
+      box-shadow:
+        0 4px 8px rgba(37, 99, 235, 0.35),
+        inset 0 2px 2px rgba(255, 255, 255, 0.7);
+    }
+
+    .selectors-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .select-pod {
+      background: var(--surface-soft);
+      border: 1.5px solid var(--border-edge);
+      border-radius: var(--radius-lg);
+      padding: 12px 14px;
+      box-shadow: var(--pixar-inset-shadow);
+    }
+
+    .select-pod label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      margin-bottom: 7px;
+    }
+
+    .orb-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.8), 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .orb-a { background: radial-gradient(circle at 30% 30%, #60a5fa, #1d4ed8); }
+    .orb-b { background: radial-gradient(circle at 30% 30%, #fdba74, #ea580c); }
+
+    select {
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 13px;
+      border: 1.5px solid #cbd5e1;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 0.96rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(15, 23, 42, 0.06);
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--blue-main);
+      box-shadow: 0 0 0 4px var(--blue-glow);
+    }
+
+    .bulk-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-pill-3d {
+      padding: 6px 13px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 800;
+      border-radius: 11px;
+      border: 1.5px solid #cbd5e1;
+      background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+      color: var(--ink);
+      cursor: pointer;
+      box-shadow: 0 3px 0 #cbd5e1;
+      transition: transform 0.1s ease;
+    }
+
+    .btn-pill-3d:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #cbd5e1;
+    }
+
+    .checkbox-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+      gap: 9px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+
+    .chk-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(180deg, #ffffff 0%, #f4f7fc 100%);
+      border: 1.5px solid #d5e0f2;
+      border-radius: 13px;
+      padding: 8px 11px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 3px 6px rgba(30, 58, 110, 0.06), inset 0 1px 1px #ffffff;
+      transition: transform 0.12s ease, border-color 0.12s ease;
+    }
+
+    .chk-chip:hover {
+      transform: translateY(-1px);
+      border-color: #93c5fd;
+    }
+
+    .chk-chip input[type="checkbox"] {
+      accent-color: var(--blue-main);
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .scale-toggle {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .radio-pod {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--surface-soft);
+      border: 1.5px solid var(--border-edge);
+      border-radius: 14px;
+      padding: 10px 13px;
+      font-size: 0.86rem;
+      cursor: pointer;
+      box-shadow: var(--pixar-inset-shadow);
+    }
+
+    .radio-pod input {
+      margin-top: 3px;
+      accent-color: var(--blue-main);
+      width: 16px;
+      height: 16px;
+    }
+
+    .radio-pod small {
+      display: block;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .btn-3d-primary {
+      width: 100%;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #60a5fa 0%, #2563eb 55%, #1d4ed8 100%);
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      box-shadow:
+        0 6px 0 #1e3a8a,
+        0 14px 24px -6px rgba(29, 78, 216, 0.42),
+        inset 0 2px 3px rgba(255, 255, 255, 0.7);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .btn-3d-primary:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 8px 0 #1e3a8a,
+        0 16px 28px -6px rgba(29, 78, 216, 0.5),
+        inset 0 2px 3px rgba(255, 255, 255, 0.8);
+    }
+
+    .btn-3d-primary:active {
+      transform: translateY(4px);
+      box-shadow:
+        0 2px 0 #1e3a8a,
+        0 6px 12px -4px rgba(29, 78, 216, 0.4),
+        inset 0 2px 3px rgba(255, 255, 255, 0.5);
+    }
+
+    .alert-box {
+      display: none;
+      background: linear-gradient(145deg, #fff1f2 0%, #ffe4e6 100%);
+      color: #9f1239;
+      border: 2px solid #fecdd3;
+      border-radius: var(--radius-lg);
+      padding: 14px 18px;
+      font-size: 0.94rem;
+      font-weight: 800;
+      box-shadow: var(--pixar-card-shadow);
+    }
+
+    /* Cartes Graphiques 3D */
+    .charts-main-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 960px) {
+      .charts-main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-card-3d {
+      background: linear-gradient(165deg, #ffffff 0%, #f6f9ff 100%);
+      border: 2px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--pixar-card-shadow);
+      padding: 22px 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-card-3d h3 {
+      margin: 0 0 4px;
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #0f172a;
+    }
+
+    .chart-subtitle {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .canvas-stage {
+      background: #ffffff;
+      border: 1.5px solid var(--border-edge);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--pixar-inset-shadow);
+      padding: 14px;
+      position: relative;
+      width: 100%;
+      min-height: 350px;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dual-radars {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      height: 100%;
+    }
+
+    @media (max-width: 620px) {
+      .dual-radars {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mini-radar-pod {
+      background: #ffffff;
+      border: 1.5px solid var(--border-edge);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--pixar-inset-shadow);
+      padding: 14px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .mini-radar-title {
+      font-size: 0.96rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    /* Tableau comparatif 3D */
+    .table-card-3d {
+      background: linear-gradient(165deg, #ffffff 0%, #f6f9ff 100%);
+      border: 2px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--pixar-card-shadow);
+      padding: 22px 24px;
+    }
+
+    .table-card-3d h3 {
+      margin: 0 0 14px;
+      font-size: 1.15rem;
+      font-weight: 900;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--border-edge);
+      box-shadow: var(--pixar-inset-shadow);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.94rem;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5fb;
+      font-weight: 900;
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    td.num, th.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .best-pill {
+      background: linear-gradient(180deg, #dcfce7 0%, #bbf7d0 100%);
+      color: var(--best-ink);
+      font-weight: 900;
+      border-radius: 999px;
+      padding: 3px 11px;
+      display: inline-block;
+      box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2), inset 0 1px 1px #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- En-tête 3D -->
+    <header class="hero-3d">
+      <div class="hero-title-group">
+        <div class="orb-icon" aria-hidden="true">📊</div>
+        <div>
+          <h1>Comparateur Radar 3D</h1>
+          <p>Importez un fichier Excel ou comparez deux lignes sur vos indicateurs chiffrés.</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Barre d'import Excel en haut -->
+    <section class="excel-loader-bar" aria-label="Importation de fichier Excel">
+      <div class="excel-info">
+        <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" hidden />
+        <button type="button" class="btn-3d-excel" id="btnChooseExcel">
+          <span>📂</span> Choisir un fichier Excel (.xlsx, .csv)
+        </button>
+        <div class="file-status-pill" id="fileStatusLabel">
+          <span>📋</span> Source active : Classement Régionale (9 matchs • 14 équipes)
+        </div>
+      </div>
+      <button type="button" class="btn-reset-demo" id="btnResetDemo" style="display: none;">
+        ↺ Revenir au classement intégré
+      </button>
+    </section>
+
+    <!-- Panneau de paramétrage -->
+    <section class="controls-panel" aria-label="Paramètres de comparaison">
+      <!-- Étape 1 : Deux lignes -->
+      <div class="control-block">
+        <h2><span class="step-badge-3d">1</span> Choisir deux lignes</h2>
+        <div class="selectors-grid">
+          <div class="select-pod">
+            <label for="selectRowA"><span class="orb-dot orb-a"></span> Sélection A (Bleu)</label>
+            <select id="selectRowA"></select>
+          </div>
+          <div class="select-pod">
+            <label for="selectRowB"><span class="orb-dot orb-b"></span> Sélection B (Orange)</label>
+            <select id="selectRowB"></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Étape 2 : Critères chiffrés -->
+      <div class="control-block">
+        <h2><span class="step-badge-3d">2</span> Colonnes chiffrées</h2>
+        <div class="bulk-actions">
+          <button type="button" class="btn-pill-3d" id="btnCheckAll">Tout cocher</button>
+          <button type="button" class="btn-pill-3d" id="btnUncheckAll">Tout décocher</button>
+        </div>
+        <div class="checkbox-list" id="metricsCheckboxList"></div>
+      </div>
+
+      <!-- Étape 3 : Échelle & Animation -->
+      <div class="control-block">
+        <h2><span class="step-badge-3d">3</span> Échelle &amp; Animation</h2>
+        <div class="scale-toggle">
+          <label class="radio-pod">
+            <input type="radio" name="scaleMode" value="normalized" checked />
+            <span>
+              <strong>Normalisé (0–100 % du max)</strong>
+              <small>Équilibre les axes quand les échelles diffèrent.</small>
+            </span>
+          </label>
+          <label class="radio-pod">
+            <input type="radio" name="scaleMode" value="raw" />
+            <span>
+              <strong>Valeurs brutes</strong>
+              <small>Affiche directement les chiffres réels du tableau.</small>
+            </span>
+          </label>
+        </div>
+        <button type="button" class="btn-3d-primary" id="btnGenerate">
+          ✨ Générer / Actualiser les graphiques
+        </button>
+      </div>
+    </section>
+
+    <div class="alert-box" id="alertBox"></div>
+
+    <!-- Zone des graphiques Radar -->
+    <section class="charts-main-grid">
+      <div class="chart-card-3d">
+        <h3>Radar Superposé (Comparaison directe)</h3>
+        <p class="chart-subtitle" id="overlaySubtitle">Superposition des profils sélectionnés</p>
+        <div class="canvas-stage">
+          <canvas id="radarOverlayCanvas"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card-3d">
+        <h3>Radars Individuels Côte à Côte</h3>
+        <p class="chart-subtitle">Profil détaillé de chaque sélection</p>
+        <div class="dual-radars">
+          <div class="mini-radar-pod">
+            <div class="mini-radar-title" id="titleRadarA" style="color: var(--blue-main);">Sélection A</div>
+            <div class="canvas-stage" style="min-height: 260px; border: none; box-shadow: none; padding: 4px;">
+              <canvas id="radarACanvas"></canvas>
+            </div>
+          </div>
+          <div class="mini-radar-pod">
+            <div class="mini-radar-title" id="titleRadarB" style="color: var(--orange-main);">Sélection B</div>
+            <div class="canvas-stage" style="min-height: 260px; border: none; box-shadow: none; padding: 4px;">
+              <canvas id="radarBCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tableau récapitulatif -->
+    <section class="table-card-3d">
+      <h3>Tableau comparatif des critères cochés</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Critère</th>
+              <th class="num" id="thRowA">Sélection A</th>
+              <th class="num" id="thRowB">Sélection B</th>
+              <th class="num">Écart (A - B)</th>
+            </tr>
+          </thead>
+          <tbody id="comparisonTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Jeu de données par défaut (Classement sur 9 matchs)
+    const DEFAULT_STANDINGS = [
+      { Pl: 1,  Equipe: "AG Plouvorn",          Pts: 22, Jo: 9, G: 7, N: 1, P: 1, F: 0, Bp: 24, Bc: 8,  Dif: 16,  Pe: 0 },
+      { Pl: 2,  Equipe: "Kériolets Pluvigner",  Pts: 20, Jo: 9, G: 6, N: 2, P: 1, F: 0, Bp: 19, Bc: 8,  Dif: 11,  Pe: 0 },
+      { Pl: 3,  Equipe: "SM Douarnenez",        Pts: 19, Jo: 9, G: 6, N: 1, P: 2, F: 0, Bp: 14, Bc: 14, Dif: 0,   Pe: 0 },
+      { Pl: 4,  Equipe: "St Plabennécois",      Pts: 17, Jo: 9, G: 5, N: 2, P: 2, F: 0, Bp: 21, Bc: 8,  Dif: 13,  Pe: 0 },
+      { Pl: 5,  Equipe: "US Concarneau (B)",    Pts: 16, Jo: 9, G: 5, N: 1, P: 3, F: 0, Bp: 15, Bc: 12, Dif: 3,   Pe: 0 },
+      { Pl: 6,  Equipe: "Paotred Dispount",     Pts: 13, Jo: 9, G: 4, N: 1, P: 4, F: 0, Bp: 16, Bc: 10, Dif: 6,   Pe: 0 },
+      { Pl: 7,  Equipe: "COB Saint Brieuc",     Pts: 13, Jo: 9, G: 4, N: 1, P: 4, F: 0, Bp: 12, Bc: 11, Dif: 1,   Pe: 0 },
+      { Pl: 8,  Equipe: "GDR Guipavas",         Pts: 12, Jo: 9, G: 3, N: 3, P: 3, F: 0, Bp: 11, Bc: 12, Dif: -1,  Pe: 0 },
+      { Pl: 9,  Equipe: "Plaintel SP",          Pts: 11, Jo: 9, G: 3, N: 2, P: 4, F: 0, Bp: 14, Bc: 9,  Dif: 5,   Pe: 0 },
+      { Pl: 10, Equipe: "US Montagnarde",       Pts: 11, Jo: 9, G: 3, N: 2, P: 4, F: 0, Bp: 10, Bc: 15, Dif: -5,  Pe: 0 },
+      { Pl: 11, Equipe: "EA Saint Renan",       Pts: 10, Jo: 9, G: 3, N: 1, P: 5, F: 0, Bp: 11, Bc: 12, Dif: -1,  Pe: 0 },
+      { Pl: 12, Equipe: "St Pontivyen",         Pts: 8,  Jo: 9, G: 2, N: 2, P: 5, F: 0, Bp: 9,  Bc: 18, Dif: -9,  Pe: 0 },
+      { Pl: 13, Equipe: "Plougastel FC",        Pts: 4,  Jo: 9, G: 1, N: 1, P: 7, F: 0, Bp: 6,  Bc: 21, Dif: -15, Pe: 0 },
+      { Pl: 14, Equipe: "St Brandan Quintin FC",Pts: 2,  Jo: 9, G: 0, N: 2, P: 7, F: 0, Bp: 4,  Bc: 28, Dif: -24, Pe: 0 }
+    ];
+
+    const KNOWN_LABELS = {
+      Pts: "Points",
+      Jo: "Joués",
+      G: "Victoires",
+      N: "Nuls",
+      P: "Défaites",
+      F: "Forfaits",
+      Bp: "Buts pour",
+      Bc: "Buts contre",
+      Dif: "Différence",
+      Pe: "Pénalités"
+    };
+
+    // État courant de l'application
+    let activeRows = [...DEFAULT_STANDINGS];
+    let labelColumn = "Equipe";
+    let rankColumn = "Pl";
+    let numericColumns = [];
+
+    const excelFileInput = document.getElementById("excelFileInput");
+    const btnChooseExcel = document.getElementById("btnChooseExcel");
+    const btnResetDemo = document.getElementById("btnResetDemo");
+    const fileStatusLabel = document.getElementById("fileStatusLabel");
+    const selectRowA = document.getElementById("selectRowA");
+    const selectRowB = document.getElementById("selectRowB");
+    const metricsCheckboxList = document.getElementById("metricsCheckboxList");
+    const btnCheckAll = document.getElementById("btnCheckAll");
+    const btnUncheckAll = document.getElementById("btnUncheckAll");
+    const btnGenerate = document.getElementById("btnGenerate");
+    const alertBox = document.getElementById("alertBox");
+
+    let overlayChart = null;
+    let chartA = null;
+    let chartB = null;
+
+    // Analyse automatique de la structure d'un tableau (intégré ou importé depuis Excel)
+    function analyzeDataset(rows, isDefault = false) {
+      if (!rows || rows.length < 2) {
+        showAlert("Le fichier doit contenir au moins 2 lignes de données exploitables.");
+        return false;
+      }
+
+      const keys = Object.keys(rows[0]).filter((k) => !k.startsWith("__EMPTY"));
+      if (keys.length < 4) {
+        showAlert("Le tableau doit comporter une colonne d'identification et au moins 3 colonnes chiffrées.");
+        return false;
+      }
+
+      // 1. Identifier la colonne textuelle principale (ex: Equipe, Nom, Club...)
+      let detectedLabelCol = keys.find((k) => {
+        const sample = rows[0][k];
+        return typeof sample === "string" && isNaN(Number(String(sample).replace(",", ".")));
+      });
+      if (!detectedLabelCol) detectedLabelCol = keys[0];
+
+      // 2. Identifier une éventuelle colonne de rang/classement (ex: Pl, Rang, Pos, #)
+      const rankCandidates = ["pl", "rang", "pos", "position", "classement", "n°", "#"];
+      let detectedRankCol = keys.find(
+        (k) => k !== detectedLabelCol && rankCandidates.includes(k.trim().toLowerCase())
+      ) || null;
+
+      // 3. Normaliser les valeurs numériques et lister les colonnes chiffrées
+      const cleanedRows = rows.map((rawRow, idx) => {
+        const obj = {};
+        obj[detectedLabelCol] = String(rawRow[detectedLabelCol] ?? `Ligne ${idx + 1}`).trim();
+        keys.forEach((k) => {
+          if (k === detectedLabelCol) return;
+          const val = rawRow[k];
+          if (typeof val === "number") {
+            obj[k] = val;
+          } else if (val !== null && val !== undefined && String(val).trim() !== "") {
+            const parsed = Number(String(val).replace(/\s/g, "").replace(",", "."));
+            if (!isNaN(parsed)) {
+              obj[k] = parsed;
+            }
+          }
+        });
+        return obj;
+      });
+
+      const detectedNumericCols = keys.filter((k) => {
+        if (k === detectedLabelCol || k === detectedRankCol) return false;
+        const validCount = cleanedRows.filter((r) => typeof r[k] === "number" && !isNaN(r[k])).length;
+        return validCount >= Math.ceil(cleanedRows.length * 0.6);
+      });
+
+      if (detectedNumericCols.length < 3) {
+        showAlert("Moins de 3 colonnes chiffrées ont été détectées dans ce fichier.");
+        return false;
+      }
+
+      activeRows = cleanedRows;
+      labelColumn = detectedLabelCol;
+      rankColumn = detectedRankCol;
+      numericColumns = detectedNumericCols;
+
+      populateSelectors();
+      populateMetricCheckboxes(isDefault);
+      renderAll();
+      return true;
+    }
+
+    function populateSelectors() {
+      selectRowA.innerHTML = "";
+      selectRowB.innerHTML = "";
+
+      activeRows.forEach((row, idx) => {
+        const prefix = rankColumn && row[rankColumn] !== undefined ? `${row[rankColumn]}. ` : "";
+        const text = `${prefix}${row[labelColumn]}`;
+        selectRowA.add(new Option(text, idx));
+        selectRowB.add(new Option(text, idx));
+      });
+
+      selectRowA.value = "0";
+      selectRowB.value = activeRows.length > 1 ? "1" : "0";
+    }
+
+    function populateMetricCheckboxes(isDefault) {
+      metricsCheckboxList.innerHTML = "";
+      const defaultPreferred = ["Pts", "G", "Bp", "Bc", "Dif"];
+
+      numericColumns.forEach((col, index) => {
+        const chip = document.createElement("label");
+        chip.className = "chk-chip";
+
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.value = col;
+        cb.checked = isDefault ? defaultPreferred.includes(col) : index < 5;
+
+        const span = document.createElement("span");
+        const friendly = KNOWN_LABELS[col];
+        span.textContent = friendly ? `${col} (${friendly})` : col;
+
+        chip.appendChild(cb);
+        chip.appendChild(span);
+        metricsCheckboxList.appendChild(chip);
+      });
+    }
+
+    function getSelectedMetrics() {
+      return Array.from(metricsCheckboxList.querySelectorAll("input[type='checkbox']:checked")).map(
+        (cb) => cb.value
+      );
+    }
+
+    function getScaleMode() {
+      return document.querySelector("input[name='scaleMode']:checked").value;
+    }
+
+    function computeSeries(row, metrics, mode) {
+      return metrics.map((col) => {
+        const rawVal = Number(row[col]) || 0;
+        if (mode === "raw") return rawVal;
+
+        const values = activeRows.map((r) => Number(r[col]) || 0);
+        const minVal = Math.min(...values);
+        const maxVal = Math.max(...values);
+        if (maxVal === minVal) return 50;
+        const pct = ((rawVal - minVal) / (maxVal - minVal)) * 100;
+        return Number(pct.toFixed(1));
+      });
+    }
+
+    function buildRadarConfig(labels, seriesA, seriesB, rawA, rawB, nameA, nameB, mode, singleMode = null) {
+      const dsA = {
+        label: nameA,
+        data: seriesA,
+        rawValues: rawA,
+        borderColor: "#2563eb",
+        backgroundColor: "rgba(37, 99, 235, 0.24)",
+        pointBackgroundColor: "#2563eb",
+        pointBorderColor: "#ffffff",
+        pointBorderWidth: 2,
+        pointRadius: 4.5,
+        pointHoverRadius: 7,
+        borderWidth: 3
+      };
+
+      const dsB = {
+        label: nameB,
+        data: seriesB,
+        rawValues: rawB,
+        borderColor: "#f97316",
+        backgroundColor: "rgba(249, 115, 22, 0.24)",
+        pointBackgroundColor: "#f97316",
+        pointBorderColor: "#ffffff",
+        pointBorderWidth: 2,
+        pointRadius: 4.5,
+        pointHoverRadius: 7,
+        borderWidth: 3
+      };
+
+      let datasets = [dsA, dsB];
+      if (singleMode === "A") datasets = [dsA];
+      if (singleMode === "B") datasets = [dsB];
+
+      return {
+        type: "radar",
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 850,
+            easing: "easeOutBack"
+          },
+          scales: {
+            r: {
+              min: mode === "normalized" ? 0 : undefined,
+              max: mode === "normalized" ? 100 : undefined,
+              ticks: {
+                backdropColor: "transparent",
+                font: { family: "Nunito", size: 10, weight: "700" },
+                color: "#64748b"
+              },
+              pointLabels: {
+                font: { family: "Nunito", size: 12, weight: "800" },
+                color: "#0f172a"
+              },
+              grid: { color: "rgba(148, 163, 184, 0.28)", circular: true },
+              angleLines: { color: "rgba(148, 163, 184, 0.28)" }
+            }
+          },
+          plugins: {
+            legend: {
+              display: singleMode === null,
+              position: "top",
+              labels: {
+                font: { family: "Nunito", size: 13, weight: "800" },
+                usePointStyle: true,
+                padding: 16
+              }
+            },
+            tooltip: {
+              backgroundColor: "rgba(15, 23, 42, 0.92)",
+              titleFont: { family: "Nunito", size: 13, weight: "800" },
+              bodyFont: { family: "Nunito", size: 12, weight: "700" },
+              padding: 10,
+              cornerRadius: 12,
+              callbacks: {
+                label: (ctx) => {
+                  const dataset = ctx.dataset;
+                  const raw = dataset.rawValues ? dataset.rawValues[ctx.dataIndex] : ctx.formattedValue;
+                  if (mode === "normalized") {
+                    return ` ${dataset.label} : ${raw} (${ctx.formattedValue} % du max)`;
+                  }
+                  return ` ${dataset.label} : ${raw}`;
+                }
+              }
+            }
+          }
+        }
+      };
+    }
+
+    function updateComparisonTable(rowA, rowB, metrics) {
+      const nameA = rowA[labelColumn];
+      const nameB = rowB[labelColumn];
+      document.getElementById("thRowA").textContent = nameA;
+      document.getElementById("thRowB").textContent = nameB;
+
+      const tbody = document.getElementById("comparisonTableBody");
+      tbody.innerHTML = "";
+
+      const lowerIsBetter = new Set(["Bc", "P", "F", "Pe"]);
+
+      metrics.forEach((col) => {
+        const valA = Number(rowA[col]) || 0;
+        const valB = Number(rowB[col]) || 0;
+        const diff = Number((valA - valB).toFixed(2));
+
+        let aWins = false;
+        let bWins = false;
+        if (valA !== valB) {
+          if (lowerIsBetter.has(col)) {
+            aWins = valA < valB;
+            bWins = valB < valA;
+          } else {
+            aWins = valA > valB;
+            bWins = valB > valA;
+          }
+        }
+
+        const labelText = KNOWN_LABELS[col] ? `<strong>${col}</strong> — ${KNOWN_LABELS[col]}` : `<strong>${col}</strong>`;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${labelText}</td>
+          <td class="num"><span class="${aWins ? "best-pill" : ""}">${valA}</span></td>
+          <td class="num"><span class="${bWins ? "best-pill" : ""}">${valB}</span></td>
+          <td class="num">${diff > 0 ? "+" + diff : diff}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function showAlert(msg) {
+      alertBox.style.display = "block";
+      alertBox.textContent = "⚠️ " + msg;
+    }
+
+    function hideAlert() {
+      alertBox.style.display = "none";
+    }
+
+    function renderAll() {
+      const selectedMetrics = getSelectedMetrics();
+      if (selectedMetrics.length < 3) {
+        showAlert("Veuillez cocher au moins 3 colonnes chiffrées pour générer les graphiques radar.");
+        return;
+      }
+      hideAlert();
+
+      const rowA = activeRows[Number(selectRowA.value)] || activeRows[0];
+      const rowB = activeRows[Number(selectRowB.value)] || activeRows[1];
+      const nameA = rowA[labelColumn];
+      const nameB = rowB[labelColumn];
+      const mode = getScaleMode();
+
+      const labels = selectedMetrics.map((m) => KNOWN_LABELS[m] || m);
+      const rawA = selectedMetrics.map((m) => Number(rowA[m]) || 0);
+      const rawB = selectedMetrics.map((m) => Number(rowB[m]) || 0);
+      const seriesA = computeSeries(rowA, selectedMetrics, mode);
+      const seriesB = computeSeries(rowB, selectedMetrics, mode);
+
+      document.getElementById("titleRadarA").textContent = nameA;
+      document.getElementById("titleRadarB").textContent = nameB;
+      document.getElementById("overlaySubtitle").textContent =
+        mode === "normalized"
+          ? `${nameA} vs ${nameB} — Échelle normalisée (0 à 100 %)`
+          : `${nameA} vs ${nameB} — Valeurs brutes`;
+
+      if (overlayChart) overlayChart.destroy();
+      if (chartA) chartA.destroy();
+      if (chartB) chartB.destroy();
+
+      overlayChart = new Chart(
+        document.getElementById("radarOverlayCanvas"),
+        buildRadarConfig(labels, seriesA, seriesB, rawA, rawB, nameA, nameB, mode, null)
+      );
+
+      chartA = new Chart(
+        document.getElementById("radarACanvas"),
+        buildRadarConfig(labels, seriesA, seriesB, rawA, rawB, nameA, nameB, mode, "A")
+      );
+
+      chartB = new Chart(
+        document.getElementById("radarBCanvas"),
+        buildRadarConfig(labels, seriesA, seriesB, rawA, rawB, nameA, nameB, mode, "B")
+      );
+
+      updateComparisonTable(rowA, rowB, selectedMetrics);
+    }
+
+    // Gestion du bouton d'import Excel / CSV
+    btnChooseExcel.addEventListener("click", () => {
+      excelFileInput.value = "";
+      excelFileInput.click();
+    });
+
+    excelFileInput.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: "array" });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          const jsonRows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+          if (analyzeDataset(jsonRows, false)) {
+            fileStatusLabel.innerHTML = `<span>✅</span> Fichier chargé : <strong>${file.name}</strong> (${activeRows.length} lignes)`;
+            btnResetDemo.style.display = "inline-block";
+          }
+        } catch (err) {
+          showAlert("Impossible de lire ce fichier Excel. Vérifiez qu'il contient un tableau valide sur la première feuille.");
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    });
+
+    btnResetDemo.addEventListener("click", () => {
+      analyzeDataset(DEFAULT_STANDINGS, true);
+      fileStatusLabel.innerHTML = `<span>📋</span> Source active : Classement Régionale (9 matchs • 14 équipes)`;
+      btnResetDemo.style.display = "none";
+    });
+
+    btnCheckAll.addEventListener("click", () => {
+      metricsCheckboxList.querySelectorAll("input[type='checkbox']").forEach((cb) => (cb.checked = true));
+      renderAll();
+    });
+
+    btnUncheckAll.addEventListener("click", () => {
+      metricsCheckboxList.querySelectorAll("input[type='checkbox']").forEach((cb) => (cb.checked = false));
+      renderAll();
+    });
+
+    btnGenerate.addEventListener("click", renderAll);
+    selectRowA.addEventListener("change", renderAll);
+    selectRowB.addEventListener("change", renderAll);
+    metricsCheckboxList.addEventListener("change", renderAll);
+    document.querySelectorAll("input[name='scaleMode']").forEach((radio) => {
+      radio.addEventListener("change", renderAll);
+    });
+
+    // Initialisation au chargement
+    analyzeDataset(DEFAULT_STANDINGS, true);
+  </script>
+</body>
+</html>
